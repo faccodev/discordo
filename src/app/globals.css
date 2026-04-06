@@ -1,0 +1,189 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-blurple: #5865F2;
+  --color-blurple-dark: #4752C4;
+  --color-dark: #313338;
+  --color-dark-hover: #3F4145;
+  --color-dark-active: #383A40;
+  --color-dark-sd: #2B2D31;
+  --color-dark-bl: #1E1F22;
+  --color-dark-more: #232529;
+  --color-status-online: #23A559;
+  --color-status-idle: #F0B232;
+  --color-status-dnd: #F23F43;
+  --color-status-offline: #80848E;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-dark);
+  color: #dbdee1;
+  overflow: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e1f22;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #313338;
+}
+
+/* Message content formatting */
+.message-content {
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.message-content code {
+  background: #2b2d31;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+}
+
+.message-content pre {
+  background: #2b2d31;
+  padding: 1em;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 0.5em 0;
+}
+
+.message-content pre code {
+  background: transparent;
+  padding: 0;
+}
+
+/* Discord-like mention styling */
+.mention {
+  color: #dee0fc;
+  background: rgba(88, 101, 242, 0.3);
+  border-radius: 3px;
+  padding: 0 0.2em;
+}
+
+.mention:hover {
+  background: rgba(88, 101, 242, 0.5);
+}
+
+/* Channel mention */
+.channel-mention {
+  color: #949bb4;
+}
+
+.channel-mention:hover {
+  color: #dbdee1;
+  background: rgba(88, 101, 242, 0.2);
+}
+
+/* Role mention */
+.role-mention {
+  border-radius: 3px;
+  padding: 0 0.2em;
+}
+
+/* Image lightbox */
+.image-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  cursor: zoom-out;
+}
+
+/* Input focus styles */
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-blurple);
+  outline-offset: -2px;
+}
+
+/* Transition utilities */
+.transition-sidebar {
+  transition: width 0.15s ease-out, min-width 0.15s ease-out, padding 0.15s ease-out;
+}
+
+/* ─── Mobile-specific ─────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  /* Prevent pull-to-refresh on message list */
+  .overflow-y-auto {
+    overscroll-behavior: contain;
+  }
+
+  /* Larger touch targets */
+  button,
+  a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Chat input on mobile */
+  textarea {
+    font-size: 16px !important; /* Prevents iOS zoom */
+  }
+
+  /* Better scroll on touch */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Safe area insets for notched devices */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Hide scrollbar on mobile but keep functionality */
+@media (max-width: 767px) {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  * {
+    scrollbar-width: none;
+  }
+}
+
+/* Touch-friendly button sizing */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Mobile search modal full screen */
+@media (max-width: 767px) {
+  .search-modal-overlay {
+    padding-top: 0 !important;
+    align-items: flex-start !important;
+  }
+}
+
