@@ -62,27 +62,33 @@ export async function POST(
       const content = formData.get("content") as string | null;
       const files = formData.getAll("files") as File[];
 
+      if (!content && files.length === 0) {
+        return NextResponse.json({ error: "Content or files required" }, { status: 400 });
+      }
+
+      // Build FormData for Discord API — must NOT set Content-Type header manually
       const body = new FormData();
       if (content) body.append("content", content);
       for (const file of files) {
         body.append("files", file);
       }
 
-      const client = getDiscordClient();
-      // Use sendMessage with FormData by calling the endpoint directly
+      const discordToken = process.env.DISCORD_BOT_TOKEN!;
+      const isUserToken = discordToken.length > 60 && discordToken.startsWith("MTI");
+      const authHeader = isUserToken ? discordToken : `Bot ${discordToken}`;
+
       const res = await fetch(
         `https://discord.com/api/v10/channels/${channelId}/messages`,
         {
           method: "POST",
-          headers: {
-            Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
-          },
+          headers: { Authorization: authHeader },
           body,
         }
       );
+
       if (!res.ok) {
         const err = await res.text();
-        throw new Error(err);
+        throw new Error(`Discord API ${res.status}: ${err}`);
       }
       return NextResponse.json(await res.json());
     } else {
