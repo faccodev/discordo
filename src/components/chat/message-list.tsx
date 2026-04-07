@@ -212,17 +212,25 @@ function MessageItem({ message }: { message: DiscordMessage }) {
         {message.attachments && message.attachments.length > 0 && (
           <div className="mt-2 space-y-2">
             {message.attachments.map((attachment) => {
-              if (attachment.content_type?.startsWith("image/")) {
+              const imageUrl = attachment.proxy_url || attachment.url;
+              const isImage = attachment.content_type?.startsWith("image/");
+
+              // Resolve partial URLs (e.g. just an ID without CDN domain)
+              const resolvedUrl = imageUrl.startsWith("http")
+                ? imageUrl
+                : `https://cdn.discordapp.com/attachments/${message.channel_id}/${message.id}/${attachment.filename}`;
+
+              if (isImage) {
                 return (
                   <a
                     key={attachment.id}
-                    href={attachment.url}
+                    href={resolvedUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block max-w-md overflow-hidden rounded"
                   >
                     <img
-                      src={attachment.proxy_url || attachment.url}
+                      src={resolvedUrl}
                       alt={attachment.description || attachment.filename}
                       className="max-h-96 rounded object-cover"
                       loading="lazy"
@@ -233,7 +241,7 @@ function MessageItem({ message }: { message: DiscordMessage }) {
               return (
                 <a
                   key={attachment.id}
-                  href={attachment.url}
+                  href={resolvedUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-sm text-blurple hover:underline"
