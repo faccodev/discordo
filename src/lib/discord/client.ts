@@ -18,8 +18,12 @@ const DISCORD_SUPER_PROPERTIES = {
 
 function getDiscordHeaders(token: string): Record<string, string> {
   const superProps = Buffer.from(JSON.stringify(DISCORD_SUPER_PROPERTIES)).toString("base64");
+  // User tokens (long, start with MTI) vs bot tokens (shorter)
+  // User tokens must NOT have "Bot " prefix
+  const isUserToken = token.length > 60 && token.startsWith("MTI");
+  const authHeader = isUserToken ? token : `Bot ${token}`;
   return {
-    Authorization: `Bot ${token}`,
+    Authorization: authHeader,
     "Content-Type": "application/json",
     "X-Super-Properties": superProps,
     "Accept-Language": "en-US",
