@@ -33,7 +33,7 @@ export default function LoginPage() {
 
       router.push("/");
       router.refresh();
-    } catch {
+    } catch (err) {
       setError("Network error — please try again");
     } finally {
       setLoading(false);
