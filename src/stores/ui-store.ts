@@ -2,6 +2,11 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { DiscordGuild, DiscordChannel, DiscordUser } from "@/lib/discord/types";
 
+interface UnreadState {
+  channelId: string;
+  lastReadMessageId: string | null;
+}
+
 interface UIState {
   // Theme
   theme: 'dark' | 'light';
@@ -34,6 +39,12 @@ interface UIState {
   // DMs
   dms: DiscordChannel[];
   setDMs: (channels: DiscordChannel[]) => void;
+
+  // Unread channels: lastReadMessageId per channelId
+  lastReadMessages: Record<string, string>;
+  setLastReadMessage: (channelId: string, messageId: string) => void;
+  markChannelRead: (channelId: string, lastMessageId: string) => void;
+  isUnread: (channelId: string, currentLastMessageId: string) => boolean;
 
   // Expanded guilds (for showing channels)
   expandedGuilds: Set<string>;
@@ -79,6 +90,23 @@ export const useUIStore = create<UIState>()(
       dms: [],
       setDMs: (dms) => set({ dms }),
 
+      // Unread tracking
+      lastReadMessages: {},
+      setLastReadMessage: (channelId, messageId) =>
+        set((state) => ({
+          lastReadMessages: { ...state.lastReadMessages, [channelId]: messageId },
+        })),
+      markChannelRead: (channelId, lastMessageId) =>
+        set((state) => ({
+          lastReadMessages: { ...state.lastReadMessages, [channelId]: lastMessageId },
+        })),
+      isUnread: (channelId, currentLastMessageId) => {
+        const lastRead = get().lastReadMessages[channelId];
+        if (!lastRead) return false;
+        // Compare using BigInt for snowflake IDs
+        return BigInt(currentLastMessageId) > BigInt(lastRead);
+      },
+
       // Expanded guilds
       expandedGuilds: new Set<string>(),
       toggleGuildExpanded: (guildId) =>
@@ -100,6 +128,7 @@ export const useUIStore = create<UIState>()(
         selectedGuildId: state.selectedGuildId,
         selectedChannelId: state.selectedChannelId,
         theme: state.theme,
+        lastReadMessages: state.lastReadMessages,
       }),
     }
   )

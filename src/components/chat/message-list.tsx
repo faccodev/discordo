@@ -404,7 +404,7 @@ function MessageItem({ message }: { message: DiscordMessage }) {
 export function MessageList({ channelId }: { channelId: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
-  const { currentUser } = useUIStore();
+  const { currentUser, markChannelRead } = useUIStore();
 
   const {
     data: messages,
@@ -428,6 +428,7 @@ export function MessageList({ channelId }: { channelId: string }) {
   });
 
   const allMessages = messages?.pages.flat().reverse() || [];
+  const lastMessageId = allMessages[allMessages.length - 1]?.id;
 
   const handleScroll = useCallback(() => {
     if (!containerRef.current) return;
@@ -440,6 +441,14 @@ export function MessageList({ channelId }: { channelId: string }) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight;
     }
   };
+
+  // Mark channel as read when user scrolls to bottom or opens channel with messages
+  useEffect(() => {
+    if (lastMessageId) {
+      fetch(`/api/discord/channels/${channelId}/ack`, { method: "POST" });
+      markChannelRead(channelId, lastMessageId);
+    }
+  }, [channelId, lastMessageId, markChannelRead]);
 
   // Scroll to bottom when messages finish loading (after entering a channel)
   useEffect(() => {

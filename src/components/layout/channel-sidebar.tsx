@@ -62,6 +62,7 @@ export function ChannelSidebar() {
     currentUser,
     theme,
     toggleTheme,
+    isUnread,
   } = useUIStore();
 
   const navigateToChannel = (channelId: string) => {
@@ -204,24 +205,30 @@ export function ChannelSidebar() {
                 .map((dm) => {
                   const recipient = dm.recipients?.[0];
                   const name = dm.name || recipient?.username || "Unknown";
+                  const isDmUnread = dm.last_message_id ? isUnread(dm.id, dm.last_message_id) : false;
                   return (
                     <button
                       key={dm.id}
                       onClick={() => navigateToChannel(dm.id)}
                       className={cn(
-                        "flex w-full items-center gap-2 rounded px-2 py-1.5 text-sm transition-colors",
+                        "group flex w-full items-center gap-2 rounded px-2 py-1.5 text-sm transition-colors",
                         selectedChannelId === dm.id
                           ? "bg-primary/10 border-l-2 border-primary text-primary"
                           : "text-text-dim hover:bg-bg-hover hover:text-primary"
                       )}
                     >
-                      <Avatar
-                        src={recipient?.avatar}
-                        alt={name}
-                        userId={recipient?.id}
-                        size="sm"
-                      />
-                      <span className="truncate">{name}</span>
+                      <div className="relative flex-shrink-0">
+                        <Avatar
+                          src={recipient?.avatar}
+                          alt={name}
+                          userId={recipient?.id}
+                          size="sm"
+                        />
+                        {isDmUnread && (
+                          <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-primary shadow-[0_0_4px_#00FF41]" />
+                        )}
+                      </div>
+                      <span className={cn("truncate", isDmUnread && "font-semibold")}>{name}</span>
                     </button>
                   );
                 })}
@@ -278,9 +285,11 @@ function ChannelItem({
   isSelected: boolean;
   onSelect: () => void;
 }) {
+  const { isUnread } = useUIStore();
   const isVoice =
     channel.type === ChannelType.GUILD_VOICE ||
     channel.type === ChannelType.GUILD_STAGE_VOICE;
+  const channelUnread = channel.last_message_id ? isUnread(channel.id, channel.last_message_id) : false;
 
   return (
     <button
@@ -294,9 +303,12 @@ function ChannelItem({
       )}
     >
       {getChannelIcon(channel)}
-      <span className={cn("flex-1 truncate text-left", isVoice && "ml-1")}>
+      <span className={cn("flex-1 truncate text-left", isVoice && "ml-1", channelUnread && "font-semibold")}>
         {channel.name}
       </span>
+      {channelUnread && (
+        <span className="h-2 w-2 flex-shrink-0 rounded-full bg-primary shadow-[0_0_4px_#00FF41]" />
+      )}
       {channel.topic && (
         <span className="ml-1 font-mono text-xs text-text-dim">{channel.topic}</span>
       )}
