@@ -348,16 +348,16 @@ export function MessageList({ channelId }: { channelId: string }) {
     }
   };
 
-  // Scroll to bottom when entering a channel
+  // Scroll to bottom when messages finish loading (after entering a channel)
   useEffect(() => {
-    if (allMessages.length > 0) {
+    if (!isLoading && allMessages.length > 0) {
       requestAnimationFrame(() => {
         if (containerRef.current) {
           containerRef.current.scrollTop = containerRef.current.scrollHeight;
         }
       });
     }
-  }, [channelId]);
+  }, [isLoading, channelId]);
 
   if (isLoading) {
     return (
