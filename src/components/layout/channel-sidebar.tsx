@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useUIStore } from "@/stores/ui-store";
 import { cn } from "@/lib/utils";
@@ -45,6 +46,7 @@ function getChannelIconColor(channel: DiscordChannel) {
 }
 
 export function ChannelSidebar() {
+  const router = useRouter();
   const {
     selectedGuildId,
     selectedChannelId,
@@ -61,6 +63,11 @@ export function ChannelSidebar() {
     theme,
     toggleTheme,
   } = useUIStore();
+
+  const navigateToChannel = (channelId: string) => {
+    setSelectedChannel(channelId);
+    router.push(`/channels/${channelId}`);
+  };
 
   const [showCreateGroup, setShowCreateGroup] = useState(false);
 
@@ -149,7 +156,7 @@ export function ChannelSidebar() {
                           key={channel.id}
                           channel={channel}
                           isSelected={selectedChannelId === channel.id}
-                          onSelect={() => setSelectedChannel(channel.id)}
+                          onSelect={() => navigateToChannel(channel.id)}
                         />
                       ))}
                     </div>
@@ -164,7 +171,7 @@ export function ChannelSidebar() {
                     key={channel.id}
                     channel={channel}
                     isSelected={selectedChannelId === channel.id}
-                    onSelect={() => setSelectedChannel(channel.id)}
+                    onSelect={() => navigateToChannel(channel.id)}
                   />
                 ))}
               </div>
@@ -192,7 +199,7 @@ export function ChannelSidebar() {
                 return (
                   <button
                     key={dm.id}
-                    onClick={() => setSelectedChannel(dm.id)}
+                    onClick={() => navigateToChannel(dm.id)}
                     className={cn(
                       "flex w-full items-center gap-2 rounded px-2 py-1.5 text-sm transition-colors",
                       selectedChannelId === dm.id

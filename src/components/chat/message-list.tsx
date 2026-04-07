@@ -348,11 +348,13 @@ export function MessageList({ channelId }: { channelId: string }) {
     }
   };
 
+  // Scroll to bottom when entering a channel
   useEffect(() => {
     if (allMessages.length > 0) {
-      containerRef.current?.scrollTo({
-        top: containerRef.current.scrollHeight,
-        behavior: "smooth",
+      requestAnimationFrame(() => {
+        if (containerRef.current) {
+          containerRef.current.scrollTop = containerRef.current.scrollHeight;
+        }
       });
     }
   }, [channelId]);

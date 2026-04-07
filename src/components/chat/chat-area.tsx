@@ -11,18 +11,21 @@ import { Loader2, Hash, Users, Search, Bell, BellOff } from "lucide-react";
 import { ChannelType } from "@/lib/discord/types";
 import type { DiscordChannel } from "@/lib/discord/types";
 
-export function ChatArea() {
+export function ChatArea({ channelId }: { channelId?: string }) {
   const { selectedChannelId, selectedGuildId, channels, guilds } = useUIStore();
   const [searchOpen, setSearchOpen] = useState(false);
 
+  // Use URL channelId if provided, otherwise fall back to Zustand
+  const activeChannelId = channelId || selectedChannelId;
+
   const { data: channelInfo } = useQuery({
-    queryKey: ["discord-channel", selectedChannelId],
+    queryKey: ["discord-channel", activeChannelId],
     queryFn: async () => {
-      const res = await fetch(`/api/discord/channels/${selectedChannelId}`);
+      const res = await fetch(`/api/discord/channels/${activeChannelId}`);
       if (!res.ok) throw new Error("Failed to fetch channel");
       return res.json() as Promise<DiscordChannel>;
     },
-    enabled: !!selectedChannelId,
+    enabled: !!activeChannelId,
   });
 
   // Browser notifications
@@ -30,16 +33,16 @@ export function ChatArea() {
     permission: notifPermission,
     requestPermission: requestNotifPermission,
   } = useNotifications({
-    channelId: selectedChannelId ?? "",
-    enabled: !!selectedChannelId,
+    channelId: activeChannelId ?? "",
+    enabled: !!activeChannelId,
   });
 
   const currentChannels = selectedGuildId ? channels[selectedGuildId] || [] : [];
-  const currentChannel = currentChannels.find((c) => c.id === selectedChannelId);
+  const currentChannel = currentChannels.find((c) => c.id === activeChannelId);
   const channelName = channelInfo?.name || currentChannel?.name || "Canal";
   const selectedGuild = guilds.find((g) => g.id === selectedGuildId);
 
-  if (!selectedChannelId) {
+  if (!activeChannelId) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center bg-dark">
         <div className="text-center">
@@ -117,16 +120,16 @@ export function ChatArea() {
 
       {/* Messages */}
       <div className="flex-1 overflow-hidden">
-        <MessageList channelId={selectedChannelId} />
+        <MessageList channelId={activeChannelId} />
       </div>
 
       {/* Input */}
-      {!isVoiceChannel && <MessageInput channelId={selectedChannelId} />}
+      {!isVoiceChannel && <MessageInput channelId={activeChannelId} />}
 
       {/* Search Modal */}
-      {searchOpen && selectedChannelId && (
+      {searchOpen && activeChannelId && (
         <SearchModal
-          channelId={selectedChannelId}
+          channelId={activeChannelId}
           channelName={channelName}
           onClose={() => setSearchOpen(false)}
         />
