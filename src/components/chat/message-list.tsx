@@ -29,68 +29,152 @@ function isMessageWithContent(type: MessageType): boolean {
 function parseContent(content: string, mentions?: { id: string; username: string }[]): React.ReactNode[] {
   if (!content) return [];
 
-  const parts: React.ReactNode[] = [];
-  const mentionRegex = /<@!?(\d+)>/g;
-  const channelRegex = /<#(\d+)>/g;
-  const roleRegex = /<@&(\d+)>/g;
-  const emojiRegex = /<(a)?:(\w+):(\d+)>/g;
+  const parts2: React.ReactNode[] = [];
+  const mentionMap = new Map<string, string>();
+  if (mentions) mentions.forEach((m) => mentionMap.set(m.id, m.username));
+
+  // Escape HTML to prevent XSS
+  let processed = content
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  // Process Discord mentions first (before any markdown)
+  const userMentionRe = /&lt;@!?(\d+)&gt;/g;
+  processed = processed.replace(userMentionRe, (m, id) => {
+    const username = mentionMap.get(id) || `User ${id}`;
+    return `[[MENTION:${id}:${username}]]`;
+  });
+
+  const channelRe = /&lt;#(\d+)&gt;/g;
+  processed = processed.replace(channelRe, (_m, id) => `[[CHANNEL:${id}]]`);
+
+  // Markdown formatting: bold, italic, strikethrough, links, code
+  // Order matters: code first to protect markdown chars inside code
+  const markdownRe = /(`[^`\n]+`|\*\*([^*]+)\*\*|\*([^*]+)\*|_([^_]+)_|~~([^~]+)~~|\[([^\]]+)\]\(([^)]+)\))/g;
 
   let lastIndex = 0;
   let match;
+  const segments: { type: string; content: string; url?: string }[] = [];
+  const tempProcessed = processed; // keep original reference for mentions
 
-  // Split by all mention types
-  const combinedRegex = /<[@#&]!?(\d+)|<a?:(\w+):(\d+)>|(`{3}[\s\S]*?`{3}|`[^`\n]+`)/g;
-  const segments: { type: string; content: string; id?: string; animated?: boolean; emojiName?: string; emojiId?: string }[] = [];
+  // Split by code blocks first to avoid formatting inside them
+  const codeBlockRe = /(`{3}[\s\S]*?`{3})|`[^`\n]+`/g;
+  const blocks: { type: "code" | "text"; content: string; match: string }[] = [];
+  let codeLast = 0;
+  let codeMatch;
 
-  let i = 0;
-  const temp = content;
-  const mentionsById = new Map(mentions?.map((m) => [m.id, m]) || []);
-
-  // Simple approach: process text and mentions separately
-  const parts2: React.ReactNode[] = [];
-  const mentionMap = new Map<string, string>();
-
-  if (mentions) {
-    mentions.forEach((m) => mentionMap.set(m.id, m.username));
+  const reForCode = /(`{3}[\s\S]*?`{3})|`[^`\n]+`/g;
+  while ((codeMatch = reForCode.exec(processed)) !== null) {
+    if (codeMatch.index > codeLast) {
+      blocks.push({ type: "text", content: processed.slice(codeLast, codeMatch.index), match: "" });
+    }
+    blocks.push({ type: "code", content: codeMatch[0], match: codeMatch[0] });
+    codeLast = codeMatch.index + codeMatch[0].length;
+  }
+  if (codeLast < processed.length) {
+    blocks.push({ type: "text", content: processed.slice(codeLast), match: "" });
   }
 
-  // Process user mentions
-  let processed = content;
-  const userMentionRe = /<@!?(\d+)>/g;
-  let userMatch;
-  while ((userMatch = userMentionRe.exec(content)) !== null) {
-    const id = userMatch[1];
-    const username = mentionMap.get(id) || `User ${id}`;
-    processed = processed.replace(userMatch[0], `[[MENTION:${id}:${username}]]`);
-  }
+  blocks.forEach((block) => {
+    if (block.type === "code") {
+      // Unescape for display
+      const unescaped = block.content
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&amp;/g, "&");
+      if (block.content.startsWith("```")) {
+        segments.push({ type: "codeblock", content: unescaped });
+      } else {
+        segments.push({ type: "inlinecode", content: unescaped });
+      }
+    } else {
+      // Apply markdown to text
+      const markdownRe = /(\*\*([^*]+)\*\*|\*([^*]+)\*|_([^_]+)_|~~([^~]+)~~|\[([^\]]+)\]\(([^)]+)\)|(`{3}[\s\S]*?`{3})|`([^`\n]+)`)/g;
+      let m;
+      let textLast = 0;
+      while ((m = markdownRe.exec(block.content)) !== null) {
+        if (m.index > textLast) {
+          segments.push({ type: "text", content: block.content.slice(textLast, m.index) });
+        }
+        if (m[2] !== undefined) {
+          segments.push({ type: "bold", content: m[2] });
+        } else if (m[3] !== undefined) {
+          segments.push({ type: "italic", content: m[3] });
+        } else if (m[4] !== undefined) {
+          segments.push({ type: "italic", content: m[4] });
+        } else if (m[5] !== undefined) {
+          segments.push({ type: "strike", content: m[5] });
+        } else if (m[6] !== undefined && m[7] !== undefined) {
+          segments.push({ type: "link", content: m[6], url: m[7] });
+        } else if (m[8] !== undefined) {
+          segments.push({ type: "codeblock", content: m[8] });
+        } else if (m[9] !== undefined) {
+          segments.push({ type: "inlinecode", content: m[9] });
+        }
+        textLast = m.index + m[0].length;
+      }
+      if (textLast < block.content.length) {
+        segments.push({ type: "text", content: block.content.slice(textLast) });
+      }
+    }
+  });
 
-  // Process channel mentions
-  const channelRe = /<#(\d+)>/g;
-  let channelMatch;
-  while ((channelMatch = channelRe.exec(content)) !== null) {
-    processed = processed.replace(channelMatch[0], `[[CHANNEL:${channelMatch[1]}]]`);
-  }
-
-  // Split by our markers
-  const segments2 = processed.split(/(\[\[(?:MENTION|CHANNEL):[^\]]+\]\])/g);
-
-  segments2.forEach((seg, idx) => {
-    if (seg.startsWith("[[MENTION:")) {
-      const [, id, username] = seg.match(/\[\[MENTION:([^:]+):([^\]]+)\]\]/) || [];
+  segments.forEach((seg, idx) => {
+    if (seg.type === "text") {
+      // Restore mention/channel markers that were escaped
+      const withMentions = seg.content
+        .replace(/\[\[MENTION:([^:]+):([^\]]+)\]\]/g, (_s, id, username) =>
+          `<span class="mention rounded px-0.5">@${username}</span>`
+        )
+        .replace(/\[\[CHANNEL:([^\]]+)\]\]/g, (_s, id) =>
+          `<span class="channel-mention rounded px-0.5">#${id}</span>`
+        );
+      // Render allowed HTML from mentions
+      parts2.push(<span key={idx} dangerouslySetInnerHTML={{ __html: withMentions }} />);
+    } else if (seg.type === "bold") {
+      parts2.push(<strong key={idx} className="font-bold">{seg.content}</strong>);
+    } else if (seg.type === "italic") {
+      parts2.push(<em key={idx} className="italic">{seg.content}</em>);
+    } else if (seg.type === "strike") {
+      parts2.push(<del key={idx} className="line-through opacity-60">{seg.content}</del>);
+    } else if (seg.type === "link") {
+      parts2.push(<a key={idx} href={seg.url} target="_blank" rel="noopener noreferrer" className="text-cyan hover:underline">{seg.content}</a>);
+    } else if (seg.type === "inlinecode") {
+      const unescaped = seg.content.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
       parts2.push(
-        <span key={idx} className="mention rounded px-0.5">
-          @{username}
-        </span>
+        <code key={idx} className="mx-0.5 rounded-sm bg-bg-hover border border-border px-1 py-0.5 font-mono text-xs text-primary">
+          {unescaped}
+        </code>
       );
-    } else if (seg.startsWith("[[CHANNEL:")) {
-      const [, id] = seg.match(/\[\[CHANNEL:([^\]]+)\]\]/) || [];
-      parts2.push(
-        <span key={idx} className="channel-mention rounded px-0.5">
-          #{id}
-        </span>
-      );
-    } else if (seg) {
-      parts2.push(seg);
+    } else if (seg.type === "codeblock") {
+      const code = seg.content
+        .replace(/```(\w*)\n?/, "")
+        .replace(/```$/, "")
+        .trim();
+      const lang = seg.content.match(/^```(\w*)/)?.[1] || "plaintext";
+      try {
+        if (lang && hljs.getLanguage(lang)) {
+          const highlighted = hljs.highlight(code, { language: lang }).value;
+          parts2.push(
+            <pre key={idx} className="my-2 overflow-x-auto rounded-sm border border-border bg-bg-hover p-3">
+              <code className="font-mono text-xs text-primary" dangerouslySetInnerHTML={{ __html: highlighted }} />
+            </pre>
+          );
+        } else {
+          parts2.push(
+            <pre key={idx} className="my-2 overflow-x-auto rounded-sm border border-border bg-bg-hover p-3">
+              <code className="font-mono text-xs text-primary">{code}</code>
+            </pre>
+          );
+        }
+      } catch {
+        parts2.push(
+          <pre key={idx} className="my-2 overflow-x-auto rounded-sm border border-border bg-bg-hover p-3">
+            <code className="font-mono text-xs text-primary">{code}</code>
+          </pre>
+        );
+      }
     }
   });
 
@@ -98,69 +182,7 @@ function parseContent(content: string, mentions?: { id: string; username: string
 }
 
 function renderCode(content: string): React.ReactNode[] {
-  // Inline code
-  if (!content.includes("```")) {
-    return parseContent(content);
-  }
-
-  const parts: React.ReactNode[] = [];
-  const codeBlockRe = /```(\w*)\n?([\s\S]*?)```|`([^`]+)`/g;
-  let lastIndex = 0;
-  let match;
-
-  while ((match = codeBlockRe.exec(content)) !== null) {
-    // Text before code block
-    if (match.index > lastIndex) {
-      parts.push(...parseContent(content.slice(lastIndex, match.index)));
-    }
-
-    if (match[3]) {
-      // Inline code
-      parts.push(
-        <code key={match.index} className="mx-0.5 rounded-sm bg-bg-hover border border-border px-1 py-0.5 font-mono text-xs text-primary">
-          {match[3]}
-        </code>
-      );
-    } else {
-      // Code block
-      const lang = match[1] || "plaintext";
-      const code = match[2].trim();
-      try {
-        if (lang && hljs.getLanguage(lang)) {
-          const highlighted = hljs.highlight(code, { language: lang }).value;
-          parts.push(
-            <pre key={match.index} className="my-2 overflow-x-auto rounded-sm border border-border bg-bg-hover p-3">
-              <code
-                className="font-mono text-sm text-primary"
-                dangerouslySetInnerHTML={{ __html: highlighted }}
-              />
-            </pre>
-          );
-        } else {
-          parts.push(
-            <pre key={match.index} className="my-2 overflow-x-auto rounded-sm border border-border bg-bg-hover p-3">
-              <code className="font-mono text-sm text-primary">{code}</code>
-            </pre>
-          );
-        }
-      } catch {
-        parts.push(
-          <pre key={match.index} className="my-2 overflow-x-auto rounded-sm border border-border bg-bg-hover p-3">
-            <code className="font-mono text-sm text-primary">{code}</code>
-          </pre>
-        );
-      }
-    }
-
-    lastIndex = match.index + match[0].length;
-  }
-
-  // Remaining text
-  if (lastIndex < content.length) {
-    parts.push(...parseContent(content.slice(lastIndex)));
-  }
-
-  return parts;
+  return parseContent(content);
 }
 
 function ImageWithFallback({
