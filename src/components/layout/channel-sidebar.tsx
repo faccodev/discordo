@@ -193,30 +193,38 @@ export function ChannelSidebar() {
                   <Plus className="h-3.5 w-3.5" />
                 </button>
               </div>
-              {dms.map((dm) => {
-                const recipient = dm.recipients?.[0];
-                const name = dm.name || recipient?.username || "Unknown";
-                return (
-                  <button
-                    key={dm.id}
-                    onClick={() => navigateToChannel(dm.id)}
-                    className={cn(
-                      "flex w-full items-center gap-2 rounded px-2 py-1.5 text-sm transition-colors",
-                      selectedChannelId === dm.id
-                        ? "bg-dark-active text-white"
-                        : "text-neutral-400 hover:bg-dark-hover hover:text-white"
-                    )}
-                  >
-                    <Avatar
-                      src={recipient?.avatar}
-                      alt={name}
-                      userId={recipient?.id}
-                      size="sm"
-                    />
-                    <span className="truncate">{name}</span>
-                  </button>
-                );
-              })}
+              {dms
+                .slice()
+                .sort((a, b) => {
+                  // Sort by last_message_id descending (most recent first)
+                  const aId = BigInt(a.last_message_id || "0");
+                  const bId = BigInt(b.last_message_id || "0");
+                  return bId > aId ? 1 : bId < aId ? -1 : 0;
+                })
+                .map((dm) => {
+                  const recipient = dm.recipients?.[0];
+                  const name = dm.name || recipient?.username || "Unknown";
+                  return (
+                    <button
+                      key={dm.id}
+                      onClick={() => navigateToChannel(dm.id)}
+                      className={cn(
+                        "flex w-full items-center gap-2 rounded px-2 py-1.5 text-sm transition-colors",
+                        selectedChannelId === dm.id
+                          ? "bg-dark-active text-white"
+                          : "text-neutral-400 hover:bg-dark-hover hover:text-white"
+                      )}
+                    >
+                      <Avatar
+                        src={recipient?.avatar}
+                        alt={name}
+                        userId={recipient?.id}
+                        size="sm"
+                      />
+                      <span className="truncate">{name}</span>
+                    </button>
+                  );
+                })}
             </div>
           </>
         )}
