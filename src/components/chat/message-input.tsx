@@ -121,7 +121,7 @@ export function MessageInput({ channelId }: MessageInputProps) {
         </div>
       )}
 
-      <div className="rounded-sm border border-border-bright bg-bg-hover">
+      <div className="rounded-xl border border-border-bright/50 glass p-1 transition-all duration-300 focus-within:border-primary focus-within:shadow-[0_0_20px_rgba(0,255,65,0.2)]">
         <div className="flex items-end gap-2 p-2">
           {/* Attach Button */}
           <div className="relative">
@@ -134,7 +134,7 @@ export function MessageInput({ channelId }: MessageInputProps) {
               className="absolute inset-0 cursor-pointer opacity-0"
             />
             <button
-              className="flex h-8 w-8 items-center justify-center rounded-sm text-text-dim transition-colors hover:text-primary"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-text-dim transition-all duration-200 hover:text-primary hover:shadow-[0_0_10px_rgba(0,255,65,0.3)]"
               title="Anexar arquivo"
             >
               <Paperclip className="h-5 w-5" />
@@ -147,15 +147,15 @@ export function MessageInput({ channelId }: MessageInputProps) {
             value={content}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            placeholder={`Enviar mensagem...`}
-            className="min-h-[40px] max-h-[200px] flex-1 resize-none bg-transparent py-2 text-sm font-mono text-primary placeholder:text-text-muted focus:outline-none"
+            placeholder={`Digite uma mensagem...`}
+            className="min-h-[40px] max-h-[200px] flex-1 resize-none bg-transparent py-2 text-sm font-mono text-text-dim placeholder:text-text-muted focus:outline-none"
             rows={1}
           />
 
           {/* Image preview shortcut */}
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="flex h-8 w-8 items-center justify-center rounded-sm text-text-dim transition-colors hover:text-primary"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-text-dim transition-all duration-200 hover:text-primary hover:shadow-[0_0_10px_rgba(0,255,65,0.3)]"
             title="Enviar imagem"
           >
             <ImageIcon className="h-5 w-5" />
@@ -166,9 +166,9 @@ export function MessageInput({ channelId }: MessageInputProps) {
             onClick={handleSubmit}
             disabled={!canSend}
             className={cn(
-              "flex h-8 w-8 items-center justify-center rounded-sm transition-colors",
+              "flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-200",
               canSend
-                ? "text-primary hover:shadow-[0_0_8px_#00FF41]"
+                ? "text-primary hover:shadow-[0_0_15px_rgba(0,255,65,0.5)]"
                 : "cursor-not-allowed text-text-muted"
             )}
             title="Enviar mensagem"

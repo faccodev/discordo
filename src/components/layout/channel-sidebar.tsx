@@ -109,9 +109,9 @@ export function ChannelSidebar() {
   }
 
   return (
-    <div className="flex h-full w-60 flex-col bg-bg-sidebar">
+    <div className="flex h-full w-60 flex-col glass-sidebar border-r border-border">
       {/* Header */}
-      <div className="flex h-12 items-center border-b border-border-bright px-4 shadow-sm">
+      <div className="flex h-12 items-center border-b border-border-bright/30 px-4 shadow-sm">
         {selectedGuild ? (
           <h2 className="flex items-center gap-2 font-mono font-semibold text-primary">
             {selectedGuild.icon ? (
@@ -211,10 +211,10 @@ export function ChannelSidebar() {
                       key={dm.id}
                       onClick={() => navigateToChannel(dm.id)}
                       className={cn(
-                        "group flex w-full items-center gap-2 rounded px-2 py-1.5 text-sm transition-colors",
+                        "group flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm transition-all duration-200",
                         selectedChannelId === dm.id
-                          ? "bg-primary/10 border-l-2 border-primary text-primary"
-                          : "text-text-dim hover:bg-bg-hover hover:text-primary"
+                          ? "glass-active text-primary"
+                          : "text-text-dim hover:bg-bg-hover hover:text-primary hover:shadow-[0_0_10px_rgba(0,255,65,0.1)]"
                       )}
                     >
                       <div className="relative flex-shrink-0">
@@ -225,10 +225,10 @@ export function ChannelSidebar() {
                           size="sm"
                         />
                         {isDmUnread && (
-                          <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-primary shadow-[0_0_4px_#00FF41]" />
+                          <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-primary shadow-[0_0_6px_#00FF41]" />
                         )}
                       </div>
-                      <span className={cn("truncate", isDmUnread && "font-semibold")}>{name}</span>
+                      <span className={cn("truncate", isDmUnread && "font-semibold text-primary")}>{name}</span>
                     </button>
                   );
                 })}
@@ -239,14 +239,14 @@ export function ChannelSidebar() {
 
       {/* User Footer */}
       {currentUser && (
-        <div className="flex h-12 items-center border-t border-border-bright bg-bg px-2">
+        <div className="flex h-14 items-center border-t border-border-bright/30 glass px-3">
           <Avatar
             src={currentUser.avatar}
             alt={currentUser.username}
             userId={currentUser.id}
             size="sm"
           />
-          <div className="ml-2 flex-1 truncate">
+          <div className="ml-3 flex-1 truncate">
             <p className="truncate text-sm font-mono font-medium text-primary">
               {currentUser.global_name || currentUser.username}
             </p>
@@ -256,7 +256,7 @@ export function ChannelSidebar() {
           </div>
           <button
             onClick={toggleTheme}
-            className="mr-1 flex h-8 w-8 items-center justify-center rounded text-text-dim hover:bg-bg-hover hover:text-primary transition-colors"
+            className="mr-1 flex h-8 w-8 items-center justify-center rounded-lg text-text-dim hover:bg-bg-hover hover:text-primary transition-colors hover:shadow-[0_0_10px_rgba(0,255,65,0.2)]"
             title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
           >
             {theme === 'dark' ? (
@@ -295,19 +295,19 @@ function ChannelItem({
     <button
       onClick={onSelect}
       className={cn(
-        "group flex w-full items-center gap-1 rounded px-2 py-1 text-sm font-mono transition-colors",
+        "group flex w-full items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-mono transition-all duration-200",
         isSelected
-          ? "bg-primary/10 border-l-2 border-primary text-primary"
-          : "text-text-dim hover:bg-bg-hover hover:text-primary",
+          ? "glass-active text-primary"
+          : "text-text-dim hover:bg-bg-hover hover:text-primary hover:shadow-[0_0_10px_rgba(0,255,65,0.1)]",
         isVoice && "font-normal"
       )}
     >
       {getChannelIcon(channel)}
-      <span className={cn("flex-1 truncate text-left", isVoice && "ml-1", channelUnread && "font-semibold")}>
+      <span className={cn("flex-1 truncate text-left", isVoice && "ml-1", channelUnread && "font-semibold text-primary")}>
         {channel.name}
       </span>
       {channelUnread && (
-        <span className="h-2 w-2 flex-shrink-0 rounded-full bg-primary shadow-[0_0_4px_#00FF41]" />
+        <span className="h-2 w-2 flex-shrink-0 rounded-full bg-primary shadow-[0_0_6px_#00FF41]" />
       )}
       {channel.topic && (
         <span className="ml-1 font-mono text-xs text-text-dim">{channel.topic}</span>

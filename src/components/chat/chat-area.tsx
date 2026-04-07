@@ -44,12 +44,12 @@ export function ChatArea({ channelId }: { channelId?: string }) {
 
   if (!activeChannelId) {
     return (
-      <div className="flex flex-1 flex-col items-center justify-center bg-bg">
-        <div className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-sm bg-bg-hover">
+      <div className="flex flex-1 flex-col items-center justify-center glass">
+        <div className="text-center p-8 rounded-xl glass">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-xl bg-bg-hover border border-border-bright/20">
             <Hash className="h-8 w-8 text-text-muted" />
           </div>
-          <h2 className="text-xl font-mono font-bold text-primary">
+          <h2 className="text-xl font-mono font-bold text-primary text-glow">
             {selectedGuild ? "Selecione um canal" : "Selecione um DM"}
           </h2>
           <p className="mt-2 text-sm font-mono text-text-dim">
@@ -67,9 +67,9 @@ export function ChatArea({ channelId }: { channelId?: string }) {
     channelInfo?.type === ChannelType.GUILD_STAGE_VOICE;
 
   return (
-    <div className="flex flex-1 flex-col overflow-hidden bg-bg">
+    <div className="flex flex-1 flex-col overflow-hidden glass">
       {/* Channel Header */}
-      <div className="flex h-12 min-h-[48px] items-center border-b border-border-bright bg-bg px-4">
+      <div className="flex h-12 min-h-[48px] items-center border-b border-border-bright/30 px-4 glass">
         <div className="flex items-center gap-2 min-w-0 flex-1">
           {channelInfo?.type === ChannelType.GUILD_TEXT ||
           channelInfo?.type === undefined ? (
@@ -86,14 +86,14 @@ export function ChatArea({ channelId }: { channelId?: string }) {
           {notifPermission === 'default' && (
             <button
               onClick={requestNotifPermission}
-              className="flex h-8 w-8 items-center justify-center rounded text-text-dim hover:bg-bg-hover hover:text-primary transition-colors md:hidden"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-text-dim hover:bg-bg-hover hover:text-primary transition-colors md:hidden"
               title="Ativar notificações"
             >
               <Bell className="h-5 w-5" />
             </button>
           )}
           {notifPermission === 'granted' && (
-            <div className="hidden h-8 w-8 items-center justify-center rounded text-primary sm:flex" title="Notificações ativas">
+            <div className="hidden h-8 w-8 items-center justify-center rounded-lg text-primary sm:flex" title="Notificações ativas">
               <Bell className="h-4 w-4" />
             </div>
           )}
@@ -102,7 +102,7 @@ export function ChatArea({ channelId }: { channelId?: string }) {
           {!isVoiceChannel && (
             <button
               onClick={() => setSearchOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded text-text-dim hover:bg-bg-hover hover:text-primary transition-colors"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-text-dim hover:bg-bg-hover hover:text-primary transition-colors hover:shadow-[0_0_10px_rgba(0,255,65,0.2)]"
               title="Pesquisar mensagens"
             >
               <Search className="h-5 w-5" />
@@ -112,7 +112,7 @@ export function ChatArea({ channelId }: { channelId?: string }) {
 
         {/* Topic */}
         {channelInfo?.topic && (
-          <span className="ml-3 hidden border-l border-border pl-4 text-sm font-mono text-text-dim lg:block xl:hidden 2xl:block">
+          <span className="ml-3 hidden border-l border-border/50 pl-4 text-sm font-mono text-text-dim lg:block xl:hidden 2xl:block">
             {channelInfo.topic}
           </span>
         )}
