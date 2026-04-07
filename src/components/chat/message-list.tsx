@@ -326,7 +326,7 @@ export function MessageList({ channelId }: { channelId: string }) {
     initialPageParam: undefined as string | undefined,
   });
 
-  const allMessages = messages?.pages.flat() || [];
+  const allMessages = messages?.pages.flat().reverse() || [];
 
   const handleScroll = useCallback(() => {
     if (!containerRef.current) return;
