@@ -27,7 +27,17 @@ export function formatRelativeTime(date: Date | string): string {
 }
 
 export function formatTimestamp(date: Date | string): string {
-  return new Date(date).toLocaleTimeString("pt-BR", {
+  const d = new Date(date);
+  const now = new Date();
+  const isToday = d.toDateString() === now.toDateString();
+
+  if (isToday) {
+    return d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  }
+
+  return d.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "short",
     hour: "2-digit",
     minute: "2-digit",
   });

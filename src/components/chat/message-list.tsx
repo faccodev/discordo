@@ -117,7 +117,7 @@ function renderCode(content: string): React.ReactNode[] {
     if (match[3]) {
       // Inline code
       parts.push(
-        <code key={match.index} className="mx-0.5 rounded-sm bg-bg-hover px-1 py-0.5 font-mono text-sm text-primary">
+        <code key={match.index} className="mx-0.5 rounded-sm bg-bg-hover border border-border px-1 py-0.5 font-mono text-xs text-primary">
           {match[3]}
         </code>
       );
@@ -185,31 +185,31 @@ function MessageItem({ message }: { message: DiscordMessage }) {
     : null;
 
   return (
-    <div className="group relative flex gap-4 px-4 py-1 hover:bg-primary/5">
+    <div className="group relative flex gap-3 px-4 py-0.5 hover:bg-primary/5">
       {/* Avatar */}
       <Avatar
         src={avatarUrl}
         alt={authorName}
         userId={message.author.id}
         size="lg"
-        className="mt-0.5 h-10 w-10 flex-shrink-0"
+        className="mt-0.5 h-8 w-8 flex-shrink-0"
       />
 
       {/* Content */}
       <div className="min-w-0 flex-1">
         {/* Header */}
-        <div className="flex items-baseline gap-2">
-          <span className="font-mono font-medium text-primary">{authorName}</span>
-          <span className="text-xs font-mono text-text-dim">
+        <div className="flex items-baseline gap-2 leading-tight">
+          <span className="font-mono text-sm font-semibold text-primary">{authorName}</span>
+          <span className="font-mono text-xs text-text-muted">
             {formatTimestamp(message.timestamp)}
           </span>
           {message.edited_timestamp && (
-            <span className="text-xs font-mono text-text-muted">(editado)</span>
+            <span className="font-mono text-xs text-text-muted">(editado)</span>
           )}
         </div>
 
         {/* Message Content */}
-        <div className="message-content mt-0.5 text-sm font-mono text-primary">
+        <div className="message-content leading-relaxed font-mono text-xs text-text-dim">
           {renderCode(message.content)}
         </div>
 
@@ -231,12 +231,12 @@ function MessageItem({ message }: { message: DiscordMessage }) {
                   <button
                     key={attachment.id}
                     onClick={() => { setLightboxSrc(resolvedUrl); setLightboxIsVideo(false); }}
-                    className="block max-w-[120px] overflow-hidden rounded"
+                    className="block max-w-[100px] overflow-hidden rounded-sm"
                   >
                     <img
                       src={resolvedUrl}
                       alt={attachment.description || attachment.filename}
-                      className="max-h-32 rounded object-cover hover:opacity-90 transition-opacity"
+                      className="max-h-24 rounded-sm object-cover hover:opacity-90 transition-opacity"
                       loading="lazy"
                     />
                   </button>
@@ -275,7 +275,7 @@ function MessageItem({ message }: { message: DiscordMessage }) {
                   href={resolvedUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-sm font-mono text-cyan hover:underline"
+                  className="flex items-center gap-2 font-mono text-xs text-cyan hover:underline"
                 >
                   📎 {attachment.filename}
                   {attachment.size > 0 && (

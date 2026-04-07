@@ -17,7 +17,7 @@ const sizeMap = {
   xs: 16,
   sm: 24,
   md: 32,
-  lg: 40,
+  lg: 32,
 };
 
 const statusSizeMap = {
