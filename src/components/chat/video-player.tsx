@@ -1,16 +1,17 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Play, Pause, Volume2, VolumeX, Maximize, X } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, Maximize } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface VideoPlayerProps {
   src: string;
   filename?: string;
+  poster?: string;
   className?: string;
 }
 
-export function VideoPlayer({ src, filename, className }: VideoPlayerProps) {
+export function VideoPlayer({ src, filename, poster, className }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -68,22 +69,17 @@ export function VideoPlayer({ src, filename, className }: VideoPlayerProps) {
     }, 2500);
   };
 
-  const formatTime = (time: number) => {
-    const mins = Math.floor(time / 60);
-    const secs = Math.floor(time % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
   return (
     <div
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => isPlaying && setShowControls(false)}
-      className={cn('relative w-full max-w-md overflow-hidden rounded bg-black', className)}
+      className={cn('relative w-full max-w-sm overflow-hidden rounded bg-black', className)}
     >
       <video
         ref={videoRef}
         src={src}
+        poster={poster}
         className="w-full"
         onClick={togglePlay}
         onPlay={() => setIsPlaying(true)}
@@ -97,10 +93,10 @@ export function VideoPlayer({ src, filename, className }: VideoPlayerProps) {
       {!isPlaying && (
         <button
           onClick={togglePlay}
-          className="absolute inset-0 flex items-center justify-center bg-black/30 transition-colors hover:bg-black/40"
+          className="absolute inset-0 flex items-center justify-center bg-black/40 transition-colors hover:bg-black/50"
         >
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition-transform hover:scale-110">
-            <Play className="h-6 w-6 text-white fill-white" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition-transform hover:scale-110">
+            <Play className="h-5 w-5 text-white fill-white" />
           </div>
         </button>
       )}
@@ -108,13 +104,13 @@ export function VideoPlayer({ src, filename, className }: VideoPlayerProps) {
       {/* Controls bar */}
       <div
         className={cn(
-          'absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-3 pb-2 pt-8 transition-opacity',
+          'absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-2 pb-1.5 pt-6 transition-opacity',
           showControls || !isPlaying ? 'opacity-100' : 'opacity-0'
         )}
       >
         {/* Progress bar */}
         <div
-          className="group mb-2 h-1 w-full cursor-pointer rounded-full bg-white/30"
+          className="group mb-1.5 h-1 w-full cursor-pointer rounded-full bg-white/30"
           onClick={handleSeek}
         >
           <div
@@ -124,40 +120,40 @@ export function VideoPlayer({ src, filename, className }: VideoPlayerProps) {
         </div>
 
         {/* Controls row */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <button
             onClick={togglePlay}
-            className="flex h-8 w-8 items-center justify-center rounded text-white hover:bg-white/20 transition-colors"
+            className="flex h-7 w-7 items-center justify-center rounded text-white hover:bg-white/20 transition-colors"
           >
             {isPlaying ? (
-              <Pause className="h-4 w-4 fill-white" />
+              <Pause className="h-3.5 w-3.5 fill-white" />
             ) : (
-              <Play className="h-4 w-4 fill-white" />
+              <Play className="h-3.5 w-3.5 fill-white" />
             )}
           </button>
 
           <button
             onClick={toggleMute}
-            className="flex h-8 w-8 items-center justify-center rounded text-white hover:bg-white/20 transition-colors"
+            className="flex h-7 w-7 items-center justify-center rounded text-white hover:bg-white/20 transition-colors"
           >
             {isMuted ? (
-              <VolumeX className="h-4 w-4" />
+              <VolumeX className="h-3.5 w-3.5" />
             ) : (
-              <Volume2 className="h-4 w-4" />
+              <Volume2 className="h-3.5 w-3.5" />
             )}
           </button>
 
           <div className="flex-1" />
 
           {filename && (
-            <span className="text-xs text-white/70 truncate max-w-[120px]">{filename}</span>
+            <span className="text-[10px] text-white/60 truncate max-w-[80px]">{filename}</span>
           )}
 
           <button
             onClick={toggleFullscreen}
-            className="flex h-8 w-8 items-center justify-center rounded text-white hover:bg-white/20 transition-colors"
+            className="flex h-7 w-7 items-center justify-center rounded text-white hover:bg-white/20 transition-colors"
           >
-            <Maximize className="h-4 w-4" />
+            <Maximize className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>

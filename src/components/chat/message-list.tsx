@@ -167,6 +167,7 @@ function MessageItem({ message }: { message: DiscordMessage }) {
   const isContentMessage = isMessageWithContent(message.type);
   const [showPicker, setShowPicker] = useState<string | null>(null);
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
+  const [lightboxIsVideo, setLightboxIsVideo] = useState(false);
 
   if (!isContentMessage) {
     return (
@@ -229,7 +230,7 @@ function MessageItem({ message }: { message: DiscordMessage }) {
                 return (
                   <button
                     key={attachment.id}
-                    onClick={() => setLightboxSrc(resolvedUrl)}
+                    onClick={() => { setLightboxSrc(resolvedUrl); setLightboxIsVideo(false); }}
                     className="block max-w-[120px] overflow-hidden rounded"
                   >
                     <img
@@ -244,12 +245,17 @@ function MessageItem({ message }: { message: DiscordMessage }) {
 
               if (isVideo) {
                 return (
-                  <VideoPlayer
+                  <button
                     key={attachment.id}
-                    src={resolvedUrl}
-                    filename={attachment.filename}
-                    className="max-w-md"
-                  />
+                    onClick={() => { setLightboxSrc(resolvedUrl); setLightboxIsVideo(true); }}
+                    className="block max-w-[180px] overflow-hidden rounded"
+                  >
+                    <VideoPlayer
+                      src={resolvedUrl}
+                      filename={attachment.filename}
+                      className="max-w-[180px]"
+                    />
+                  </button>
                 );
               }
 
@@ -329,11 +335,11 @@ function MessageItem({ message }: { message: DiscordMessage }) {
           </div>
         )}
 
-        {/* Image Lightbox */}
+        {/* Image/Video Lightbox */}
         {lightboxSrc && (
           <ImageLightbox
             src={lightboxSrc}
-            alt=""
+            isVideo={lightboxIsVideo}
             onClose={() => setLightboxSrc(null)}
           />
         )}
