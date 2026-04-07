@@ -74,7 +74,7 @@ export function VideoPlayer({ src, filename, poster, className }: VideoPlayerPro
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => isPlaying && setShowControls(false)}
-      className={cn('relative w-full max-w-sm overflow-hidden rounded bg-black', className)}
+      className={cn('relative w-full max-w-sm overflow-hidden rounded-sm border border-border bg-black', className)}
     >
       <video
         ref={videoRef}
@@ -114,7 +114,7 @@ export function VideoPlayer({ src, filename, poster, className }: VideoPlayerPro
           onClick={handleSeek}
         >
           <div
-            className="h-full rounded-full bg-blurple transition-all group-hover:h-1.5"
+            className="h-full rounded-full bg-primary transition-all group-hover:h-1.5"
             style={{ width: `${progress}%` }}
           />
         </div>

@@ -88,14 +88,14 @@ export default function DashboardLayout({
 
   if (!me) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-dark">
-        <Loader2 className="h-8 w-8 animate-spin text-blurple" />
+      <div className="flex h-screen w-screen items-center justify-center bg-bg">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-dark">
+    <div className="flex h-screen w-screen overflow-hidden bg-bg">
       {/* Server List — hidden on mobile */}
       {!isMobile && <ServerList />}
 

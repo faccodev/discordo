@@ -1,331 +1,196 @@
-# Discordo Web — Plano do Projeto
+# Plan: Matrix/Terminal Theme Redesign
 
-## 1. Visão Geral
-
-Cliente web Discord com Next.js (App Router), TailwindCSS e Lucide Icons. Todas as requisições à API do Discord são feitas server-side via Route Handlers, mantendo o token seguro no servidor. Autenticação na interface via JWT.
-
-**Stack:**
-- Next.js 15 (App Router)
-- TailwindCSS
-- Lucide React (ícones)
-- JWT (jose) para sessão
-- React Query (TanStack Query) para cache/estado server-state
-- Zustand para UI state client-side
+## Context
+Complete UI overhaul of Discordo to Matrix/hacker terminal aesthetic — neon green on black, monospace fonts, monochrome avatars, terminal-style UI elements, and improved mobile navigation with bottom drawer pattern.
 
 ---
 
-## 2. Arquitetura
+## Changes
 
-```
-src/
-├── app/                          # Next.js App Router
-│   ├── (auth)/
-│   │   └── login/               # Página de login (email/senha → JWT)
-│   ├── (dashboard)/
-│   │   ├── layout.tsx            # Layout com sidebar de servidores/canais
-│   │   ├── page.tsx              # DM / canais favoritos
-│   │   ├── [guildId]/
-│   │   │   └── [channelId]/      # Chat do canal
-│   └── api/                      # Route Handlers (server-side)
-│       ├── auth/login/           # Gera JWT
-│       ├── auth/logout/          # Invalida JWT
-│       ├── discord/me/            # GET /users/@me
-│       ├── discord/guilds/        # GET /users/@me/guilds
-│       ├── discord/channels/      # GET /channels/:id
-│       ├── discord/messages/      # GET /channels/:id/messages
-│       ├── discord/dms/           # GET /users/@me/channels
-│       └── discord/gateway/       # WS gateway info
-│
-├── components/
-│   ├── ui/                       # Componentes base (Button, Input, Avatar...)
-│   ├── layout/                   # Sidebar, Header, ServerList
-│   ├── chat/                     # MessageList, MessageInput, Embed
-│   └── discord/                  # GuildIcon, ChannelList, UserStatus
-│
-├── lib/
-│   ├── discord/                  # Cliente Discord API (server-side)
-│   │   ├── client.ts             # Fetch wrapper com headers corretos
-│   │   ├── types.ts              # Tipos TypeScript da API do Discord
-│   │   ├── endpoints.ts          # Constantes de endpoints
-│   │   └── transformers.ts       # Normalização de dados
-│   ├── jwt/                      # Assinatura/verificação JWT
-│   └── utils.ts                  # Helpers
-│
-└── stores/
-    └── ui-store.ts               # Zustand: sidebar colapsada, tema, etc.
+### 1. Global CSS — Matrix Color Palette (`src/app/globals.css`)
+
+Replace all dark/neutral color variables with terminal palette:
+
+```css
+:root {
+  --color-primary: #00FF41;       /* Matrix neon green */
+  --color-primary-dark: #00CC33;
+  --color-bg: #0D0D0D;            /* Near-black background */
+  --color-bg-hover: #1A1A1A;
+  --color-bg-active: #262626;
+  --color-bg-sidebar: #0A0A0A;
+  --color-border: #1F3D1F;
+  --color-border-bright: #00FF41;
+  --color-text: #00FF41;
+  --color-text-dim: #008F2A;
+  --color-text-muted: #004D1A;
+  --color-cyan: #00D4FF;
+  --color-warning: #FFD700;
+  --color-error: #FF0040;
+}
 ```
 
----
+Remove all `[data-theme="light"]` overrides. Set body background to `#0D0D0D` and text to `#00FF41`.
 
-## 3. Variáveis de Ambiente
-
-```env
-# Server-side (nunca expostas ao cliente)
-DISCORD_BOT_TOKEN=          # Token de usuário Discord (self-bot - TOS)
-JWT_SECRET=                  # Segredo para assinar JWTs (min 32 chars)
-JWT_EXPIRES_IN=              # e.g. "7d"
-
-# Opcional
-DISCORD_API_BASE=https://discord.com/api/v10
+Add scrollbar styling:
+```css
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #0D0D0D; }
+::-webkit-scrollbar-thumb { background: #00FF41; border-radius: 2px; }
+::selection { background: #00FF41; color: #0D0D0D; }
 ```
 
----
+### 2. Tailwind Config (`tailwind.config.ts`)
 
-## 4. Autenticação
-
-### 4.1 Fluxo
-
-```
-Usuário → POST /api/auth/login { email, password }
-       → Servidor valida credenciais (mock/config)
-       → Gera JWT com claims: { sub: userId, email, role }
-       → Retorna { token, expiresAt }
-       → Cliente armazena em httpOnly cookie (ou localStorage)
-```
-
-### 4.2 proteções
-
-- Route Handlers `/api/discord/*` exigem header `Authorization: Bearer <jwt>`
-- Middleware verifica JWT em todas as rotas de `(dashboard)`
-- Token Discord **nunca** sai do servidor
-
-### 4.3 Login mock
-
-Para MVP, login via email/senha configurado em `.env` (sem banco):
-```env
-ADMIN_EMAIL=admin@discordo.local
-ADMIN_PASSWORD=sua_senha_segura
-```
-
----
-
-## 5. Funcionalidades
-
-### 5.1 Servidores (Guilds)
-
-- [ ] Sidebar esquerda com lista de servidores (ícone + nome)
-- [ ] Expande/collapse sidebar
-- [ ] Badge de notificações não lidas
-- [ ] Guild icon (com fallback para inicial)
-- [ ] Clica → mostra canais na sidebar
-
-### 5.2 Canais
-
-- [ ] Lista de canais por categoria (texto, voz, categorias)
-- [ ] Ícones diferentes por tipo (#, 🔊, etc)
-- [ ] Canal atual destacado
-- [ ] Contador de mensagens não lidas
-
-### 5.3 Mensagens (DM e Guild Channel)
-
-- [ ] Lista de mensagens com scroll virtualizado
-- [ ] Avatar, nome, timestamp do autor
-- [ ] Menções formatadas (`@usuario`, `#canal`)
-- [ ] Emojis customizados renderizados
-- [ ] Mensagens do sistema (ex: "X entrou no servidor")
-- [ ] Mensagens com imagem: `<img>` com lazy loading
-- [ ] Embeds: título, descrição, cor, thumbnail, fields
-- [ ] Link previews (og:title, og:description, og:image via fetch server-side)
-- [ ] Mensagens com código (inline e blocks com syntax highlight)
-- [ ] Timestamps amigáveis ("há 2 minutos", "ontem às 14:30")
-- [ ] Carregar mais mensagens (paginação)
-- [ ] Autores com roles coloridas (para guilds)
-
-### 5.4 Input de Mensagem
-
-- [ ] Textarea com placeholder
-- [ ] Enter envia, Shift+Enter quebra linha
-- [ ] Contador de caracteres (limite 2000)
-
-### 5.5 DM (Mensagens Diretas)
-
-- [ ] Aba de DMs na sidebar
-- [ ] Lista de conversas com avatar e preview da última mensagem
-- [ ] Abre DM ao clicar
-
----
-
-## 6. API Discord (Server-Side)
-
-### 6.1 Endpoints
-
-| Método | Endpoint | Uso |
-|--------|----------|-----|
-| GET | `/users/@me` | Perfil próprio |
-| GET | `/users/@me/guilds` | Lista de servidores |
-| GET | `/users/@me/channels` | DMs |
-| GET | `/channels/:id` | Canal (nome, tipo) |
-| GET | `/channels/:id/messages?limit=50&before=:id` | Mensagens |
-| GET | `/guilds/:id/channels` | Canais do servidor |
-
-### 6.2 Headers necessários (referenciados do discordo)
+Replace blurple/dark tokens with Matrix tokens:
 
 ```typescript
-const DISCORD_HEADERS = {
-  'Authorization': `Bot ${DISCORD_BOT_TOKEN}`, // ou Bearer para user token
-  'Content-Type': 'application/json',
-  'X-Super-Properties': base64(JSON.stringify({
-    os: 'Windows',
-    browser: 'Chrome',
-    release_channel: 'stable',
-    client_build_number: 482285,
-  })),
-  'Accept-Language': 'en-US',
-  'Referer': 'https://discord.com/channels/@me',
+colors: {
+  primary: { DEFAULT: "#00FF41", dark: "#00CC33" },
+  bg: { DEFAULT: "#0D0D0D", hover: "#1A1A1A", active: "#262626", sidebar: "#0A0A0A" },
+  "border-bright": "#00FF41",
+  cyan: "#00D4FF",
+  warning: "#FFD700",
+  error: "#FF0040",
+  // Keep neutral for grayscale text
 }
 ```
 
-### 6.3 Tipos principais
+Remove `blurple`, `dark` color extensions.
+
+### 3. Fonts — Matrix Font (`src/app/layout.tsx`)
+
+Add `Share_Tech_Mono` (Google Fonts — terminal aesthetic):
 
 ```typescript
-interface DiscordUser {
-  id: string;
-  username: string;
-  discriminator: string;
-  avatar: string | null;
-  email?: string;
-}
+import { Share_Tech_Mono, JetBrains_Mono } from "next/font/google";
 
-interface DiscordChannel {
-  id: string;
-  type: 0 | 1 | 2 | 4 | 5 | 11 | 13 | 15 | 16; // DM, GuildText, etc.
-  name?: string;
-  parent_id?: string;
-  position?: number;
-  last_message_id?: string;
-}
-
-interface DiscordMessage {
-  id: string;
-  channel_id: string;
-  guild_id?: string;
-  author: DiscordUser;
-  content: string;
-  timestamp: string;
-  edited_timestamp?: string;
-  attachments: Attachment[];
-  embeds: Embed[];
-  mentions: Mention[];
-  mention_roles: string[];
-  type: number;
-}
-
-interface Attachment {
-  id: string;
-  filename: string;
-  content_type: string;
-  url: string;
-  proxy_url: string;
-  width?: number;
-  height?: number;
-}
-
-interface Embed {
-  title?: string;
-  description?: string;
-  color?: number;
-  url?: string;
-  author?: { name: string; icon_url?: string };
-  thumbnail?: { url: string };
-  image?: { url: string };
-  fields?: { name: string; value: string; inline?: boolean }[];
-  footer?: { text: string; icon_url?: string };
-  provider?: { name: string };
-}
+const matrixFont = Share_Tech_Mono({
+  subsets: ["latin"],
+  variable: "--font-matrix",
+  weight: "400",
+});
 ```
 
+Apply `matrixFont.variable` to `<html>` alongside existing `jetbrainsMono.variable`.
+
+### 4. Avatar Component (`src/components/ui/avatar.tsx`)
+
+- Add CSS class: `filter grayscale(100%) brightness(0.9) contrast(1.1)`
+- Change `rounded-full` → `rounded-sm` (square/terminal)
+- Reduce size scale: xs=16px, sm=24px, md=32px, lg=40px
+- Add green border glow on selection
+
+### 5. Server List (`src/components/layout/server-list.tsx`)
+
+- Background: `bg-bg-sidebar`
+- Add left border: `border-l-2 border-border-bright`
+- Home + guild icons: `grayscale(100%) brightness(0.8)`
+- Selected guild: green glow `shadow-[0_0_8px_#00FF41]`
+- Separator: `bg-border-bright` (bright green line)
+- Theme toggle: green icon `text-primary`
+
+### 6. Channel Sidebar (`src/components/layout/channel-sidebar.tsx`)
+
+- Background: `bg-bg-sidebar`
+- Header: border-bottom `border-b border-border-bright`
+- DM list avatars: small (24px), square (`rounded-sm`)
+- Active channel: `bg-primary/10 border-l-2 border-primary text-primary`
+- Channel names: `text-primary font-mono text-sm`
+- Section headers: uppercase, `text-text-dim`, small
+- User footer: `bg-bg` border-top green border
+
+### 7. Message List (`src/components/chat/message-list.tsx`)
+
+- Author name: `text-primary font-mono`
+- Timestamp: `text-text-dim text-xs`
+- Message content: `text-primary`
+- Hover: green glow `hover:bg-primary/5`
+- System messages: cyan, centered
+- Message separator: green horizontal line `bg-border-bright`
+- Reaction badges: green border `border-primary`, `text-primary`
+
+### 8. Chat Area Header (`src/components/chat/chat-area.tsx`)
+
+- Border-bottom: `border-b border-border-bright`
+- Channel name: `font-mono text-primary font-bold`
+- Header icons: `text-cyan`
+
+### 9. Message Input (`src/components/chat/message-input.tsx`)
+
+- Container: `bg-bg-hover border border-border-bright rounded-sm`
+- Text: `text-primary placeholder:text-text-muted`
+- Send button: `text-primary hover:shadow-[0_0_8px_#00FF41]`
+
+### 10. Login Page (`src/app/(auth)/login/page.tsx`)
+
+Full Matrix terminal style:
+- Background: `#0D0D0D`
+- Title "DISCORDO": large `font-mono text-primary` with green text-shadow glow
+- Blinking cursor after title (CSS animation)
+- Input: terminal prompt style `bg-transparent border-b border-primary text-primary`
+- Button: green border `border-primary text-primary hover:bg-primary hover:text-black`
+- Subtle scanline CSS effect on background
+
+### 11. Reaction Picker (`src/components/chat/reaction-picker.tsx`)
+
+- Background: `bg-bg-sidebar border border-border-bright rounded-sm`
+- Emoji buttons: `text-primary hover:bg-primary/10`
+- Selected emoji: `text-primary`
+
+### 12. Mobile Navigation (`src/components/layout/mobile-nav.tsx`, `mobile-bottom-bar.tsx`)
+
+Replace current mobile nav with terminal-style bottom tab bar:
+
+**Bottom Tab Bar (always visible):**
+```
+[🌐 Servers]  [# Channels/DMs]  [👤 Profile]
+```
+- Tabs: `text-text-dim`, active = `text-primary border-b-2 border-primary`
+- Tapping a tab opens a bottom drawer/sheet sliding up
+
+**Server Drawer** (slides up from left):
+- Full-height sheet, `bg-bg-sidebar`
+- Server icons in grid, grayscale
+- Selected = green border
+
+**Channel Drawer** (slides up from bottom):
+- List of channels/DMs
+- `text-primary font-mono`
+- Active = green highlight
+
+**Implementation**: Use a shared bottom sheet component with 3 tabs, each opening its respective drawer. Use CSS transforms for slide-up animation.
+
+### 13. Scroll Button (`src/components/chat/message-list.tsx`)
+
+- `bg-primary text-black hover:shadow-[0_0_12px_#00FF41]`
+
 ---
 
-## 7. Componentes UI
+## Critical Files
 
-### 7.1 Layout
-
-- `ServerList` — coluna fina com ícones de servidores
-- `ChannelSidebar` — lista de categorias e canais (colapsável)
-- `ChatArea` — área principal de mensagens
-- `MessageInput` — textarea no rodapé
-
-### 7.2 Chat
-
-- `MessageList` — container com scroll, virtualizado
-- `MessageItem` — uma mensagem
-- `EmbedCard` — embed renderizado (imagem, título, fields)
-- `AttachmentImage` — imagem com lightbox
-- `LinkPreview` — card de preview de link (fetch server-side)
-- `Mention` — span estilizado para menções
-- `CodeBlock` — syntax highlighting
-- `SystemMessage` — mensagens de sistema (joins, etc)
-- `TypingIndicator` — indicadores de digitação
-
-### 7.3 Sidebar
-
-- `GuildIcon` — avatar do servidor com fallback
-- `ChannelList` — lista de canais agrupados
-- `DirectMessages` — lista de DMs
-- `UserStatusBadge` — bolinha de status online/idle/dnd/offline
+| File | Changes |
+|------|---------|
+| `src/app/globals.css` | Full palette rewrite, scrollbar, selection, body bg |
+| `tailwind.config.ts` | Replace blurple/dark tokens with Matrix tokens |
+| `src/app/layout.tsx` | Add Share_Tech_Mono font |
+| `src/components/ui/avatar.tsx` | Grayscale filter, square, smaller sizes |
+| `src/components/layout/server-list.tsx` | Terminal styling, green glow |
+| `src/components/layout/channel-sidebar.tsx` | Terminal styling, smaller DM avatars |
+| `src/components/chat/message-list.tsx` | Green text, mono font, terminal hover |
+| `src/components/chat/chat-area.tsx` | Green header border |
+| `src/components/chat/message-input.tsx` | Terminal input style |
+| `src/components/layout/mobile-nav.tsx` | Bottom tab bar with drawers |
+| `src/components/chat/reaction-picker.tsx` | Terminal styling |
+| `src/app/(auth)/login/page.tsx` | Full Matrix terminal login |
 
 ---
 
-## 8. Estilização
+## Verification
 
-- **Tema**: Dark mode por padrão (como Discord)
-- **Cores**: Slate/Zinc do Tailwind com algumas cores de accent ( blurple: #5865F2)
-- **Tipografia**: Font mono para código (JetBrains Mono via next/font)
-- **Animações**: Transições suaves para sidebar e modais
-
----
-
-## 9. Segurança
-
-- Token Discord **nunca** exposto ao client
-- JWT com `httpOnly` cookie, `SameSite=Strict`
-- Todos os `/api/discord/*` validam JWT antes de chamar Discord API
-- Rate limiting básico nos endpoints
-- Validação de inputs com Zod
-
----
-
-## 10. Ordenação de Implementação
-
-### Fase 1 — Foundation
-1. Setup Next.js + Tailwind + Lucide
-2. Variáveis de ambiente e lib JWT
-3. Route Handler de login/logout
-4. Middleware de autenticação
-5. Layout base com sidebar
-
-### Fase 2 — Discord API
-6. Cliente Discord server-side (fetch wrapper)
-7. GET /users/@me — perfil
-8. GET /users/@me/guilds — servidores
-9. GET /users/@me/channels — DMs
-10. GET /guilds/:id/channels — canais do servidor
-
-### Fase 3 — Chat Core
-11. MessageList com renderização básica
-12. Avatares, nomes, timestamps
-13. Scroll e paginação de mensagens
-14. Componente EmbedCard
-
-### Fase 4 — Rich Content
-15. Attachments (imagens)
-16. Link Previews
-17. Menções formatadas
-18. Código inline e blocks
-19. Emojis customizados
-
-### Fase 5 — UX
-20. Mensagens de sistema
-21. Badge de notificações
-22. Input de mensagem
-23. Carregar mais mensagens
-24. Codespaces / Docker
-
----
-
-## 11. Observações Importantes
-
-- **TOS Discord**: Self-bots violam TOS. Para produção, usar OAuth2 com bot token é o caminho correto.
-- **Rate Limits**: Discord tem rate limits agressivos — implementar backoff exponencial.
-- **Gateway WebSocket**: Não implementado no MVP. Mensagens em tempo real via polling ou WebSocket separado.
-- **Cache**: React Query com staleTime agressivo para reduzir chamadas.
+1. `npm run build` — must pass
+2. Login page: Matrix terminal aesthetic visible
+3. Dashboard: green-on-black theme, grayscale avatars
+4. Avatars: small (24px for DM list) and square
+5. Messages: green monospace text
+6. Mobile: bottom tab bar with slide-up drawers for servers/channels

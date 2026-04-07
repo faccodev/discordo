@@ -2,34 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --color-blurple: #5865F2;
-  --color-blurple-dark: #4752C4;
-  --color-dark: #313338;
-  --color-dark-hover: #3F4145;
-  --color-dark-active: #383A40;
-  --color-dark-sd: #2B2D31;
-  --color-dark-bl: #1E1F22;
-  --color-dark-more: #232529;
-  --color-status-online: #23A559;
-  --color-status-idle: #F0B232;
-  --color-status-dnd: #F23F43;
-  --color-status-offline: #80848E;
-}
+/* ─── Matrix/Terminal Theme ──────────────────────────────── */
 
-[data-theme="light"] {
-  --color-blurple: #5865F2;
-  --color-blurple-dark: #4752C4;
-  --color-dark: #FFFFFF;
-  --color-dark-hover: #E3E5E8;
-  --color-dark-active: #DBDEE1;
-  --color-dark-sd: #F2F3F5;
-  --color-dark-bl: #EBEDEF;
-  --color-dark-more: #E3E5E8;
-  --color-status-online: #23A559;
-  --color-status-idle: #F0B232;
-  --color-status-dnd: #F23F43;
-  --color-status-offline: #80848E;
+:root {
+  /* Primary neon green */
+  --color-primary: #00FF41;
+  --color-primary-dark: #00CC33;
+  --color-primary-glow: rgba(0, 255, 65, 0.15);
+
+  /* Backgrounds — near-black */
+  --color-bg: #0D0D0D;
+  --color-bg-hover: #1A1A1A;
+  --color-bg-active: #262626;
+  --color-bg-sidebar: #0A0A0A;
+  --color-bg-input: #141414;
+
+  /* Borders */
+  --color-border: #1F3D1F;
+  --color-border-bright: #00FF41;
+
+  /* Text */
+  --color-text: #00FF41;
+  --color-text-dim: #008F2A;
+  --color-text-muted: #003D15;
+
+  /* Accents */
+  --color-cyan: #00D4FF;
+  --color-warning: #FFD700;
+  --color-error: #FF0040;
+
+  /* Status (monochrome — green tones) */
+  --color-status-online: #00FF41;
+  --color-status-idle: #FFD700;
+  --color-status-dnd: #FF0040;
+  --color-status-offline: #004D1A;
 }
 
 * {
@@ -42,53 +48,52 @@ html {
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--color-dark);
-  color: #dbdee1;
+  background-color: var(--color-bg);
+  color: var(--color-text);
   overflow: hidden;
 }
 
-/* Light mode adjustments */
-[data-theme="light"] body {
-  color: #2E3338;
-}
+/* ─── Scrollbar ─────────────────────────────────────────── */
 
-[data-theme="light"] .text-neutral-400,
-[data-theme="light"] .text-neutral-500 {
-  color: #6D6F78 !important;
-}
-
-[data-theme="light"] .bg-dark,
-[data-theme="light"] .bg-dark-hover,
-[data-theme="light"] .bg-dark-bl,
-[data-theme="light"] .bg-dark-active,
-[data-theme="light"] .bg-dark-sd,
-[data-theme="light"] .bg-dark-more {
-  background-color: var(--color-dark) !important;
-}
-
-[data-theme="light"] .border-dark,
-[data-theme="light"] .border-dark-bl,
-[data-theme="light"] .border-dark-hover {
-  border-color: #C5C7CA !important;
-}
-
-/* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 4px;
+  height: 4px;
 }
-
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--color-bg);
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #1e1f22;
-  border-radius: 4px;
+  background: var(--color-border-bright);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #313338;
+/* ─── Text Selection ───────────────────────────────────── */
+
+::selection {
+  background: var(--color-primary);
+  color: var(--color-bg);
+}
+
+/* ─── Cursor ───────────────────────────────────────────── */
+
+* {
+  cursor: default;
+}
+button, a, [role="button"] {
+  cursor: pointer;
+}
+input, textarea {
+  cursor: text;
+}
+
+/* ─── Focus ────────────────────────────────────────────── */
+
+:focus-visible {
+  outline: 1px solid var(--color-border-bright);
+  outline-offset: 1px;
 }
 
 /* Message content formatting */
@@ -98,17 +103,19 @@ body {
 }
 
 .message-content code {
-  background: #2b2d31;
+  background: var(--color-bg-hover);
+  color: var(--color-primary);
   padding: 0.2em 0.4em;
-  border-radius: 3px;
+  border-radius: 2px;
   font-family: var(--font-mono);
   font-size: 0.85em;
 }
 
 .message-content pre {
-  background: #2b2d31;
+  background: var(--color-bg-hover);
+  border: 1px solid var(--color-border);
   padding: 1em;
-  border-radius: 4px;
+  border-radius: 2px;
   overflow-x: auto;
   margin: 0.5em 0;
 }
@@ -116,94 +123,62 @@ body {
 .message-content pre code {
   background: transparent;
   padding: 0;
+  color: var(--color-primary);
 }
 
-/* Discord-like mention styling */
+/* Matrix mention styling */
 .mention {
-  color: #dee0fc;
-  background: rgba(88, 101, 242, 0.3);
-  border-radius: 3px;
+  color: var(--color-cyan);
+  background: var(--color-primary-glow);
+  border-radius: 2px;
   padding: 0 0.2em;
 }
 
 .mention:hover {
-  background: rgba(88, 101, 242, 0.5);
+  background: rgba(0, 255, 65, 0.3);
 }
 
-/* Channel mention */
 .channel-mention {
-  color: #949bb4;
+  color: var(--color-text-dim);
 }
 
 .channel-mention:hover {
-  color: #dbdee1;
-  background: rgba(88, 101, 242, 0.2);
+  color: var(--color-primary);
 }
 
-/* Role mention */
 .role-mention {
-  border-radius: 3px;
+  color: var(--color-cyan);
+  border-radius: 2px;
   padding: 0 0.2em;
 }
 
-/* Image lightbox */
-.image-lightbox {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-  cursor: zoom-out;
-}
-
-/* Input focus styles */
-input:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid var(--color-blurple);
-  outline-offset: -2px;
-}
-
-/* Transition utilities */
-.transition-sidebar {
-  transition: width 0.15s ease-out, min-width 0.15s ease-out, padding 0.15s ease-out;
-}
-
-/* ─── Mobile-specific ─────────────────────────────────────────── */
+/* ─── Mobile-specific ─────────────────────────────────── */
 
 @media (max-width: 767px) {
-  /* Prevent pull-to-refresh on message list */
   .overflow-y-auto {
     overscroll-behavior: contain;
   }
 
-  /* Larger touch targets */
-  button,
-  a {
+  button, a {
     min-height: 44px;
     min-width: 44px;
   }
 
-  /* Chat input on mobile */
   textarea {
-    font-size: 16px !important; /* Prevents iOS zoom */
+    font-size: 16px !important;
   }
 
-  /* Better scroll on touch */
   * {
     -webkit-overflow-scrolling: touch;
   }
 }
 
-/* Safe area insets for notched devices */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   body {
     padding-bottom: env(safe-area-inset-bottom);
   }
 }
 
-/* Hide scrollbar on mobile but keep functionality */
 @media (max-width: 767px) {
   ::-webkit-scrollbar {
     display: none;
@@ -213,17 +188,46 @@ textarea:focus-visible {
   }
 }
 
-/* Touch-friendly button sizing */
 .touch-target {
   min-height: 44px;
   min-width: 44px;
 }
 
-/* Mobile search modal full screen */
-@media (max-width: 767px) {
-  .search-modal-overlay {
-    padding-top: 0 !important;
-    align-items: flex-start !important;
-  }
+/* ─── Animations ───────────────────────────────────────── */
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { text-shadow: 0 0 4px var(--color-primary), 0 0 12px var(--color-primary); }
+  50% { text-shadow: 0 0 8px var(--color-primary), 0 0 24px var(--color-primary); }
+}
+
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}
+
+.animate-glow {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+/* Matrix rain background effect for login */
+.matrix-bg {
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 255, 65, 0.03) 0px,
+      rgba(0, 255, 65, 0.03) 1px,
+      transparent 1px,
+      transparent 2px
+    ),
+    var(--color-bg);
 }
 

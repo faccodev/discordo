@@ -38,42 +38,36 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex h-screen w-screen items-center justify-center bg-dark">
-      <div className="w-full max-w-sm space-y-6 p-8">
+    <div className="flex h-screen w-screen items-center justify-center matrix-bg">
+      <div className="w-full max-w-sm space-y-8 p-8">
         {/* Logo and Title */}
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blurple">
-            <svg
-              viewBox="0 0 71 55"
-              className="h-8 w-8 text-white"
-              fill="currentColor"
-            >
-              <path d="M60.1 4.9A58.5 58.5 0 0 0 45.7 1.1a.06.06 0 0 0-.07.03 39.3 39.3 0 0 0-17.2 14.5 54 54 0 0 0-5.8-3.5.06.06 0 0 0-.08.02C13 21.3 7.4 30.8 7.4 40.3c0 3 .4 6 .9 8.7a.06.06 0 0 0 .03.05 58 58 0 0 0 17.6 5.7.07.07 0 0 0 .08-.03 39.7 39.7 0 0 0 14-12.6.06.06 0 0 0 0-.06 53 53 0 0 0 5.4 3.3.06.06 0 0 0 .07-.02c12.2-5.2 20.7-14.6 20.7-26.1a.06.06 0 0 0-.03-.05 44.3 44.3 0 0 0-6.6-8.5.06.06 0 0 0-.07-.03ZM23.7 34.3c-3.5 0-6.3-3.2-6.3-7.1 0-3.9 2.8-7.1 6.3-7.1 3.5 0 6.3 3.2 6.3 7.1 0 3.9-2.8 7.1-6.3 7.1Zm23.6 0c-3.5 0-6.3-3.2-6.3-7.1 0-3.9 2.8-7.1 6.3-7.1 3.5 0 6.3 3.2 6.3 7.1 0 3.9-2.8 7.1-6.3 7.1Z"/>
-            </svg>
-          </div>
-          <h1 className="text-2xl font-bold text-white">Discordo Web</h1>
-          <p className="mt-2 text-sm text-neutral-400">
-            Enter your password to continue
+          <h1 className="text-5xl font-mono font-bold text-primary animate-glow">
+            DISCORDO
+          </h1>
+          <span className="animate-blink text-5xl text-primary">_</span>
+          <p className="mt-4 font-mono text-sm text-text-dim">
+            Terminal v2.0 — Authentication Required
           </p>
         </div>
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
-            <div className="flex items-center gap-2 rounded bg-red-500/20 p-3 text-sm text-red-400">
+            <div className="flex items-center gap-2 rounded-sm border border-error bg-error/10 p-3 font-mono text-sm text-error">
               <AlertCircle className="h-4 w-4 flex-shrink-0" />
               {error}
             </div>
           )}
 
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+            <span className="absolute left-0 top-1/2 -translate-y-1/2 font-mono text-primary">&gt;</span>
             <Input
               type={showPassword ? "text" : "password"}
-              placeholder="Password"
+              placeholder="ACCESS_PASSWORD"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="pl-10 pr-10"
+              className="border-b border-primary bg-transparent pl-8 pr-10 font-mono text-primary placeholder:text-text-muted focus:border-primary focus:outline-none"
               required
               autoFocus
               autoComplete="current-password"
@@ -81,7 +75,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300 transition-colors"
+              className="absolute right-0 top-1/2 -translate-y-1/2 text-text-dim hover:text-primary transition-colors"
             >
               {showPassword ? (
                 <EyeOff className="h-4 w-4" />
@@ -91,20 +85,24 @@ export default function LoginPage() {
             </button>
           </div>
 
-          <Button type="submit" className="w-full" disabled={loading || !password.trim()}>
+          <Button
+            type="submit"
+            className="w-full border border-primary bg-transparent font-mono text-primary hover:bg-primary hover:text-black transition-all hover:shadow-[0_0_12px_#00FF41]"
+            disabled={loading || !password.trim()}
+          >
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Signing in...
+                AUTHENTICATING...
               </>
             ) : (
-              "Sign in"
+              "[ AUTHENTICATE ]"
             )}
           </Button>
         </form>
 
         {/* Info */}
-        <p className="text-center text-xs text-neutral-500">
+        <p className="text-center font-mono text-xs text-text-muted">
           Your Discord token is kept server-side and never exposed to the browser.
         </p>
       </div>

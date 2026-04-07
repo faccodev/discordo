@@ -4,8 +4,8 @@
   "description": "Web client for Discord — DMs, channels, calls and more",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1e1f22",
-  "theme_color": "#5865f2",
+  "background_color": "#0D0D0D",
+  "theme_color": "#00FF41",
   "orientation": "portrait-primary",
   "icons": [
     {

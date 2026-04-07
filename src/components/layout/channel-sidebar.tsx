@@ -38,10 +38,10 @@ function getChannelIconColor(channel: DiscordChannel) {
   switch (channel.type) {
     case ChannelType.GUILD_VOICE:
     case ChannelType.GUILD_STAGE_VOICE:
-      return "text-neutral-500";
+      return "text-text-dim";
     case ChannelType.GUILD_TEXT:
     default:
-      return "text-neutral-500 group-hover:text-white";
+      return "text-text-dim group-hover:text-primary";
   }
 }
 
@@ -108,22 +108,22 @@ export function ChannelSidebar() {
   }
 
   return (
-    <div className="flex h-full w-60 flex-col bg-dark-sd">
+    <div className="flex h-full w-60 flex-col bg-bg-sidebar">
       {/* Header */}
-      <div className="flex h-12 items-center border-b border-dark-bl px-4 shadow-sm">
+      <div className="flex h-12 items-center border-b border-border-bright px-4 shadow-sm">
         {selectedGuild ? (
-          <h2 className="flex items-center gap-2 font-semibold text-white">
+          <h2 className="flex items-center gap-2 font-mono font-semibold text-primary">
             {selectedGuild.icon ? (
               <img
                 src={`https://cdn.discordapp.com/icons/${selectedGuild.id}/${selectedGuild.icon}.png`}
                 alt=""
-                className="h-6 w-6 rounded-full"
+                className="h-6 w-6 rounded-sm"
               />
             ) : null}
             {selectedGuild.name}
           </h2>
         ) : (
-          <h2 className="font-semibold text-white">Direct Messages</h2>
+          <h2 className="font-mono font-semibold text-primary">Direct Messages</h2>
         )}
       </div>
 
@@ -138,7 +138,7 @@ export function ChannelSidebar() {
                   {/* Category Header */}
                   <button
                     onClick={() => toggleGuildExpanded(category.id)}
-                    className="mb-1 flex w-full items-center gap-1 px-1 text-xs font-semibold uppercase text-neutral-400 hover:text-white"
+                    className="mb-1 flex w-full items-center gap-1 px-1 text-xs font-semibold uppercase text-text-dim hover:text-primary"
                   >
                     {isGuildExpanded(category.id) ? (
                       <ChevronDown className="h-3 w-3" />
@@ -182,12 +182,12 @@ export function ChannelSidebar() {
             {/* Direct Messages */}
             <div className="space-y-0.5">
               <div className="mb-2 flex items-center justify-between px-2">
-                <p className="text-xs font-semibold uppercase text-neutral-400">
+                <p className="text-xs font-semibold uppercase text-text-dim">
                   Mensagens Diretas
                 </p>
                 <button
                   onClick={() => setShowCreateGroup(true)}
-                  className="flex h-5 w-5 items-center justify-center rounded text-neutral-500 hover:bg-dark-hover hover:text-white transition-colors"
+                  className="flex h-5 w-5 items-center justify-center rounded-sm text-text-dim hover:bg-bg-hover hover:text-primary transition-colors"
                   title="Create group DM"
                 >
                   <Plus className="h-3.5 w-3.5" />
@@ -211,8 +211,8 @@ export function ChannelSidebar() {
                       className={cn(
                         "flex w-full items-center gap-2 rounded px-2 py-1.5 text-sm transition-colors",
                         selectedChannelId === dm.id
-                          ? "bg-dark-active text-white"
-                          : "text-neutral-400 hover:bg-dark-hover hover:text-white"
+                          ? "bg-primary/10 border-l-2 border-primary text-primary"
+                          : "text-text-dim hover:bg-bg-hover hover:text-primary"
                       )}
                     >
                       <Avatar
@@ -232,7 +232,7 @@ export function ChannelSidebar() {
 
       {/* User Footer */}
       {currentUser && (
-        <div className="flex h-12 items-center bg-dark-bl px-2">
+        <div className="flex h-12 items-center border-t border-border-bright bg-bg px-2">
           <Avatar
             src={currentUser.avatar}
             alt={currentUser.username}
@@ -240,16 +240,16 @@ export function ChannelSidebar() {
             size="sm"
           />
           <div className="ml-2 flex-1 truncate">
-            <p className="truncate text-sm font-medium text-white">
+            <p className="truncate text-sm font-mono font-medium text-primary">
               {currentUser.global_name || currentUser.username}
             </p>
-            <p className="truncate text-xs text-neutral-500">
+            <p className="truncate text-xs font-mono text-text-dim">
               #{currentUser.discriminator}
             </p>
           </div>
           <button
             onClick={toggleTheme}
-            className="mr-1 flex h-8 w-8 items-center justify-center rounded text-neutral-500 hover:bg-dark-hover hover:text-white transition-colors"
+            className="mr-1 flex h-8 w-8 items-center justify-center rounded text-text-dim hover:bg-bg-hover hover:text-primary transition-colors"
             title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
           >
             {theme === 'dark' ? (
@@ -286,10 +286,10 @@ function ChannelItem({
     <button
       onClick={onSelect}
       className={cn(
-        "group flex w-full items-center gap-1 rounded px-2 py-1 text-sm transition-colors",
+        "group flex w-full items-center gap-1 rounded px-2 py-1 text-sm font-mono transition-colors",
         isSelected
-          ? "bg-dark-active text-white"
-          : "text-neutral-400 hover:bg-dark-hover hover:text-white",
+          ? "bg-primary/10 border-l-2 border-primary text-primary"
+          : "text-text-dim hover:bg-bg-hover hover:text-primary",
         isVoice && "font-normal"
       )}
     >
@@ -298,7 +298,7 @@ function ChannelItem({
         {channel.name}
       </span>
       {channel.topic && (
-        <span className="ml-1 text-xs text-neutral-500">{channel.topic}</span>
+        <span className="ml-1 font-mono text-xs text-text-dim">{channel.topic}</span>
       )}
     </button>
   );

@@ -105,14 +105,14 @@ export function MessageInput({ channelId }: MessageInputProps) {
                   className="h-20 w-20 rounded object-cover"
                 />
               ) : (
-                <div className="flex h-20 w-36 items-center gap-2 rounded bg-dark-bl px-3">
-                  <FileText className="h-5 w-5 flex-shrink-0 text-neutral-500" />
-                  <span className="truncate text-xs text-neutral-400">{f.file.name}</span>
+                <div className="flex h-20 w-36 items-center gap-2 rounded-sm border border-border bg-bg-hover px-3">
+                  <FileText className="h-5 w-5 flex-shrink-0 text-text-dim" />
+                  <span className="truncate text-xs font-mono text-text-dim">{f.file.name}</span>
                 </div>
               )}
               <button
                 onClick={() => removeFile(f.id)}
-                className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-dark-more text-white shadow hover:bg-red-500 transition-colors"
+                className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-error text-black shadow hover:shadow-[0_0_8px_#FF0040] transition-colors"
               >
                 <X className="h-3 w-3" />
               </button>
@@ -121,7 +121,7 @@ export function MessageInput({ channelId }: MessageInputProps) {
         </div>
       )}
 
-      <div className="rounded-lg bg-dark-bl">
+      <div className="rounded-sm border border-border-bright bg-bg-hover">
         <div className="flex items-end gap-2 p-2">
           {/* Attach Button */}
           <div className="relative">
@@ -134,7 +134,7 @@ export function MessageInput({ channelId }: MessageInputProps) {
               className="absolute inset-0 cursor-pointer opacity-0"
             />
             <button
-              className="flex h-8 w-8 items-center justify-center rounded text-neutral-500 transition-colors hover:text-white"
+              className="flex h-8 w-8 items-center justify-center rounded-sm text-text-dim transition-colors hover:text-primary"
               title="Anexar arquivo"
             >
               <Paperclip className="h-5 w-5" />
@@ -148,14 +148,14 @@ export function MessageInput({ channelId }: MessageInputProps) {
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             placeholder={`Enviar mensagem...`}
-            className="min-h-[40px] max-h-[200px] flex-1 resize-none bg-transparent py-2 text-sm text-white placeholder:text-neutral-500 focus:outline-none"
+            className="min-h-[40px] max-h-[200px] flex-1 resize-none bg-transparent py-2 text-sm font-mono text-primary placeholder:text-text-muted focus:outline-none"
             rows={1}
           />
 
           {/* Image preview shortcut */}
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="flex h-8 w-8 items-center justify-center rounded text-neutral-500 transition-colors hover:text-white"
+            className="flex h-8 w-8 items-center justify-center rounded-sm text-text-dim transition-colors hover:text-primary"
             title="Enviar imagem"
           >
             <ImageIcon className="h-5 w-5" />
@@ -166,10 +166,10 @@ export function MessageInput({ channelId }: MessageInputProps) {
             onClick={handleSubmit}
             disabled={!canSend}
             className={cn(
-              "flex h-8 w-8 items-center justify-center rounded transition-colors",
+              "flex h-8 w-8 items-center justify-center rounded-sm transition-colors",
               canSend
-                ? "text-blurple hover:bg-blurple hover:text-white"
-                : "cursor-not-allowed text-neutral-500"
+                ? "text-primary hover:shadow-[0_0_8px_#00FF41]"
+                : "cursor-not-allowed text-text-muted"
             )}
             title="Enviar mensagem"
           >
@@ -181,8 +181,8 @@ export function MessageInput({ channelId }: MessageInputProps) {
         {content.length > 1800 && (
           <div
             className={cn(
-              "px-2 pb-1 text-right text-xs",
-              content.length > 2000 ? "text-red-500" : "text-neutral-500"
+              "px-2 pb-1 text-right text-xs font-mono",
+              content.length > 2000 ? "text-error" : "text-text-dim"
             )}
           >
             {content.length}/2000

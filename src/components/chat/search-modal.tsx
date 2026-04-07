@@ -67,22 +67,22 @@ export function SearchModal({ channelId, channelName, onClose }: SearchModalProp
       onClick={handleOverlayClick}
       className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 pt-[15vh]"
     >
-      <div className="flex w-full max-w-2xl flex-col overflow-hidden rounded-lg bg-dark shadow-2xl">
+      <div className="flex w-full max-w-2xl flex-col overflow-hidden rounded-sm border border-border-bright bg-bg-sidebar shadow-2xl shadow-primary/20">
         {/* Header */}
-        <div className="flex items-center gap-3 border-b border-dark-bl px-4 py-3">
-          <Search className="h-4 w-4 flex-shrink-0 text-neutral-500" />
+        <div className="flex items-center gap-3 border-b border-border px-4 py-3">
+          <Search className="h-4 w-4 flex-shrink-0 text-cyan" />
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={`Search${channelName ? ` in #${channelName}` : ''}...`}
-            className="flex-1 bg-transparent text-sm text-white placeholder:text-neutral-500 focus:outline-none"
+            className="flex-1 bg-transparent font-mono text-sm text-primary placeholder:text-text-muted focus:outline-none"
           />
-          {isFetching && <Loader2 className="h-4 w-4 animate-spin text-neutral-500" />}
+          {isFetching && <Loader2 className="h-4 w-4 animate-spin text-primary" />}
           <button
             onClick={onClose}
-            className="flex-shrink-0 rounded p-1 text-neutral-500 hover:bg-dark-hover hover:text-white transition-colors"
+            className="flex-shrink-0 rounded-sm p-1 text-text-dim hover:bg-bg-hover hover:text-primary transition-colors"
           >
             <X className="h-4 w-4" />
           </button>
@@ -93,11 +93,11 @@ export function SearchModal({ channelId, channelName, onClose }: SearchModalProp
           {/* Empty state */}
           {!query && (
             <div className="flex flex-col items-center justify-center py-16 text-center">
-              <Search className="mb-3 h-10 w-10 text-neutral-600" />
-              <p className="text-sm font-medium text-neutral-400">
+              <Search className="mb-3 h-10 w-10 text-text-muted" />
+              <p className="font-mono text-sm font-medium text-text-dim">
                 Search{channelName ? ` in #${channelName}` : ' messages'}
               </p>
-              <p className="mt-1 text-xs text-neutral-600">
+              <p className="mt-1 font-mono text-xs text-text-muted">
                 Type at least 2 characters to search
               </p>
             </div>
@@ -105,7 +105,7 @@ export function SearchModal({ channelId, channelName, onClose }: SearchModalProp
 
           {/* Loading */}
           {query && debouncedQuery.length < 2 && (
-            <div className="flex items-center justify-center py-12 text-sm text-neutral-500">
+            <div className="flex items-center justify-center py-12 font-mono text-sm text-text-dim">
               Keep typing...
             </div>
           )}
@@ -113,14 +113,14 @@ export function SearchModal({ channelId, channelName, onClose }: SearchModalProp
           {/* Results */}
           {debouncedQuery.length >= 2 && results?.length === 0 && !isFetching && (
             <div className="flex flex-col items-center justify-center py-16 text-center">
-              <p className="text-sm text-neutral-400">
+              <p className="font-mono text-sm text-text-dim">
                 No results for &ldquo;{debouncedQuery}&rdquo;
               </p>
             </div>
           )}
 
           {results && results.length > 0 && (
-            <div className="divide-y divide-dark-bl">
+            <div className="divide-y divide-border">
               {results.map((message) => (
                 <SearchResultItem key={message.id} message={message} />
               ))}
@@ -129,8 +129,8 @@ export function SearchModal({ channelId, channelName, onClose }: SearchModalProp
         </div>
 
         {/* Footer */}
-        <div className="border-t border-dark-bl px-4 py-2">
-          <p className="text-xs text-neutral-600">
+        <div className="border-t border-border px-4 py-2">
+          <p className="font-mono text-xs text-text-muted">
             {results?.length ?? 0} results • Press ESC to close
           </p>
         </div>
@@ -156,7 +156,7 @@ function SearchResultItem({ message }: { message: DiscordMessage }) {
   return (
     <button
       onClick={handleClick}
-      className="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-dark-hover transition-colors"
+      className="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-bg-hover transition-colors"
     >
       <Avatar
         src={avatarUrl}
@@ -166,16 +166,16 @@ function SearchResultItem({ message }: { message: DiscordMessage }) {
       />
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline gap-2">
-          <span className="text-sm font-medium text-white">{authorName}</span>
-          <span className="text-xs text-neutral-500">
+          <span className="font-mono text-sm font-medium text-primary">{authorName}</span>
+          <span className="font-mono text-xs text-text-dim">
             {formatRelativeTime(message.timestamp)}
           </span>
         </div>
-        <p className="mt-0.5 line-clamp-2 text-sm text-neutral-300">
+        <p className="mt-0.5 line-clamp-2 font-mono text-sm text-primary/80">
           {highlightQuery(message.content)}
         </p>
         {message.attachments && message.attachments.length > 0 && (
-          <p className="mt-1 text-xs text-neutral-600">
+          <p className="mt-1 font-mono text-xs text-text-dim">
             📎 {message.attachments[0].filename}
           </p>
         )}
@@ -186,5 +186,5 @@ function SearchResultItem({ message }: { message: DiscordMessage }) {
 
 function highlightQuery(text: string): React.ReactNode {
   // Simple highlight — will be refined
-  return text || <span className="italic text-neutral-600">No text content</span>;
+  return text || <span className="italic text-text-muted">No text content</span>;
 }

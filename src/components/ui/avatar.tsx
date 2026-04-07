@@ -14,10 +14,10 @@ interface AvatarProps {
 }
 
 const sizeMap = {
-  xs: 24,
-  sm: 32,
-  md: 40,
-  lg: 48,
+  xs: 16,
+  sm: 24,
+  md: 32,
+  lg: 40,
 };
 
 const statusSizeMap = {
@@ -55,17 +55,18 @@ export function Avatar({
           alt={alt}
           width={dimension}
           height={dimension}
-          className="rounded-full object-cover"
+          className="rounded-sm object-cover grayscale brightness-90 contrast-110"
           style={{ width: dimension, height: dimension }}
         />
       ) : (
         <div
-          className="flex items-center justify-center rounded-full font-medium text-white"
+          className="flex items-center justify-center rounded-sm font-mono font-medium text-primary"
           style={{
             width: dimension,
             height: dimension,
-            backgroundColor: bgColor,
+            backgroundColor: "#1A1A1A",
             fontSize: dimension * 0.4,
+            border: "1px solid #00FF41",
           }}
         >
           {getInitials(alt)}

@@ -117,7 +117,7 @@ function renderCode(content: string): React.ReactNode[] {
     if (match[3]) {
       // Inline code
       parts.push(
-        <code key={match.index} className="mx-0.5 rounded bg-dark-bl px-1 py-0.5 font-mono text-sm">
+        <code key={match.index} className="mx-0.5 rounded-sm bg-bg-hover px-1 py-0.5 font-mono text-sm text-primary">
           {match[3]}
         </code>
       );
@@ -129,24 +129,24 @@ function renderCode(content: string): React.ReactNode[] {
         if (lang && hljs.getLanguage(lang)) {
           const highlighted = hljs.highlight(code, { language: lang }).value;
           parts.push(
-            <pre key={match.index} className="my-2 overflow-x-auto rounded bg-dark-bl p-3">
+            <pre key={match.index} className="my-2 overflow-x-auto rounded-sm border border-border bg-bg-hover p-3">
               <code
-                className="font-mono text-sm"
+                className="font-mono text-sm text-primary"
                 dangerouslySetInnerHTML={{ __html: highlighted }}
               />
             </pre>
           );
         } else {
           parts.push(
-            <pre key={match.index} className="my-2 overflow-x-auto rounded bg-dark-bl p-3">
-              <code className="font-mono text-sm">{code}</code>
+            <pre key={match.index} className="my-2 overflow-x-auto rounded-sm border border-border bg-bg-hover p-3">
+              <code className="font-mono text-sm text-primary">{code}</code>
             </pre>
           );
         }
       } catch {
         parts.push(
-          <pre key={match.index} className="my-2 overflow-x-auto rounded bg-dark-bl p-3">
-            <code className="font-mono text-sm">{code}</code>
+          <pre key={match.index} className="my-2 overflow-x-auto rounded-sm border border-border bg-bg-hover p-3">
+            <code className="font-mono text-sm text-primary">{code}</code>
           </pre>
         );
       }
@@ -172,9 +172,9 @@ function MessageItem({ message }: { message: DiscordMessage }) {
   if (!isContentMessage) {
     return (
       <div className="my-2 flex items-center gap-2">
-        <div className="h-px flex-1 bg-dark-hover" />
-        <span className="px-2 text-xs text-neutral-500">{message.content}</span>
-        <div className="h-px flex-1 bg-dark-hover" />
+        <div className="h-px flex-1 bg-border-bright" />
+        <span className="px-2 text-xs font-mono text-cyan">{message.content}</span>
+        <div className="h-px flex-1 bg-border-bright" />
       </div>
     );
   }
@@ -185,7 +185,7 @@ function MessageItem({ message }: { message: DiscordMessage }) {
     : null;
 
   return (
-    <div className="group relative flex gap-4 px-4 py-1 hover:bg-dark-hover/50">
+    <div className="group relative flex gap-4 px-4 py-1 hover:bg-primary/5">
       {/* Avatar */}
       <Avatar
         src={avatarUrl}
@@ -199,17 +199,17 @@ function MessageItem({ message }: { message: DiscordMessage }) {
       <div className="min-w-0 flex-1">
         {/* Header */}
         <div className="flex items-baseline gap-2">
-          <span className="font-medium text-white">{authorName}</span>
-          <span className="text-xs text-neutral-500">
+          <span className="font-mono font-medium text-primary">{authorName}</span>
+          <span className="text-xs font-mono text-text-dim">
             {formatTimestamp(message.timestamp)}
           </span>
           {message.edited_timestamp && (
-            <span className="text-xs text-neutral-600">(editado)</span>
+            <span className="text-xs font-mono text-text-muted">(editado)</span>
           )}
         </div>
 
         {/* Message Content */}
-        <div className="message-content mt-0.5 text-sm text-white">
+        <div className="message-content mt-0.5 text-sm font-mono text-primary">
           {renderCode(message.content)}
         </div>
 
@@ -275,11 +275,11 @@ function MessageItem({ message }: { message: DiscordMessage }) {
                   href={resolvedUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-sm text-blurple hover:underline"
+                  className="flex items-center gap-2 text-sm font-mono text-cyan hover:underline"
                 >
                   📎 {attachment.filename}
                   {attachment.size > 0 && (
-                    <span className="text-xs text-neutral-500">
+                    <span className="text-xs font-mono text-text-dim">
                       ({(attachment.size / 1024).toFixed(1)} KB)
                     </span>
                   )}
@@ -316,7 +316,7 @@ function MessageItem({ message }: { message: DiscordMessage }) {
               onClick={() =>
                 setShowPicker(showPicker === message.id ? null : message.id)
               }
-              className="flex h-6 w-6 items-center justify-center rounded-full border border-dark-bl bg-dark-hover text-neutral-500 hover:border-blurple hover:text-blurple transition-colors"
+              className="flex h-6 w-6 items-center justify-center rounded-sm border border-border bg-bg-hover text-text-dim hover:border-primary hover:text-primary transition-colors"
               title="Add reaction"
             >
               <Smile className="h-3.5 w-3.5" />
@@ -402,14 +402,14 @@ export function MessageList({ channelId }: { channelId: string }) {
   if (isLoading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-blurple" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="flex h-full items-center justify-center text-red-500">
+      <div className="flex h-full items-center justify-center font-mono text-error">
         Erro ao carregar mensagens
       </div>
     );
@@ -418,7 +418,7 @@ export function MessageList({ channelId }: { channelId: string }) {
   if (allMessages.length === 0) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className="text-neutral-500">Nenhuma mensagem ainda</p>
+        <p className="font-mono text-text-dim">Nenhuma mensagem ainda</p>
       </div>
     );
   }
@@ -435,7 +435,7 @@ export function MessageList({ channelId }: { channelId: string }) {
           <button
             onClick={() => fetchNextPage()}
             disabled={isFetchingNextPage}
-            className="rounded bg-dark-hover px-4 py-2 text-sm text-neutral-400 hover:bg-dark-active hover:text-white disabled:opacity-50"
+            className="rounded-sm border border-border bg-bg-hover px-4 py-2 text-sm font-mono text-text-dim hover:border-primary hover:text-primary disabled:opacity-50"
           >
             {isFetchingNextPage ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -457,7 +457,7 @@ export function MessageList({ channelId }: { channelId: string }) {
       {showScrollButton && (
         <button
           onClick={scrollToBottom}
-          className="fixed bottom-24 right-8 flex items-center gap-1 rounded-full bg-blurple px-3 py-1.5 text-sm text-white shadow-lg transition-all hover:bg-blurple-dark"
+          className="fixed bottom-24 right-8 flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-sm font-mono text-black shadow-lg transition-all hover:shadow-[0_0_12px_#00FF41]"
         >
           <ArrowDown className="h-4 w-4" />
           Novas mensagens

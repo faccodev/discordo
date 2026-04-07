@@ -9,28 +9,26 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Discord-like colors
-        blurple: {
-          DEFAULT: "#5865F2",
-          dark: "#4752C4",
+        // Matrix/Terminal colors
+        primary: {
+          DEFAULT: "#00FF41",
+          dark: "#00CC33",
         },
-        dark: {
-          DEFAULT: "#313338",
-          hover: "#3F4145",
-          active: "#383A40",
-          sd: "#2B2D31",
-          bl: "#1E1F22",
-          more: "#232529",
+        bg: {
+          DEFAULT: "#0D0D0D",
+          hover: "#1A1A1A",
+          active: "#262626",
+          sidebar: "#0A0A0A",
         },
-        embed: {
-          sidebar: "#2B2D31",
-          input: "#383A40",
-        },
+        "border-bright": "#00FF41",
+        cyan: "#00D4FF",
+        warning: "#FFD700",
+        error: "#FF0040",
         status: {
-          online: "#23A559",
-          idle: "#F0B232",
-          dnd: "#F23F43",
-          offline: "#80848E",
+          online: "#00FF41",
+          idle: "#FFD700",
+          dnd: "#FF0040",
+          offline: "#004D1A",
         },
       },
       fontFamily: {

@@ -9,7 +9,7 @@ interface EmbedCardProps {
 }
 
 function getEmbedColor(color?: number): string {
-  if (!color) return "#5865F2";
+  if (!color) return "#00FF41";
   const r = (color >> 16) & 255;
   const g = (color >> 8) & 255;
   const b = color & 255;
@@ -21,10 +21,10 @@ export function EmbedCard({ embed }: EmbedCardProps) {
 
   return (
     <div
-      className="mt-1 flex max-w-[520px] overflow-hidden rounded"
+      className="mt-1 flex max-w-[520px] overflow-hidden rounded-sm"
       style={{
-        backgroundColor: "#2B2D31",
-        borderLeft: hasColor ? `4px solid ${getEmbedColor(embed.color)}` : undefined,
+        backgroundColor: "#0A0A0A",
+        borderLeft: hasColor ? `4px solid ${getEmbedColor(embed.color)}` : "4px solid #00FF41",
       }}
     >
       <div className="flex flex-1 flex-col p-3">
@@ -37,11 +37,11 @@ export function EmbedCard({ embed }: EmbedCardProps) {
                 alt=""
                 width={20}
                 height={20}
-                className="rounded-full"
+                className="rounded-sm"
               />
             )}
             {embed.author.name && (
-              <span className="text-xs font-medium text-white">
+              <span className="font-mono text-xs font-medium text-primary">
                 {embed.author.name}
               </span>
             )}
@@ -54,7 +54,7 @@ export function EmbedCard({ embed }: EmbedCardProps) {
             href={embed.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="mb-1 text-sm font-semibold text-blurple hover:underline"
+            className="mb-1 font-mono text-sm font-semibold text-cyan hover:underline"
           >
             {embed.title}
           </a>
@@ -63,7 +63,7 @@ export function EmbedCard({ embed }: EmbedCardProps) {
         {/* Description */}
         {embed.description && (
           <div
-            className="text-sm text-white"
+            className="font-mono text-sm text-primary/80"
             dangerouslySetInnerHTML={{ __html: embed.description }}
           />
         )}
@@ -98,8 +98,8 @@ export function EmbedCard({ embed }: EmbedCardProps) {
           >
             {embed.fields.map((field, idx) => (
               <div key={idx} className={field.inline ? "col-span-1" : "col-span-2"}>
-                <p className="text-xs font-semibold text-white">{field.name}</p>
-                <p className="text-sm text-neutral-400">{field.value}</p>
+                <p className="font-mono text-xs font-semibold text-primary">{field.name}</p>
+                <p className="font-mono text-sm text-text-dim">{field.value}</p>
               </div>
             ))}
           </div>
@@ -107,14 +107,14 @@ export function EmbedCard({ embed }: EmbedCardProps) {
 
         {/* Footer */}
         {(embed.footer || embed.timestamp) && (
-          <div className="mt-2 flex items-center gap-2 text-xs text-neutral-500">
+          <div className="mt-2 flex items-center gap-2 font-mono text-xs text-text-dim">
             {embed.footer?.icon_url && (
               <Image
                 src={embed.footer.icon_url}
                 alt=""
                 width={16}
                 height={16}
-                className="rounded-full"
+                className="rounded-sm"
               />
             )}
             <span>
@@ -134,7 +134,7 @@ export function EmbedCard({ embed }: EmbedCardProps) {
 
         {/* Provider */}
         {embed.provider?.name && (
-          <p className="mt-1 text-xs text-neutral-500">{embed.provider.name}</p>
+          <p className="mt-1 font-mono text-xs text-text-dim">{embed.provider.name}</p>
         )}
       </div>
 
@@ -147,7 +147,7 @@ export function EmbedCard({ embed }: EmbedCardProps) {
               alt=""
               width={embed.thumbnail.width || 80}
               height={embed.thumbnail.height || 80}
-              className="max-w-[80px] rounded object-cover"
+              className="max-w-[80px] rounded-sm object-cover"
             />
           </a>
         </div>

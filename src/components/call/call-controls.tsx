@@ -41,7 +41,7 @@ export function CallControls({ className }: CallControlsProps) {
   const participantCount = participants.size;
 
   return (
-    <div className={cn('flex items-center gap-2 px-4 py-3 bg-dark-bl', className)}>
+    <div className={cn('flex items-center gap-2 px-4 py-3 bg-bg-sidebar border-t border-border', className)}>
       {/* Participant avatars */}
       {participantCount > 0 && (
         <div className="flex items-center -space-x-2 mr-2">
@@ -54,16 +54,16 @@ export function CallControls({ className }: CallControlsProps) {
                   alt={p.globalName || p.username}
                   userId={p.userId}
                   size="xs"
-                  className="ring-2 ring-dark-bl"
+                  className="ring-2 ring-border"
                 />
                 {/* Speaking indicator */}
                 {!p.selfMute && (
-                  <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-green-500 ring-1 ring-dark-bl" />
+                  <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-primary ring-1 ring-border" />
                 )}
               </div>
             ))}
           {participantCount > 3 && (
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-dark-hover text-xs font-medium text-neutral-400 ring-2 ring-dark-bl">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-bg-hover font-mono text-xs font-medium text-text-dim ring-2 ring-border">
               +{participantCount - 3}
             </div>
           )}
@@ -78,8 +78,8 @@ export function CallControls({ className }: CallControlsProps) {
           className={cn(
             'flex h-8 w-8 items-center justify-center rounded-full transition-colors',
             selfMuted
-              ? 'bg-red-500 text-white hover:bg-red-600'
-              : 'bg-dark-hover text-neutral-400 hover:text-white hover:bg-dark-active'
+              ? 'bg-error text-black hover:shadow-[0_0_8px_#FF0040]'
+              : 'bg-bg-hover text-text-dim hover:text-primary hover:bg-primary/10'
           )}
           title={selfMuted ? 'Unmute' : 'Mute'}
         >
@@ -92,8 +92,8 @@ export function CallControls({ className }: CallControlsProps) {
           className={cn(
             'flex h-8 w-8 items-center justify-center rounded-full transition-colors',
             selfDeafened
-              ? 'bg-red-500 text-white hover:bg-red-600'
-              : 'bg-dark-hover text-neutral-400 hover:text-white hover:bg-dark-active'
+              ? 'bg-error text-black hover:shadow-[0_0_8px_#FF0040]'
+              : 'bg-bg-hover text-text-dim hover:text-primary hover:bg-primary/10'
           )}
           title={selfDeafened ? 'Undeafen' : 'Deafen'}
         >
@@ -110,8 +110,8 @@ export function CallControls({ className }: CallControlsProps) {
           className={cn(
             'flex h-8 w-8 items-center justify-center rounded-full transition-colors',
             selfVideoOn
-              ? 'bg-blurple text-white hover:bg-blurple-dark'
-              : 'bg-dark-hover text-neutral-400 hover:text-white hover:bg-dark-active'
+              ? 'bg-primary text-black hover:shadow-[0_0_8px_#00FF41]'
+              : 'bg-bg-hover text-text-dim hover:text-primary hover:bg-primary/10'
           )}
           title={selfVideoOn ? 'Turn off camera' : 'Turn on camera'}
         >
@@ -124,8 +124,8 @@ export function CallControls({ className }: CallControlsProps) {
           className={cn(
             'flex h-8 w-8 items-center justify-center rounded-full transition-colors',
             selfScreenShare
-              ? 'bg-blurple text-white hover:bg-blurple-dark'
-              : 'bg-dark-hover text-neutral-400 hover:text-white hover:bg-dark-active'
+              ? 'bg-primary text-black hover:shadow-[0_0_8px_#00FF41]'
+              : 'bg-bg-hover text-text-dim hover:text-primary hover:bg-primary/10'
           )}
           title={selfScreenShare ? 'Stop sharing' : 'Share screen'}
         >
@@ -133,12 +133,12 @@ export function CallControls({ className }: CallControlsProps) {
         </button>
 
         {/* Divider */}
-        <div className="mx-1 h-6 w-px bg-dark-hover" />
+        <div className="mx-1 h-6 w-px bg-border" />
 
         {/* Leave call */}
         <button
           onClick={leaveCall}
-          className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white transition-colors hover:bg-red-600"
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-error text-black transition-colors hover:shadow-[0_0_8px_#FF0040]"
           title="Leave call"
         >
           <PhoneOff className="h-4 w-4" />
@@ -147,13 +147,13 @@ export function CallControls({ className }: CallControlsProps) {
 
       {/* Participant count */}
       <div className="ml-auto flex items-center gap-2">
-        <span className="text-xs text-neutral-500">
+        <span className="font-mono text-xs text-text-dim">
           {participantCount + 1} in call
         </span>
 
         {/* More options */}
         <button
-          className="flex h-8 w-8 items-center justify-center rounded-full bg-dark-hover text-neutral-400 hover:text-white hover:bg-dark-active transition-colors"
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-bg-hover text-text-dim hover:text-primary hover:bg-primary/10 transition-colors"
           title="Call options"
         >
           <MoreHorizontal className="h-4 w-4" />
@@ -186,11 +186,11 @@ export function ParticipantList({ className }: ParticipantListProps) {
   return (
     <div
       className={cn(
-        'flex flex-col gap-1 p-3 max-h-64 overflow-y-auto border-t border-dark',
+        'flex flex-col gap-1 p-3 max-h-64 overflow-y-auto border-t border-border',
         className
       )}
     >
-      <p className="mb-2 text-xs font-semibold uppercase text-neutral-500">
+      <p className="mb-2 font-mono text-xs font-semibold uppercase text-text-dim">
         In Call — {participants.size + 1}
       </p>
 
@@ -251,7 +251,7 @@ function ParticipantRow({
     : undefined;
 
   return (
-    <div className="flex items-center gap-2 rounded px-2 py-1 hover:bg-dark-hover transition-colors">
+    <div className="flex items-center gap-2 rounded-sm px-2 py-1 hover:bg-bg-hover transition-colors">
       <div className="relative">
         <Avatar
           src={avatarUrl}
@@ -261,26 +261,26 @@ function ParticipantRow({
         />
         {/* Status dot */}
         {muted ? (
-          <div className="absolute -bottom-0.5 -right-0.5 h-4 w-4 items-center justify-center rounded-full bg-red-500 flex">
-            <MicOff className="h-2.5 w-2.5 text-white" />
+          <div className="absolute -bottom-0.5 -right-0.5 h-4 w-4 items-center justify-center rounded-full bg-error flex">
+            <MicOff className="h-2.5 w-2.5 text-black" />
           </div>
         ) : (
-          <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-green-500 ring-1 ring-dark-bl" />
+          <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-primary ring-1 ring-border" />
         )}
       </div>
 
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm text-white">
+        <p className="truncate font-mono text-sm text-primary">
           {name}
-          {isSelf && <span className="ml-1 text-neutral-500">(you)</span>}
+          {isSelf && <span className="ml-1 text-text-dim">(you)</span>}
         </p>
       </div>
 
       {/* Icons */}
       <div className="flex items-center gap-1">
-        {deafened && <HeadphoneOff className="h-3 w-3 text-red-500" />}
-        {muted && <MicOff className="h-3 w-3 text-red-500" />}
-        {!videoOn && <VideoOff className="h-3 w-3 text-neutral-500" />}
+        {deafened && <HeadphoneOff className="h-3 w-3 text-error" />}
+        {muted && <MicOff className="h-3 w-3 text-error" />}
+        {!videoOn && <VideoOff className="h-3 w-3 text-text-dim" />}
       </div>
     </div>
   );

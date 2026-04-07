@@ -15,25 +15,25 @@ export function ServerList() {
   };
 
   return (
-    <div className="flex h-full w-[72px] flex-col items-center bg-dark-bl py-3">
+    <div className="flex h-full w-[72px] flex-col items-center border-l-2 border-primary bg-bg-sidebar py-3">
       {/* Home Button */}
       <Link
         href="/"
         className={cn(
-          "group flex h-12 w-12 items-center justify-center rounded-xl transition-all",
-          "hover:rounded-2xl hover:bg-blurple",
-          selectedGuildId === null && "rounded-2xl bg-blurple"
+          "group flex h-12 w-12 items-center justify-center rounded-sm transition-all",
+          "hover:rounded-lg hover:shadow-[0_0_8px_#00FF41]",
+          selectedGuildId === null && "rounded-sm bg-primary/20 shadow-[0_0_8px_#00FF41]"
         )}
         onClick={() => {
           setSelectedGuild(null);
           setSelectedChannel(null);
         }}
       >
-        <Home className="h-6 w-6 text-white" />
+        <Home className="h-6 w-6 text-primary" />
       </Link>
 
       {/* Separator */}
-      <div className="my-2 h-[2px] w-8 rounded-full bg-dark-hover" />
+      <div className="my-2 h-[2px] w-8 rounded-full bg-border-bright" />
 
       {/* Guild List */}
       <div className="flex flex-1 flex-col items-center gap-2 overflow-y-auto">
@@ -42,9 +42,9 @@ export function ServerList() {
             key={guild.id}
             onClick={() => handleGuildClick(guild.id)}
             className={cn(
-              "group relative flex h-12 w-12 items-center justify-center rounded-xl transition-all",
-              "hover:rounded-2xl",
-              selectedGuildId === guild.id && "rounded-2xl bg-blurple"
+              "group relative flex h-12 w-12 items-center justify-center rounded-sm transition-all",
+              "hover:rounded-lg",
+              selectedGuildId === guild.id && "rounded-sm bg-primary/20 shadow-[0_0_8px_#00FF41]"
             )}
             title={guild.name}
           >
@@ -54,12 +54,12 @@ export function ServerList() {
                 alt={guild.name}
                 width={48}
                 height={48}
-                className="h-12 w-12 rounded-full object-cover"
+                className="h-12 w-12 rounded-sm object-cover grayscale brightness-75 contrast-100"
               />
             ) : (
               <div
-                className="flex h-12 w-12 items-center justify-center rounded-full text-sm font-bold text-white"
-                style={{ backgroundColor: getAvatarColor(guild.id) }}
+                className="flex h-12 w-12 items-center justify-center rounded-sm text-sm font-bold font-mono text-primary"
+                style={{ backgroundColor: "#1A1A1A", border: "1px solid #1F3D1F" }}
               >
                 {getInitials(guild.name)}
               </div>
@@ -67,7 +67,7 @@ export function ServerList() {
 
             {/* Online indicator dot */}
             {selectedGuildId === guild.id && (
-              <span className="absolute bottom-0 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-white" />
+              <span className="absolute bottom-0 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-primary" />
             )}
           </button>
         ))}
@@ -76,13 +76,13 @@ export function ServerList() {
       {/* Theme Toggle Button */}
       <button
         onClick={toggleTheme}
-        className="mt-auto flex h-10 w-10 items-center justify-center rounded-xl bg-dark-hover transition-all hover:rounded-2xl hover:bg-blurple"
+        className="mt-auto flex h-10 w-10 items-center justify-center rounded-sm bg-bg-hover transition-all hover:rounded-lg hover:shadow-[0_0_8px_#00FF41]"
         title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
       >
         {theme === 'dark' ? (
-          <Sun className="h-5 w-5 text-yellow-400" />
+          <Sun className="h-5 w-5 text-warning" />
         ) : (
-          <Moon className="h-5 w-5 text-blurple" />
+          <Moon className="h-5 w-5 text-primary" />
         )}
       </button>
     </div>

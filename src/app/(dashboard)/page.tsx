@@ -21,9 +21,9 @@ export default function DashboardPage() {
   if (!selectedChannelId) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center">
-        <Hash className="h-16 w-16 text-neutral-600 mb-4" />
-        <h2 className="text-xl font-semibold text-white mb-2">Bem-vindo ao Discordo</h2>
-        <p className="text-neutral-500 text-sm">Seleciona um canal ou DM para começar</p>
+        <Hash className="h-16 w-16 text-text-muted mb-4" />
+        <h2 className="font-mono text-xl font-semibold text-primary mb-2">Bem-vindo ao Discordo</h2>
+        <p className="font-mono text-sm text-text-dim">Seleciona um canal ou DM para começar</p>
       </div>
     );
   }
