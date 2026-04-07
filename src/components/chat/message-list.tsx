@@ -163,6 +163,41 @@ function renderCode(content: string): React.ReactNode[] {
   return parts;
 }
 
+function ImageWithFallback({
+  src,
+  alt,
+  authorInitial,
+  onClick,
+}: {
+  src: string;
+  alt: string;
+  authorInitial: string;
+  onClick: () => void;
+}) {
+  const [imgError, setImgError] = useState(false);
+
+  return (
+    <button
+      onClick={onClick}
+      className="block max-w-[100px] overflow-hidden rounded-sm"
+    >
+      {imgError ? (
+        <div className="flex h-14 w-14 items-center justify-center border border-border bg-bg-hover font-mono text-2xl text-primary">
+          {authorInitial}
+        </div>
+      ) : (
+        <img
+          src={src}
+          alt={alt}
+          className="max-h-24 rounded-sm object-cover hover:opacity-90 transition-opacity"
+          loading="lazy"
+          onError={() => setImgError(true)}
+        />
+      )}
+    </button>
+  );
+}
+
 function MessageItem({ message }: { message: DiscordMessage }) {
   const isContentMessage = isMessageWithContent(message.type);
   const [showPicker, setShowPicker] = useState<string | null>(null);
@@ -183,6 +218,7 @@ function MessageItem({ message }: { message: DiscordMessage }) {
   const avatarUrl = message.author.avatar
     ? `https://cdn.discordapp.com/avatars/${message.author.id}/${message.author.avatar}.png`
     : null;
+  const authorInitial = authorName.charAt(0).toUpperCase();
 
   return (
     <div className="group relative flex gap-3 px-4 py-0.5 hover:bg-primary/5">
@@ -228,18 +264,13 @@ function MessageItem({ message }: { message: DiscordMessage }) {
 
               if (isImage) {
                 return (
-                  <button
+                  <ImageWithFallback
                     key={attachment.id}
+                    src={resolvedUrl}
+                    alt={attachment.description || attachment.filename}
+                    authorInitial={authorInitial}
                     onClick={() => { setLightboxSrc(resolvedUrl); setLightboxIsVideo(false); }}
-                    className="block max-w-[100px] overflow-hidden rounded-sm"
-                  >
-                    <img
-                      src={resolvedUrl}
-                      alt={attachment.description || attachment.filename}
-                      className="max-h-24 rounded-sm object-cover hover:opacity-90 transition-opacity"
-                      loading="lazy"
-                    />
-                  </button>
+                  />
                 );
               }
 
