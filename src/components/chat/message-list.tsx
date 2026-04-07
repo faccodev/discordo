@@ -122,16 +122,46 @@ function parseContent(content: string, mentions?: { id: string; username: string
 
   segments.forEach((seg, idx) => {
     if (seg.type === "text") {
-      // Restore mention/channel markers that were escaped
-      const withMentions = seg.content
-        .replace(/\[\[MENTION:([^:]+):([^\]]+)\]\]/g, (_s, id, username) =>
-          `<span class="mention rounded px-0.5">@${username}</span>`
-        )
-        .replace(/\[\[CHANNEL:([^\]]+)\]\]/g, (_s, id) =>
-          `<span class="channel-mention rounded px-0.5">#${id}</span>`
-        );
-      // Render allowed HTML from mentions
-      parts2.push(<span key={idx} dangerouslySetInnerHTML={{ __html: withMentions }} />);
+      // Split text by mention/channel markers and render each part
+      const mentionRe = /\[\[MENTION:([^:]+):([^\]]+)\]\]|\[\[CHANNEL:([^\]]+)\]\]/g;
+      const parts: React.ReactNode[] = [];
+      let lastIdx = 0;
+      let m;
+
+      while ((m = mentionRe.exec(seg.content)) !== null) {
+        // Text before the mention
+        if (m.index > lastIdx) {
+          parts.push(<span key={`${idx}-t-${lastIdx}`}>{seg.content.slice(lastIdx, m.index)}</span>);
+        }
+        // Mention
+        if (m[1] !== undefined) {
+          parts.push(
+            <span key={`${idx}-m-${m.index}`} className="text-primary font-medium">
+              @{m[2]}
+            </span>
+          );
+        }
+        // Channel mention
+        if (m[3] !== undefined) {
+          parts.push(
+            <span key={`${idx}-c-${m.index}`} className="text-cyan font-medium">
+              #{m[3]}
+            </span>
+          );
+        }
+        lastIdx = m.index + m[0].length;
+      }
+
+      // Remaining text after last mention
+      if (lastIdx < seg.content.length) {
+        parts.push(<span key={`${idx}-t-${lastIdx}`}>{seg.content.slice(lastIdx)}</span>);
+      }
+
+      if (parts.length > 0) {
+        parts2.push(...parts);
+      } else {
+        parts2.push(<span key={idx}>{seg.content}</span>);
+      }
     } else if (seg.type === "bold") {
       parts2.push(<strong key={idx} className="font-bold">{seg.content}</strong>);
     } else if (seg.type === "italic") {
