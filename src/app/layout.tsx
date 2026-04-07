@@ -23,8 +23,8 @@ const shareTechMono = Share_Tech_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Discordo Web",
-  description: "Cliente Discord via browser",
+  title: "Matrix",
+  description: "Matrix Discord Client",
   manifest: "/manifest.json",
   icons: {
     icon: [

@@ -48,14 +48,14 @@ export function Avatar({
   };
 
   return (
-    <div className={cn("relative inline-block", className)}>
+    <div className={cn("relative inline-block group", className)}>
       {src ? (
         <Image
           src={src}
           alt={alt}
           width={dimension}
           height={dimension}
-          className="rounded-sm object-cover grayscale brightness-90 contrast-110"
+          className="rounded-sm object-cover grayscale brightness-90 contrast-110 transition-all duration-300 group-hover:grayscale-0 group-hover:brightness-100 group-hover:contrast-100"
           style={{ width: dimension, height: dimension }}
         />
       ) : (

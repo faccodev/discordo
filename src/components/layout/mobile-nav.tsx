@@ -60,7 +60,7 @@ export function MobileNav({ className }: MobileNavProps) {
               <img
                 src={`https://cdn.discordapp.com/icons/${selectedGuildId}/${guilds.find((g) => g.id === selectedGuildId)?.icon}.png`}
                 alt=""
-                className="w-5 h-5 rounded-sm flex-shrink-0"
+                className="w-5 h-5 rounded-sm flex-shrink-0 grayscale hover:grayscale-0 transition-all duration-300"
               />
             ) : (
               <Hash className="h-4 w-4 flex-shrink-0" />

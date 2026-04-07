@@ -54,7 +54,7 @@ export function ServerList() {
                 alt={guild.name}
                 width={48}
                 height={48}
-                className="h-12 w-12 rounded-sm object-cover grayscale brightness-75 contrast-100"
+                className="h-12 w-12 rounded-sm object-cover grayscale brightness-75 contrast-100 transition-all duration-300 group-hover:grayscale-0 group-hover:brightness-100"
               />
             ) : (
               <div

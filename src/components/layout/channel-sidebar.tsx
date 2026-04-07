@@ -117,7 +117,7 @@ export function ChannelSidebar() {
               <img
                 src={`https://cdn.discordapp.com/icons/${selectedGuild.id}/${selectedGuild.icon}.png`}
                 alt=""
-                className="h-6 w-6 rounded-sm"
+                className="h-6 w-6 rounded-sm grayscale hover:grayscale-0 transition-all duration-300"
               />
             ) : null}
             {selectedGuild.name}
