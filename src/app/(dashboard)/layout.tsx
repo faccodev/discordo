@@ -7,7 +7,9 @@ import { ServerList } from "@/components/layout/server-list";
 import { ChannelSidebar } from "@/components/layout/channel-sidebar";
 import { MobileNav, MobileBottomBar } from "@/components/layout/mobile-nav";
 import { ChatArea } from "@/components/chat/chat-area";
+import { SearchModal } from "@/components/chat/search-modal";
 import { useUIStore } from "@/stores/ui-store";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { Loader2 } from "lucide-react";
 import type { DiscordChannel, DiscordGuild, DiscordUser } from "@/lib/discord/types";
 
@@ -21,9 +23,16 @@ export default function DashboardLayout({
     setGuilds,
     setDMs,
     setCurrentUser,
+    selectedChannelId,
+    setSelectedChannel,
   } = useUIStore();
 
   const [isMobile, setIsMobile] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  useKeyboardShortcuts({
+    openSearch: () => setSearchOpen(true),
+  });
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -106,6 +115,15 @@ export default function DashboardLayout({
 
       {/* Mobile bottom bar */}
       {isMobile && <MobileBottomBar />}
+
+      {/* Search Modal (Ctrl+K) */}
+      {searchOpen && (
+        <SearchModal
+          channelId={selectedChannelId ?? undefined}
+          channelName={selectedChannelId ?? 'all'}
+          onClose={() => setSearchOpen(false)}
+        />
+      )}
     </div>
   );
 }

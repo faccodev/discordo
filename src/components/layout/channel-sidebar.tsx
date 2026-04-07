@@ -1,17 +1,21 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useUIStore } from "@/stores/ui-store";
 import { cn } from "@/lib/utils";
 import { Avatar } from "@/components/ui/avatar";
+import { CreateGroupModal } from "@/components/chat/create-group-modal";
 import {
   Hash,
   Volume2,
   ChevronDown,
   ChevronRight,
   Users,
-  Shield,
+  Plus,
+  Phone,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { ChannelType } from "@/lib/discord/types";
 import type { DiscordChannel } from "@/lib/discord/types";
@@ -54,7 +58,11 @@ export function ChannelSidebar() {
     isGuildExpanded,
     sidebarCollapsed,
     currentUser,
+    theme,
+    toggleTheme,
   } = useUIStore();
+
+  const [showCreateGroup, setShowCreateGroup] = useState(false);
 
   const selectedGuild = guilds.find((g) => g.id === selectedGuildId);
 
@@ -166,9 +174,18 @@ export function ChannelSidebar() {
           <>
             {/* Direct Messages */}
             <div className="space-y-0.5">
-              <p className="mb-2 px-2 text-xs font-semibold uppercase text-neutral-400">
-                Mensagens Diretas
-              </p>
+              <div className="mb-2 flex items-center justify-between px-2">
+                <p className="text-xs font-semibold uppercase text-neutral-400">
+                  Mensagens Diretas
+                </p>
+                <button
+                  onClick={() => setShowCreateGroup(true)}
+                  className="flex h-5 w-5 items-center justify-center rounded text-neutral-500 hover:bg-dark-hover hover:text-white transition-colors"
+                  title="Create group DM"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                </button>
+              </div>
               {dms.map((dm) => {
                 const recipient = dm.recipients?.[0];
                 const name = dm.name || recipient?.username || "Unknown";
@@ -215,7 +232,23 @@ export function ChannelSidebar() {
               #{currentUser.discriminator}
             </p>
           </div>
+          <button
+            onClick={toggleTheme}
+            className="mr-1 flex h-8 w-8 items-center justify-center rounded text-neutral-500 hover:bg-dark-hover hover:text-white transition-colors"
+            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          >
+            {theme === 'dark' ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
+          </button>
         </div>
+      )}
+
+      {/* Create Group Modal */}
+      {showCreateGroup && (
+        <CreateGroupModal onClose={() => setShowCreateGroup(false)} />
       )}
     </div>
   );

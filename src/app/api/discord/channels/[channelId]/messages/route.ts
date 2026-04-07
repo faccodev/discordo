@@ -54,20 +54,54 @@ export async function POST(
   const { channelId } = await params;
 
   try {
-    const body = await request.json();
-    const { content } = body;
+    const contentType = request.headers.get("content-type") || "";
 
-    if (!content || typeof content !== "string") {
-      return NextResponse.json({ error: "Content is required" }, { status: 400 });
+    if (contentType.includes("multipart/form-data")) {
+      // File upload via FormData
+      const formData = await request.formData();
+      const content = formData.get("content") as string | null;
+      const files = formData.getAll("files") as File[];
+
+      const body = new FormData();
+      if (content) body.append("content", content);
+      for (const file of files) {
+        body.append("files", file);
+      }
+
+      const client = getDiscordClient();
+      // Use sendMessage with FormData by calling the endpoint directly
+      const res = await fetch(
+        `https://discord.com/api/v10/channels/${channelId}/messages`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+          },
+          body,
+        }
+      );
+      if (!res.ok) {
+        const err = await res.text();
+        throw new Error(err);
+      }
+      return NextResponse.json(await res.json());
+    } else {
+      // JSON body (text only)
+      const body = await request.json();
+      const { content } = body;
+
+      if (!content || typeof content !== "string") {
+        return NextResponse.json({ error: "Content is required" }, { status: 400 });
+      }
+
+      if (content.length > 2000) {
+        return NextResponse.json({ error: "Content too long (max 2000 chars)" }, { status: 400 });
+      }
+
+      const client = getDiscordClient();
+      const message = await client.sendMessage(channelId, content);
+      return NextResponse.json(message);
     }
-
-    if (content.length > 2000) {
-      return NextResponse.json({ error: "Content too long (max 2000 chars)" }, { status: 400 });
-    }
-
-    const client = getDiscordClient();
-    const message = await client.sendMessage(channelId, content);
-    return NextResponse.json(message);
   } catch (error) {
     console.error("Error sending message:", error);
     return NextResponse.json(

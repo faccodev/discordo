@@ -9,8 +9,8 @@ import { formatRelativeTime } from '@/lib/utils';
 import type { DiscordMessage } from '@/lib/discord/types';
 
 interface SearchModalProps {
-  channelId: string;
-  channelName: string;
+  channelId?: string;
+  channelName?: string;
   onClose: () => void;
 }
 
@@ -45,6 +45,7 @@ export function SearchModal({ channelId, channelName, onClose }: SearchModalProp
   const { data: results, isLoading, isFetching } = useQuery({
     queryKey: ['discord-search', channelId, debouncedQuery],
     queryFn: async () => {
+      if (!channelId) return [];
       const params = new URLSearchParams({ q: debouncedQuery });
       const res = await fetch(
         `/api/discord/channels/${channelId}/messages/search?${params}`
@@ -52,7 +53,7 @@ export function SearchModal({ channelId, channelName, onClose }: SearchModalProp
       if (!res.ok) throw new Error('Search failed');
       return res.json() as Promise<DiscordMessage[]>;
     },
-    enabled: debouncedQuery.length >= 2,
+    enabled: !!channelId && debouncedQuery.length >= 2,
     staleTime: 30 * 1000,
   });
 
@@ -75,7 +76,7 @@ export function SearchModal({ channelId, channelName, onClose }: SearchModalProp
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={`Search in #${channelName}...`}
+            placeholder={`Search${channelName ? ` in #${channelName}` : ''}...`}
             className="flex-1 bg-transparent text-sm text-white placeholder:text-neutral-500 focus:outline-none"
           />
           {isFetching && <Loader2 className="h-4 w-4 animate-spin text-neutral-500" />}
@@ -94,7 +95,7 @@ export function SearchModal({ channelId, channelName, onClose }: SearchModalProp
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <Search className="mb-3 h-10 w-10 text-neutral-600" />
               <p className="text-sm font-medium text-neutral-400">
-                Search for messages in #{channelName}
+                Search{channelName ? ` in #${channelName}` : ' messages'}
               </p>
               <p className="mt-1 text-xs text-neutral-600">
                 Type at least 2 characters to search

@@ -3,11 +3,11 @@
 import Image from "next/image";
 import { useUIStore } from "@/stores/ui-store";
 import { cn, getInitials, getAvatarColor } from "@/lib/utils";
-import { Home, Settings } from "lucide-react";
+import { Home, Settings, Sun, Moon } from "lucide-react";
 import Link from "next/link";
 
 export function ServerList() {
-  const { guilds, selectedGuildId, setSelectedGuild, setSelectedChannel } = useUIStore();
+  const { guilds, selectedGuildId, setSelectedGuild, setSelectedChannel, theme, toggleTheme } = useUIStore();
 
   const handleGuildClick = (guildId: string) => {
     setSelectedGuild(guildId);
@@ -73,12 +73,17 @@ export function ServerList() {
         ))}
       </div>
 
-      {/* Settings Button */}
+      {/* Theme Toggle Button */}
       <button
+        onClick={toggleTheme}
         className="mt-auto flex h-10 w-10 items-center justify-center rounded-xl bg-dark-hover transition-all hover:rounded-2xl hover:bg-blurple"
-        title="Configurações"
+        title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
       >
-        <Settings className="h-5 w-5 text-green-500" />
+        {theme === 'dark' ? (
+          <Sun className="h-5 w-5 text-yellow-400" />
+        ) : (
+          <Moon className="h-5 w-5 text-blurple" />
+        )}
       </button>
     </div>
   );

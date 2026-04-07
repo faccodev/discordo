@@ -165,6 +165,45 @@ export class DiscordClient {
       { method: "DELETE" }
     );
   }
+
+  // Group DMs
+  async createGroupDM(
+    recipients: string[],
+    name?: string,
+    icon?: string
+  ): Promise<unknown> {
+    return discordFetch<unknown>(Endpoints.userChannels, this.token, {
+      method: "POST",
+      body: JSON.stringify({ recipients, name, icon }),
+    });
+  }
+
+  async updateChannel(channelId: string, data: {
+    name?: string;
+    icon?: string;
+    topic?: string;
+  }): Promise<unknown> {
+    return discordFetch<unknown>(Endpoints.channel(channelId), this.token, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
+  }
+
+  async addRecipient(channelId: string, userId: string): Promise<void> {
+    return discordFetch<void>(
+      Endpoints.channelRecipient(channelId, userId),
+      this.token,
+      { method: "PUT" }
+    );
+  }
+
+  async removeRecipient(channelId: string, userId: string): Promise<void> {
+    return discordFetch<void>(
+      Endpoints.channelRecipient(channelId, userId),
+      this.token,
+      { method: "DELETE" }
+    );
+  }
 }
 
 export function getDiscordClient(token?: string): DiscordClient {

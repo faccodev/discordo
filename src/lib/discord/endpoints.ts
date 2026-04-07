@@ -16,6 +16,7 @@ export const Endpoints = {
   channel: (channelId: string) => `/channels/${channelId}`,
   channelMessages: (channelId: string) => `/channels/${channelId}/messages`,
   channelSearch: (channelId: string) => `/channels/${channelId}/messages/search`,
+  channelRecipient: (channelId: string, userId: string) => `/channels/${channelId}/recipients/${userId}`,
 
   // Gateway
   gateway: "/gateway",

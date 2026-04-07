@@ -6,9 +6,11 @@ import { useUIStore } from "@/stores/ui-store";
 import { Avatar } from "@/components/ui/avatar";
 import { EmbedCard } from "./embed-card";
 import { formatRelativeTime, formatTimestamp, cn } from "@/lib/utils";
-import { Loader2, ArrowDown } from "lucide-react";
+import { Loader2, ArrowDown, Smile } from "lucide-react";
 import { MessageType } from "@/lib/discord/types";
 import type { DiscordMessage } from "@/lib/discord/types";
+import { ReactionBadge } from "./reaction-picker";
+import { ReactionPicker } from "./reaction-picker";
 import hljs from "highlight.js";
 
 const MESSAGE_TYPES_WITH_CONTENT = [
@@ -160,6 +162,7 @@ function renderCode(content: string): React.ReactNode[] {
 
 function MessageItem({ message }: { message: DiscordMessage }) {
   const isContentMessage = isMessageWithContent(message.type);
+  const [showPicker, setShowPicker] = useState<string | null>(null);
 
   if (!isContentMessage) {
     return (
@@ -253,6 +256,43 @@ function MessageItem({ message }: { message: DiscordMessage }) {
             {message.embeds.map((embed, idx) => (
               <EmbedCard key={idx} embed={embed} />
             ))}
+          </div>
+        )}
+
+        {/* Reactions */}
+        {message.reactions && message.reactions.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1">
+            {message.reactions.map((reaction, idx) => (
+              <ReactionBadge
+                key={idx}
+                count={reaction.count}
+                me={reaction.me}
+                emoji={reaction.emoji}
+                onClick={() =>
+                  setShowPicker(showPicker === message.id ? null : message.id)
+                }
+              />
+            ))}
+            <button
+              onClick={() =>
+                setShowPicker(showPicker === message.id ? null : message.id)
+              }
+              className="flex h-6 w-6 items-center justify-center rounded-full border border-dark-bl bg-dark-hover text-neutral-500 hover:border-blurple hover:text-blurple transition-colors"
+              title="Add reaction"
+            >
+              <Smile className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        )}
+
+        {/* Reaction Picker */}
+        {showPicker === message.id && (
+          <div className="relative">
+            <ReactionPicker
+              channelId={message.channel_id}
+              messageId={message.id}
+              onClose={() => setShowPicker(null)}
+            />
           </div>
         )}
       </div>

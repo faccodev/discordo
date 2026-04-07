@@ -3,6 +3,11 @@ import { persist } from "zustand/middleware";
 import type { DiscordGuild, DiscordChannel, DiscordUser } from "@/lib/discord/types";
 
 interface UIState {
+  // Theme
+  theme: 'dark' | 'light';
+  setTheme: (theme: 'dark' | 'light') => void;
+  toggleTheme: () => void;
+
   // Sidebar
   sidebarCollapsed: boolean;
   toggleSidebar: () => void;
@@ -39,6 +44,11 @@ interface UIState {
 export const useUIStore = create<UIState>()(
   persist(
     (set, get) => ({
+      // Theme
+      theme: 'dark',
+      setTheme: (theme) => set({ theme }),
+      toggleTheme: () => set((state) => ({ theme: state.theme === 'dark' ? 'light' : 'dark' })),
+
       // Sidebar
       sidebarCollapsed: false,
       toggleSidebar: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
@@ -89,6 +99,7 @@ export const useUIStore = create<UIState>()(
         sidebarCollapsed: state.sidebarCollapsed,
         selectedGuildId: state.selectedGuildId,
         selectedChannelId: state.selectedChannelId,
+        theme: state.theme,
       }),
     }
   )
