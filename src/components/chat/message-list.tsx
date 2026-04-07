@@ -11,6 +11,9 @@ import { MessageType } from "@/lib/discord/types";
 import type { DiscordMessage } from "@/lib/discord/types";
 import { ReactionBadge } from "./reaction-picker";
 import { ReactionPicker } from "./reaction-picker";
+import { VideoPlayer } from "./video-player";
+import { AudioPlayer } from "./audio-player";
+import { ImageLightbox } from "./image-lightbox";
 import hljs from "highlight.js";
 
 const MESSAGE_TYPES_WITH_CONTENT = [
@@ -163,6 +166,7 @@ function renderCode(content: string): React.ReactNode[] {
 function MessageItem({ message }: { message: DiscordMessage }) {
   const isContentMessage = isMessageWithContent(message.type);
   const [showPicker, setShowPicker] = useState<string | null>(null);
+  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
   if (!isContentMessage) {
     return (
@@ -214,6 +218,7 @@ function MessageItem({ message }: { message: DiscordMessage }) {
             {message.attachments.map((attachment) => {
               const imageUrl = attachment.proxy_url || attachment.url;
               const isImage = attachment.content_type?.startsWith("image/");
+              const isVideo = attachment.content_type?.startsWith("video/");
 
               // Resolve partial URLs (e.g. just an ID without CDN domain)
               const resolvedUrl = imageUrl.startsWith("http")
@@ -222,22 +227,42 @@ function MessageItem({ message }: { message: DiscordMessage }) {
 
               if (isImage) {
                 return (
-                  <a
+                  <button
                     key={attachment.id}
-                    href={resolvedUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block max-w-md overflow-hidden rounded"
+                    onClick={() => setLightboxSrc(resolvedUrl)}
+                    className="block max-w-[120px] overflow-hidden rounded"
                   >
                     <img
                       src={resolvedUrl}
                       alt={attachment.description || attachment.filename}
-                      className="max-h-96 rounded object-cover"
+                      className="max-h-32 rounded object-cover hover:opacity-90 transition-opacity"
                       loading="lazy"
                     />
-                  </a>
+                  </button>
                 );
               }
+
+              if (isVideo) {
+                return (
+                  <VideoPlayer
+                    key={attachment.id}
+                    src={resolvedUrl}
+                    filename={attachment.filename}
+                    className="max-w-md"
+                  />
+                );
+              }
+
+              if (attachment.content_type?.startsWith("audio/")) {
+                return (
+                  <AudioPlayer
+                    key={attachment.id}
+                    src={resolvedUrl}
+                    filename={attachment.filename}
+                  />
+                );
+              }
+
               return (
                 <a
                   key={attachment.id}
@@ -302,6 +327,15 @@ function MessageItem({ message }: { message: DiscordMessage }) {
               onClose={() => setShowPicker(null)}
             />
           </div>
+        )}
+
+        {/* Image Lightbox */}
+        {lightboxSrc && (
+          <ImageLightbox
+            src={lightboxSrc}
+            alt=""
+            onClose={() => setLightboxSrc(null)}
+          />
         )}
       </div>
     </div>
