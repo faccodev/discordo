@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { ServerList } from "@/components/layout/server-list";
 import { ChannelSidebar } from "@/components/layout/channel-sidebar";
-import { MobileNav, MobileBottomBar } from "@/components/layout/mobile-nav";
+import { MobileNav } from "@/components/layout/mobile-nav";
 import { ChatArea } from "@/components/chat/chat-area";
 import { SearchModal } from "@/components/chat/search-modal";
 import { useUIStore } from "@/stores/ui-store";
@@ -102,19 +102,16 @@ export default function DashboardLayout({
       {/* Channel Sidebar — hidden on mobile (replaced by top bar) */}
       {!isMobile && <ChannelSidebar />}
 
-      {/* Main Content - flex-col on mobile to handle nav + content + bottom bar */}
+      {/* Main Content */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Mobile navigation */}
         {isMobile && <MobileNav />}
 
-        {/* Page content - takes remaining space */}
+        {/* Page content */}
         <div className="flex-1 min-h-0 overflow-hidden">
           {children}
         </div>
       </div>
-
-      {/* Mobile bottom bar */}
-      {isMobile && <MobileBottomBar />}
 
       {/* Search Modal (Ctrl+K) */}
       {searchOpen && (
