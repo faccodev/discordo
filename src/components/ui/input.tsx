@@ -14,16 +14,16 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         <input
           ref={ref}
           className={cn(
-            "flex h-10 w-full rounded-sm border border-border bg-bg px-3 py-2 font-mono text-sm text-primary",
-            "placeholder:text-text-muted",
-            "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-bg",
+            "flex h-10 w-full rounded-sm border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 font-mono text-sm text-[var(--color-text)]",
+            "placeholder:text-[var(--color-text-muted)]",
+            "focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg)]",
             "disabled:cursor-not-allowed disabled:opacity-50",
-            error && "ring-2 ring-error",
+            error && "ring-2 ring-[var(--color-error)]",
             className
           )}
           {...props}
         />
-        {error && <p className="mt-1 font-mono text-xs text-error">{error}</p>}
+        {error && <p className="mt-1 font-mono text-xs text-[var(--color-error)]">{error}</p>}
       </div>
     );
   }

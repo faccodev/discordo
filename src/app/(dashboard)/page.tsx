@@ -21,9 +21,9 @@ export default function DashboardPage() {
   if (!selectedChannelId) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center">
-        <Hash className="h-16 w-16 text-text-muted mb-4" />
-        <h2 className="font-mono text-xl font-semibold text-primary mb-2">Bem-vindo ao Matrix</h2>
-        <p className="font-mono text-sm text-text-dim">Seleciona um canal ou DM para começar</p>
+        <Hash className="h-16 w-16 text-[var(--color-text-muted)] mb-4" />
+        <h2 className="font-mono text-xl font-semibold text-[var(--color-brand)] mb-2">Bem-vindo ao Matrix</h2>
+        <p className="font-mono text-sm text-[var(--color-text-secondary)]">Seleciona um canal ou DM para começar</p>
       </div>
     );
   }

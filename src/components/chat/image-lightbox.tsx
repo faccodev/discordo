@@ -31,7 +31,7 @@ export function ImageLightbox({ src, isVideo, onClose }: ImageLightboxProps) {
     >
       <button
         onClick={onClose}
-        className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-sm border border-[var(--color-brand)] bg-[var(--color-bg-hover)] text-[var(--color-brand)] hover:shadow-[0_0_8px_#00D4FF] transition-colors"
+        className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-sm border border-[var(--color-brand)] bg-[var(--color-bg-hover)] text-[var(--color-brand)] hover:shadow-[0_0_8px_rgba(62,207,142,0.8)] transition-colors"
       >
         <X className="h-5 w-5" />
       </button>

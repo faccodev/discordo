@@ -182,7 +182,7 @@ export function MessageInput({ channelId }: MessageInputProps) {
           <div
             className={cn(
               "px-2 pb-1 text-right text-xs font-mono",
-              content.length > 2000 ? "text-error" : "text-[var(--color-text-secondary)]"
+              content.length > 2000 ? "text-[var(--color-error)]" : "text-[var(--color-text-secondary)]"
             )}
           >
             {content.length}/2000

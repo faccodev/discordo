@@ -259,9 +259,9 @@ function MessageItem({ message }: { message: DiscordMessage }) {
   if (!isContentMessage) {
     return (
       <div className="my-2 flex items-center gap-2">
-        <div className="h-px flex-1 bg-border-bright" />
+        <div className="h-px flex-1 bg-[var(--color-border-light)]" />
         <span className="px-2 text-xs font-mono text-[var(--color-brand-hover)]">{message.content}</span>
-        <div className="h-px flex-1 bg-border-bright" />
+        <div className="h-px flex-1 bg-[var(--color-border-light)]" />
       </div>
     );
   }

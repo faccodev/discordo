@@ -38,21 +38,21 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex h-screen w-screen items-center justify-center matrix-grid relative overflow-hidden">
+    <div className="flex h-screen w-screen items-center justify-center relative overflow-hidden bg-[var(--color-bg-deep)]">
       {/* Background glow effects */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[128px]" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan/10 rounded-full blur-[128px]" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[rgba(62,207,142,0.08)] rounded-full blur-[128px]" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[rgba(62,207,142,0.06)] rounded-full blur-[128px]" />
       </div>
 
       <div className="relative w-full max-w-sm space-y-8 p-8">
         {/* Logo and Title */}
         <div className="text-center">
-          <h1 className="text-5xl font-mono font-bold text-primary text-glow">
+          <h1 className="text-5xl font-mono font-bold text-[var(--color-brand)] text-glow">
             MATRIX
           </h1>
-          <span className="animate-blink text-5xl text-primary">_</span>
-          <p className="mt-4 font-mono text-sm text-text-dim">
+          <span className="animate-blink text-5xl text-[var(--color-brand)]">_</span>
+          <p className="mt-4 font-mono text-sm text-[var(--color-text-secondary)]">
             Terminal v2.0 — Authentication Required
           </p>
         </div>
@@ -60,20 +60,20 @@ export default function LoginPage() {
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
-            <div className="flex items-center gap-2 rounded-lg border border-error/50 glass p-3 font-mono text-sm text-error">
+            <div className="flex items-center gap-2 rounded-lg border border-[var(--color-error)]/50 bg-[var(--color-bg-glass)] p-3 font-mono text-sm text-[var(--color-error)]">
               <AlertCircle className="h-4 w-4 flex-shrink-0" />
               {error}
             </div>
           )}
 
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-primary/70">&gt;</span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-[var(--color-brand)] opacity-70">&gt;</span>
             <Input
               type={showPassword ? "text" : "password"}
               placeholder="ACCESS_PASSWORD"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="border border-border-bright/50 bg-glass pl-8 pr-10 font-mono text-primary placeholder:text-text-muted rounded-xl focus:border-primary focus:outline-none focus:shadow-[0_0_20px_rgba(0,255,65,0.2)] transition-all duration-300"
+              className="border border-[var(--color-border-light)] bg-[var(--color-bg-glass)] pl-8 pr-10 font-mono text-[var(--color-brand)] placeholder:text-[var(--color-text-muted)] rounded-xl focus:border-[var(--color-brand)] focus:outline-none focus:shadow-[0_0_20px_rgba(62,207,142,0.2)] transition-all duration-300"
               required
               autoFocus
               autoComplete="current-password"
@@ -81,7 +81,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-text-dim hover:text-primary transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-secondary)] hover:text-[var(--color-brand)] transition-colors"
             >
               {showPassword ? (
                 <EyeOff className="h-4 w-4" />
@@ -93,7 +93,7 @@ export default function LoginPage() {
 
           <Button
             type="submit"
-            className="w-full border border-primary/50 glass font-mono text-primary hover:bg-primary/10 hover:border-primary hover:shadow-[0_0_25px_rgba(0,255,65,0.3)] transition-all duration-300"
+            className="w-full border border-[var(--color-brand)]/50 bg-[var(--color-bg-glass)] font-mono text-[var(--color-brand)] hover:bg-[rgba(62,207,142,0.1)] hover:border-[var(--color-brand)] hover:shadow-[0_0_25px_rgba(62,207,142,0.3)] transition-all duration-300"
             disabled={loading || !password.trim()}
           >
             {loading ? (
@@ -108,7 +108,7 @@ export default function LoginPage() {
         </form>
 
         {/* Info */}
-        <p className="text-center font-mono text-xs text-text-muted">
+        <p className="text-center font-mono text-xs text-[var(--color-text-muted)]">
           Your Discord token is kept server-side and never exposed to the browser.
         </p>
       </div>

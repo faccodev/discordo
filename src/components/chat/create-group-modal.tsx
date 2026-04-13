@@ -112,15 +112,15 @@ export function CreateGroupModal({ onClose }: CreateGroupModalProps) {
       onClick={handleOverlayClick}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
     >
-      <div className="flex w-full max-w-md flex-col overflow-hidden rounded-sm border border-border-bright bg-bg-sidebar shadow-2xl shadow-primary/20">
+      <div className="flex w-full max-w-md flex-col overflow-hidden rounded-sm border border-[var(--color-border-light)] bg-[var(--color-bg-sidebar)] shadow-2xl shadow-[rgba(62,207,142,0.2)]">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-border px-4 py-3">
-          <h2 className="font-mono text-sm font-semibold text-primary">
+        <div className="flex items-center justify-between border-b border-[var(--color-border)] px-4 py-3">
+          <h2 className="font-mono text-sm font-semibold text-[var(--color-brand)]">
             {step === 'search' ? '> CREATE_GROUP_DM' : '> NAME_GROUP'}
           </h2>
           <button
             onClick={onClose}
-            className="flex h-7 w-7 items-center justify-center rounded-sm text-text-dim hover:bg-bg-hover hover:text-primary transition-colors"
+            className="flex h-7 w-7 items-center justify-center rounded-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-brand)] transition-colors"
           >
             <X className="h-4 w-4" />
           </button>
@@ -139,7 +139,7 @@ export function CreateGroupModal({ onClose }: CreateGroupModalProps) {
                       <button
                         key={u.id}
                         onClick={() => toggleUser(u)}
-                        className="flex items-center gap-1.5 rounded-sm border border-primary bg-primary/10 px-2 py-1 font-mono text-xs text-primary"
+                        className="flex items-center gap-1.5 rounded-sm border border-[var(--color-brand)] bg-[rgba(62,207,142,0.1)] px-2 py-1 font-mono text-xs text-[var(--color-brand)]"
                       >
                         <img
                           src={
@@ -160,14 +160,14 @@ export function CreateGroupModal({ onClose }: CreateGroupModalProps) {
 
               {/* Search */}
               <div className="relative mb-3">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-dim" />
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-text-secondary)]" />
                 <input
                   data-search-input
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search for people..."
-                  className="w-full rounded-sm border border-border bg-bg py-2 pl-10 pr-4 font-mono text-base md:text-sm text-primary placeholder:text-text-muted focus:border-primary focus:outline-none"
+                  className="w-full rounded-sm border border-[var(--color-border)] bg-[var(--color-bg)] py-2 pl-10 pr-4 font-mono text-base md:text-sm text-[var(--color-brand)] placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-brand)] focus:outline-none"
                 />
               </div>
 
@@ -180,7 +180,7 @@ export function CreateGroupModal({ onClose }: CreateGroupModalProps) {
                       <button
                         key={user.id}
                         onClick={() => toggleUser(user)}
-                        className="flex w-full items-center gap-3 rounded-sm px-2 py-2 text-left hover:bg-bg-hover transition-colors"
+                        className="flex w-full items-center gap-3 rounded-sm px-2 py-2 text-left hover:bg-[var(--color-bg-hover)] transition-colors"
                       >
                         <Avatar
                           src={
@@ -193,10 +193,10 @@ export function CreateGroupModal({ onClose }: CreateGroupModalProps) {
                           size="sm"
                         />
                         <div className="min-w-0 flex-1">
-                          <p className="font-mono text-sm font-medium text-primary">{name}</p>
-                          <p className="font-mono text-xs text-text-dim">@{user.username}</p>
+                          <p className="font-mono text-sm font-medium text-[var(--color-brand)]">{name}</p>
+                          <p className="font-mono text-xs text-[var(--color-text-secondary)]">@{user.username}</p>
                         </div>
-                        <UserPlus className="h-4 w-4 text-text-dim" />
+                        <UserPlus className="h-4 w-4 text-[var(--color-text-secondary)]" />
                       </button>
                     );
                   })}
@@ -204,13 +204,13 @@ export function CreateGroupModal({ onClose }: CreateGroupModalProps) {
               )}
 
               {search && suggestions.length === 0 && (
-                <p className="py-4 text-center font-mono text-sm text-text-dim">
+                <p className="py-4 text-center font-mono text-sm text-[var(--color-text-secondary)]">
                   No results for &ldquo;{search}&rdquo;
                 </p>
               )}
 
               {!search && selected.length === 0 && (
-                <p className="py-4 text-center font-mono text-sm text-text-dim">
+                <p className="py-4 text-center font-mono text-sm text-[var(--color-text-secondary)]">
                   Select people to add to your group
                 </p>
               )}
@@ -219,7 +219,7 @@ export function CreateGroupModal({ onClose }: CreateGroupModalProps) {
               {selected.length > 0 && (
                 <button
                   onClick={() => setStep('name')}
-                  className="mt-4 w-full rounded-sm border border-primary bg-primary/10 py-2 font-mono text-sm font-medium text-primary hover:bg-primary hover:text-black transition-all"
+                  className="mt-4 w-full rounded-sm border border-[var(--color-brand)] bg-[rgba(62,207,142,0.1)] py-2 font-mono text-sm font-medium text-[var(--color-brand)] hover:bg-[var(--color-brand)] hover:text-black transition-all"
                 >
                   Continue with {selected.length} member{selected.length > 1 ? 's' : ''}
                 </button>
@@ -245,13 +245,13 @@ export function CreateGroupModal({ onClose }: CreateGroupModalProps) {
                         userId={u.id}
                         size="xs"
                       />
-                      <span className="font-mono text-xs text-text-dim">{name}</span>
+                      <span className="font-mono text-xs text-[var(--color-text-secondary)]">{name}</span>
                     </div>
                   );
                 })}
                 <button
                   onClick={() => setStep('search')}
-                  className="font-mono text-xs text-cyan hover:underline"
+                  className="font-mono text-xs text-[var(--color-brand)] hover:underline"
                 >
                   Edit
                 </button>
@@ -259,7 +259,7 @@ export function CreateGroupModal({ onClose }: CreateGroupModalProps) {
 
               {/* Name input */}
               <div className="mb-4">
-                <label className="mb-1.5 block font-mono text-xs font-semibold uppercase text-text-dim">
+                <label className="mb-1.5 block font-mono text-xs font-semibold uppercase text-[var(--color-text-secondary)]">
                   Group name (optional)
                 </label>
                 <input
@@ -269,13 +269,13 @@ export function CreateGroupModal({ onClose }: CreateGroupModalProps) {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Study Group, Weekend Plans"
                   maxLength={100}
-                  className="w-full rounded-sm border border-border bg-bg py-2 px-3 font-mono text-base md:text-sm text-primary placeholder:text-text-muted focus:border-primary focus:outline-none"
+                  className="w-full rounded-sm border border-[var(--color-border)] bg-[var(--color-bg)] py-2 px-3 font-mono text-base md:text-sm text-[var(--color-brand)] placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-brand)] focus:outline-none"
                 />
-                <p className="mt-1 font-mono text-xs text-text-dim">{name.length}/100</p>
+                <p className="mt-1 font-mono text-xs text-[var(--color-text-secondary)]">{name.length}/100</p>
               </div>
 
               {createMutation.error && (
-                <p className="mb-3 font-mono text-sm text-error">
+                <p className="mb-3 font-mono text-sm text-[var(--color-error)]">
                   {(createMutation.error as Error).message}
                 </p>
               )}
@@ -284,7 +284,7 @@ export function CreateGroupModal({ onClose }: CreateGroupModalProps) {
               <button
                 onClick={() => createMutation.mutate()}
                 disabled={createMutation.isPending}
-                className="flex w-full items-center justify-center gap-2 rounded-sm border border-primary bg-primary/10 py-2 font-mono text-sm font-medium text-primary hover:bg-primary hover:text-black disabled:opacity-50 transition-all"
+                className="flex w-full items-center justify-center gap-2 rounded-sm border border-[var(--color-brand)] bg-[rgba(62,207,142,0.1)] py-2 font-mono text-sm font-medium text-[var(--color-brand)] hover:bg-[var(--color-brand)] hover:text-black disabled:opacity-50 transition-all"
               >
                 {createMutation.isPending ? (
                   <Loader2 className="h-4 w-4 animate-spin" />

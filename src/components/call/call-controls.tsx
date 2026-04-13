@@ -41,7 +41,7 @@ export function CallControls({ className }: CallControlsProps) {
   const participantCount = participants.size;
 
   return (
-    <div className={cn('flex items-center gap-2 px-4 py-3 bg-bg-sidebar border-t border-border', className)}>
+    <div className={cn('flex items-center gap-2 px-4 py-3 bg-[var(--color-bg-sidebar)] border-t border-[var(--color-border)]', className)}>
       {/* Participant avatars */}
       {participantCount > 0 && (
         <div className="flex items-center -space-x-2 mr-2">
@@ -54,16 +54,16 @@ export function CallControls({ className }: CallControlsProps) {
                   alt={p.globalName || p.username}
                   userId={p.userId}
                   size="xs"
-                  className="ring-2 ring-border"
+                  className="ring-2 ring-[var(--color-border)]"
                 />
                 {/* Speaking indicator */}
                 {!p.selfMute && (
-                  <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-primary ring-1 ring-border" />
+                  <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-[var(--color-brand)] ring-1 ring-[var(--color-border)]" />
                 )}
               </div>
             ))}
           {participantCount > 3 && (
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-bg-hover font-mono text-xs font-medium text-text-dim ring-2 ring-border">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--color-bg-hover)] font-mono text-xs font-medium text-[var(--color-text-secondary)] ring-2 ring-[var(--color-border)]">
               +{participantCount - 3}
             </div>
           )}
@@ -78,8 +78,8 @@ export function CallControls({ className }: CallControlsProps) {
           className={cn(
             'flex h-8 w-8 items-center justify-center rounded-full transition-colors',
             selfMuted
-              ? 'bg-error text-black hover:shadow-[0_0_8px_#FF0040]'
-              : 'bg-bg-hover text-text-dim hover:text-primary hover:bg-primary/10'
+              ? 'bg-[var(--color-error)] text-black hover:shadow-[0_0_8px_rgba(239,68,68,0.8)]'
+              : 'bg-[var(--color-bg-hover)] text-[var(--color-text-secondary)] hover:text-[var(--color-brand)] hover:bg-[rgba(62,207,142,0.1)]'
           )}
           title={selfMuted ? 'Unmute' : 'Mute'}
         >
@@ -92,8 +92,8 @@ export function CallControls({ className }: CallControlsProps) {
           className={cn(
             'flex h-8 w-8 items-center justify-center rounded-full transition-colors',
             selfDeafened
-              ? 'bg-error text-black hover:shadow-[0_0_8px_#FF0040]'
-              : 'bg-bg-hover text-text-dim hover:text-primary hover:bg-primary/10'
+              ? 'bg-[var(--color-error)] text-black hover:shadow-[0_0_8px_rgba(239,68,68,0.8)]'
+              : 'bg-[var(--color-bg-hover)] text-[var(--color-text-secondary)] hover:text-[var(--color-brand)] hover:bg-[rgba(62,207,142,0.1)]'
           )}
           title={selfDeafened ? 'Undeafen' : 'Deafen'}
         >
@@ -110,8 +110,8 @@ export function CallControls({ className }: CallControlsProps) {
           className={cn(
             'flex h-8 w-8 items-center justify-center rounded-full transition-colors',
             selfVideoOn
-              ? 'bg-primary text-black hover:shadow-[0_0_8px_#00D4FF]'
-              : 'bg-bg-hover text-text-dim hover:text-primary hover:bg-primary/10'
+              ? 'bg-[var(--color-brand)] text-black hover:shadow-[0_0_8px_rgba(62,207,142,0.8)]'
+              : 'bg-[var(--color-bg-hover)] text-[var(--color-text-secondary)] hover:text-[var(--color-brand)] hover:bg-[rgba(62,207,142,0.1)]'
           )}
           title={selfVideoOn ? 'Turn off camera' : 'Turn on camera'}
         >
@@ -124,8 +124,8 @@ export function CallControls({ className }: CallControlsProps) {
           className={cn(
             'flex h-8 w-8 items-center justify-center rounded-full transition-colors',
             selfScreenShare
-              ? 'bg-primary text-black hover:shadow-[0_0_8px_#00D4FF]'
-              : 'bg-bg-hover text-text-dim hover:text-primary hover:bg-primary/10'
+              ? 'bg-[var(--color-brand)] text-black hover:shadow-[0_0_8px_rgba(62,207,142,0.8)]'
+              : 'bg-[var(--color-bg-hover)] text-[var(--color-text-secondary)] hover:text-[var(--color-brand)] hover:bg-[rgba(62,207,142,0.1)]'
           )}
           title={selfScreenShare ? 'Stop sharing' : 'Share screen'}
         >
@@ -133,12 +133,12 @@ export function CallControls({ className }: CallControlsProps) {
         </button>
 
         {/* Divider */}
-        <div className="mx-1 h-6 w-px bg-border" />
+        <div className="mx-1 h-6 w-px bg-[var(--color-border)]" />
 
         {/* Leave call */}
         <button
           onClick={leaveCall}
-          className="flex h-8 w-8 items-center justify-center rounded-full bg-error text-black transition-colors hover:shadow-[0_0_8px_#FF0040]"
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-error)] text-black transition-colors hover:shadow-[0_0_8px_rgba(239,68,68,0.8)]"
           title="Leave call"
         >
           <PhoneOff className="h-4 w-4" />
@@ -147,13 +147,13 @@ export function CallControls({ className }: CallControlsProps) {
 
       {/* Participant count */}
       <div className="ml-auto flex items-center gap-2">
-        <span className="font-mono text-xs text-text-dim">
+        <span className="font-mono text-xs text-[var(--color-text-secondary)]">
           {participantCount + 1} in call
         </span>
 
         {/* More options */}
         <button
-          className="flex h-8 w-8 items-center justify-center rounded-full bg-bg-hover text-text-dim hover:text-primary hover:bg-primary/10 transition-colors"
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-bg-hover)] text-[var(--color-text-secondary)] hover:text-[var(--color-brand)] hover:bg-[rgba(62,207,142,0.1)] transition-colors"
           title="Call options"
         >
           <MoreHorizontal className="h-4 w-4" />
@@ -186,11 +186,11 @@ export function ParticipantList({ className }: ParticipantListProps) {
   return (
     <div
       className={cn(
-        'flex flex-col gap-1 p-3 max-h-64 overflow-y-auto border-t border-border',
+        'flex flex-col gap-1 p-3 max-h-64 overflow-y-auto border-t border-[var(--color-border)]',
         className
       )}
     >
-      <p className="mb-2 font-mono text-xs font-semibold uppercase text-text-dim">
+      <p className="mb-2 font-mono text-xs font-semibold uppercase text-[var(--color-text-secondary)]">
         In Call — {participants.size + 1}
       </p>
 
@@ -251,7 +251,7 @@ function ParticipantRow({
     : undefined;
 
   return (
-    <div className="flex items-center gap-2 rounded-sm px-2 py-1 hover:bg-bg-hover transition-colors">
+    <div className="flex items-center gap-2 rounded-sm px-2 py-1 hover:bg-[var(--color-bg-hover)] transition-colors">
       <div className="relative">
         <Avatar
           src={avatarUrl}
@@ -261,26 +261,26 @@ function ParticipantRow({
         />
         {/* Status dot */}
         {muted ? (
-          <div className="absolute -bottom-0.5 -right-0.5 h-4 w-4 items-center justify-center rounded-full bg-error flex">
+          <div className="absolute -bottom-0.5 -right-0.5 h-4 w-4 items-center justify-center rounded-full bg-[var(--color-error)] flex">
             <MicOff className="h-2.5 w-2.5 text-black" />
           </div>
         ) : (
-          <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-primary ring-1 ring-border" />
+          <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-[var(--color-brand)] ring-1 ring-[var(--color-border)]" />
         )}
       </div>
 
       <div className="min-w-0 flex-1">
-        <p className="truncate font-mono text-sm text-primary">
+        <p className="truncate font-mono text-sm text-[var(--color-brand)]">
           {name}
-          {isSelf && <span className="ml-1 text-text-dim">(you)</span>}
+          {isSelf && <span className="ml-1 text-[var(--color-text-secondary)]">(you)</span>}
         </p>
       </div>
 
       {/* Icons */}
       <div className="flex items-center gap-1">
-        {deafened && <HeadphoneOff className="h-3 w-3 text-error" />}
-        {muted && <MicOff className="h-3 w-3 text-error" />}
-        {!videoOn && <VideoOff className="h-3 w-3 text-text-dim" />}
+        {deafened && <HeadphoneOff className="h-3 w-3 text-[var(--color-error)]" />}
+        {muted && <MicOff className="h-3 w-3 text-[var(--color-error)]" />}
+        {!videoOn && <VideoOff className="h-3 w-3 text-[var(--color-text-secondary)]" />}
       </div>
     </div>
   );

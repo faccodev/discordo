@@ -114,7 +114,7 @@ export function VideoPlayer({ src, filename, poster, className }: VideoPlayerPro
           onClick={handleSeek}
         >
           <div
-            className="h-full rounded-full bg-primary transition-all group-hover:h-1.5"
+            className="h-full rounded-full bg-[var(--color-brand)] transition-all group-hover:h-1.5"
             style={{ width: `${progress}%` }}
           />
         </div>

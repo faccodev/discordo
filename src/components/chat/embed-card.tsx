@@ -112,7 +112,7 @@ function renderMarkdown(text: string): React.ReactNode[] {
         } else if (m[5] !== undefined) {
           inlineParts.push(<del key={`${idx}-s-${m.index}`} className="line-through opacity-60">{m[5]}</del>);
         } else if (m[6] !== undefined && m[7] !== undefined) {
-          inlineParts.push(<a key={`${idx}-l-${m.index}`} href={m[7]} target="_blank" rel="noopener noreferrer" className="text-cyan hover:underline">{m[6]}</a>);
+          inlineParts.push(<a key={`${idx}-l-${m.index}`} href={m[7]} target="_blank" rel="noopener noreferrer" className="text-[var(--color-brand)] hover:underline">{m[6]}</a>);
         }
         inlineLast = m.index + m[0].length;
       }
@@ -200,7 +200,7 @@ export function EmbedCard({ embed }: EmbedCardProps) {
               href={embed.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="mb-1 font-mono text-sm font-semibold text-cyan hover:underline"
+              className="mb-1 font-mono text-sm font-semibold text-[var(--color-brand)] hover:underline"
             >
               {embed.title}
             </a>
@@ -222,7 +222,7 @@ export function EmbedCard({ embed }: EmbedCardProps) {
 
           {/* Description */}
           {embed.description && (
-            <div className="font-mono text-xs text-text-dim leading-relaxed space-y-1">
+            <div className="font-mono text-xs text-[var(--color-text-secondary)] leading-relaxed space-y-1">
               {renderMarkdown(embed.description)}
             </div>
           )}
@@ -251,7 +251,7 @@ export function EmbedCard({ embed }: EmbedCardProps) {
               {embed.fields.map((field, idx) => (
                 <div key={idx} className={field.inline ? "col-span-1" : "col-span-2"}>
                   <p className="font-mono text-xs font-semibold text-[var(--color-brand)]">{field.name}</p>
-                  <p className="font-mono text-xs text-text-dim leading-relaxed">{field.value}</p>
+                  <p className="font-mono text-xs text-[var(--color-text-secondary)] leading-relaxed">{field.value}</p>
                 </div>
               ))}
             </div>
@@ -259,7 +259,7 @@ export function EmbedCard({ embed }: EmbedCardProps) {
 
           {/* Footer */}
           {(embed.footer || embed.timestamp) && (
-            <div className="mt-2 flex items-center gap-2 font-mono text-xs text-text-[var(--color-text-muted)]">
+            <div className="mt-2 flex items-center gap-2 font-mono text-xs text-[var(--color-text-muted)]">
               {embed.footer?.icon_url && (
                 <img
                   src={embed.footer.icon_url}
@@ -284,7 +284,7 @@ export function EmbedCard({ embed }: EmbedCardProps) {
 
           {/* Provider */}
           {embed.provider?.name && (
-            <p className="mt-1 font-mono text-xs text-text-[var(--color-text-muted)]">{embed.provider.name}</p>
+            <p className="mt-1 font-mono text-xs text-[var(--color-text-muted)]">{embed.provider.name}</p>
           )}
         </div>
 

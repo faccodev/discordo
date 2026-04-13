@@ -83,7 +83,7 @@ export function AudioPlayer({ src, filename }: AudioPlayerProps) {
       {/* Progress */}
       <div className="flex-1">
         <div
-          className="group h-1.5 w-full cursor-pointer rounded-full bg-border"
+          className="group h-1.5 w-full cursor-pointer rounded-full bg-[var(--color-border)]"
           onClick={handleSeek}
         >
           <div

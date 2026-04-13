@@ -15,13 +15,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         className={cn(
           "inline-flex items-center justify-center rounded-sm font-mono font-medium transition-all",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]",
           "disabled:pointer-events-none disabled:opacity-50",
           {
-            "border border-border bg-bg-hover hover:border-primary text-primary": variant === "default",
-            "border border-primary bg-primary hover:bg-primary-dark text-black": variant === "primary",
-            "bg-transparent hover:bg-bg-hover text-primary": variant === "ghost",
-            "border border-error bg-error/10 hover:bg-error text-error": variant === "danger",
+            "border border-[var(--color-border)] bg-[var(--color-bg-hover)] hover:border-[var(--color-brand)] text-[var(--color-brand)]": variant === "default",
+            "border border-[var(--color-brand)] bg-[var(--color-brand)] hover:brightness-110 text-black": variant === "primary",
+            "bg-transparent hover:bg-[var(--color-bg-hover)] text-[var(--color-brand)]": variant === "ghost",
+            "border border-[var(--color-error)] bg-[rgba(239,68,68,0.1)] hover:bg-[var(--color-error)] text-[var(--color-error)]": variant === "danger",
           },
           {
             "h-8 px-3 text-sm": size === "sm",
