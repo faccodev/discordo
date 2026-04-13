@@ -28,7 +28,6 @@ export async function GET(
   const query = searchParams.get("q");
   const pageSize = Math.min(parseInt(searchParams.get("limit") || "25"), 50);
   const cursor = searchParams.get("cursor") || undefined;
-  const authorId = searchParams.get("author") || undefined;
 
   if (!query || query.trim().length === 0) {
     return NextResponse.json(
@@ -51,12 +50,6 @@ export async function GET(
 
     const messages = await client.searchMessages(channelId, query.trim(), searchOptions);
 
-    // Filter by author if specified
-    let filteredMessages = messages;
-    if (authorId) {
-      filteredMessages = messages.filter((m) => m.author.id === authorId);
-    }
-
     // Find next cursor (next page before message ID)
     let nextCursor: string | null = null;
     if (messages.length === pageSize && messages.length > 0) {
@@ -64,15 +57,15 @@ export async function GET(
     }
 
     return NextResponse.json({
-      messages: filteredMessages,
+      messages,
       nextCursor,
       query: query.trim(),
-      total: filteredMessages.length,
+      total: messages.length,
     });
   } catch (error) {
     console.error("Search error:", error);
     return NextResponse.json(
-      { error: "Search failed" },
+      { error: "Search failed", details: String(error) },
       { status: 500 }
     );
   }

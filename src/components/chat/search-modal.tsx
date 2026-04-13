@@ -54,23 +54,66 @@ export function SearchModal({ channelId, channelName, onClose }: SearchModalProp
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  // Fetch search results
-  const { data, isLoading, isFetching, dataUpdatedAt } = useQuery({
+  // Fetch search results (message content search via Discord API)
+  const { data: searchData, isLoading, isFetching, refetch } = useQuery({
     queryKey: ['discord-search', channelId, debouncedQuery],
     queryFn: async (): Promise<SearchResponse> => {
       if (!channelId) return { messages: [], nextCursor: null, query: '', total: 0 };
-      const params = new URLSearchParams({ q: debouncedQuery });
+      const params = new URLSearchParams({ q: debouncedQuery, limit: '50' });
       const res = await fetch(
         `/api/discord/channels/${channelId}/messages/search?${params}`
       );
-      if (!res.ok) throw new Error('Search failed');
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Search failed');
+      }
       return res.json();
     },
     enabled: !!channelId && debouncedQuery.length >= 2,
-    staleTime: 60 * 1000,
+    staleTime: 30 * 1000,
+    retry: 1,
   });
 
-  const messages = data?.messages || [];
+  // Fetch recent messages to search in embeds (Discord API only searches message content)
+  const { data: recentMessages } = useQuery({
+    queryKey: ['discord-messages-embed-search', channelId, debouncedQuery],
+    queryFn: async (): Promise<DiscordMessage[]> => {
+      if (!channelId || !debouncedQuery) return [];
+      // Fetch last 100 messages to search through embeds
+      const res = await fetch(
+        `/api/discord/channels/${channelId}/messages?limit=100`
+      );
+      if (!res.ok) return [];
+      return res.json();
+    },
+    enabled: !!channelId && debouncedQuery.length >= 2,
+    staleTime: 30 * 1000,
+  });
+
+  // Combine search results: API results + messages with matching embeds
+  const messages = useMemo(() => {
+    const apiMessages = searchData?.messages || [];
+    const seenIds = new Set(apiMessages.map((m) => m.id));
+
+    // Find messages where embeds match the search query
+    const embedMatches = (recentMessages || [])
+      .filter((msg) => {
+        if (seenIds.has(msg.id)) return false;
+        // Search in embed title, description, author name, footer, fields
+        return msg.embeds?.some((embed) =>
+          embed.title?.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+          embed.description?.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+          embed.author?.name?.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+          embed.footer?.text?.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+          embed.fields?.some((field) =>
+            field.name.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+            field.value.toLowerCase().includes(debouncedQuery.toLowerCase())
+          )
+        );
+      });
+
+    return [...apiMessages, ...embedMatches];
+  }, [searchData, recentMessages, debouncedQuery]);
 
   // Keyboard navigation
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
@@ -249,13 +292,35 @@ function SearchResultItem({ message, query, isSelected, onClick, onMouseEnter }:
     ? `https://cdn.discordapp.com/avatars/${message.author.id}/${message.author.avatar}.png`
     : undefined;
 
-  const highlightedContent = useMemo(
-    () => highlightSearchTerm(message.content, query),
-    [message.content, query]
-  );
-
   const hasAttachments = message.attachments && message.attachments.length > 0;
   const hasEmbeds = message.embeds && message.embeds.length > 0;
+
+  // Find if query matches in content or embeds
+  const queryLower = query.toLowerCase();
+  const contentMatches = message.content.toLowerCase().includes(queryLower);
+  const matchingEmbed = message.embeds?.find((embed) =>
+    embed.title?.toLowerCase().includes(queryLower) ||
+    embed.description?.toLowerCase().includes(queryLower) ||
+    embed.author?.name?.toLowerCase().includes(queryLower)
+  );
+
+  const highlightedContent = useMemo(() => {
+    if (contentMatches) {
+      return highlightSearchTerm(message.content, query);
+    }
+    if (matchingEmbed) {
+      // Show the matching embed field
+      if (matchingEmbed.title?.toLowerCase().includes(queryLower)) {
+        return <span className="italic opacity-80">📎 {matchingEmbed.title}</span>;
+      }
+      if (matchingEmbed.description) {
+        // Truncate and highlight
+        const desc = matchingEmbed.description.slice(0, 200);
+        return <span className="italic opacity-80">📎 {desc}{matchingEmbed.description.length > 200 ? '...' : ''}</span>;
+      }
+    }
+    return message.content || <span className="italic text-[var(--color-text-muted)]">No text content</span>;
+  }, [message.content, message.embeds, query, contentMatches, matchingEmbed]);
 
   return (
     <button
@@ -288,6 +353,11 @@ function SearchResultItem({ message, query, isSelected, onClick, onMouseEnter }:
           <span className="font-mono text-xs text-[var(--color-text-muted)]">
             {formatRelativeTime(message.timestamp)}
           </span>
+          {matchingEmbed && !contentMatches && (
+            <span className="ml-auto font-mono text-xs text-[var(--color-brand)] bg-[rgba(62,207,142,0.15)] px-1.5 py-0.5 rounded">
+              in embed
+            </span>
+          )}
         </div>
 
         <div className={cn(

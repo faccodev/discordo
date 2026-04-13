@@ -142,10 +142,14 @@ export class DiscordClient {
       params.set("before", options.before);
     }
 
-    return discordFetch<DiscordMessage[]>(
+    // Discord search returns { messages: [[...]], total_results: number }
+    const result = await discordFetch<{ messages: DiscordMessage[][]; total_results: number }>(
       `${Endpoints.channelMessages(channelId)}/search?${params}`,
       this.token
     );
+
+    // Flatten the nested array (messages grouped by relevance/thread)
+    return result.messages.flat();
   }
 
   // Send message
@@ -214,6 +218,7 @@ export class DiscordClient {
 }
 
 export function getDiscordClient(token?: string): DiscordClient {
+  // If no token provided, use bot token (server-side operations)
   const discordToken = token || process.env.DISCORD_BOT_TOKEN;
   if (!discordToken) {
     throw new Error("DISCORD_BOT_TOKEN is not set");
