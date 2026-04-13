@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { X, Search, Loader2, ArrowUp, ArrowDown, Hash } from 'lucide-react';
+import { X, Search, Loader2, ArrowUp, ArrowDown, Hash, FileText, Image, Paperclip } from 'lucide-react';
 import { Avatar } from '@/components/ui/avatar';
-import { formatRelativeTime } from '@/lib/utils';
+import { formatRelativeTime, cn } from '@/lib/utils';
 import type { DiscordMessage } from '@/lib/discord/types';
 
 interface SearchModalProps {
@@ -14,17 +14,29 @@ interface SearchModalProps {
   onClose: () => void;
 }
 
+interface SearchResponse {
+  messages: DiscordMessage[];
+  nextCursor: string | null;
+  query: string;
+  total: number;
+}
+
 export function SearchModal({ channelId, channelName, onClose }: SearchModalProps) {
+  const router = useRouter();
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [loadMore, setLoadMore] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
-  // Debounce search query
+  // Debounce search query (faster for better UX)
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(query.trim());
-    }, 400);
+      setSelectedIndex(0);
+    }, 300);
     return () => clearTimeout(timer);
   }, [query]);
 
@@ -42,96 +54,179 @@ export function SearchModal({ channelId, channelName, onClose }: SearchModalProp
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  const { data: results, isLoading, isFetching } = useQuery({
+  // Fetch search results
+  const { data, isLoading, isFetching, dataUpdatedAt } = useQuery({
     queryKey: ['discord-search', channelId, debouncedQuery],
-    queryFn: async () => {
-      if (!channelId) return [];
+    queryFn: async (): Promise<SearchResponse> => {
+      if (!channelId) return { messages: [], nextCursor: null, query: '', total: 0 };
       const params = new URLSearchParams({ q: debouncedQuery });
       const res = await fetch(
         `/api/discord/channels/${channelId}/messages/search?${params}`
       );
       if (!res.ok) throw new Error('Search failed');
-      return res.json() as Promise<DiscordMessage[]>;
+      return res.json();
     },
     enabled: !!channelId && debouncedQuery.length >= 2,
-    staleTime: 30 * 1000,
+    staleTime: 60 * 1000,
   });
 
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === overlayRef.current) onClose();
-  };
+  const messages = data?.messages || [];
+
+  // Keyboard navigation
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (!messages.length) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedIndex((prev) => Math.min(prev + 1, messages.length - 1));
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedIndex((prev) => Math.max(prev - 1, 0));
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (messages[selectedIndex]) {
+          navigateToMessage(messages[selectedIndex]);
+        }
+        break;
+    }
+  }, [messages, selectedIndex]);
+
+  // Scroll selected item into view
+  useEffect(() => {
+    if (selectedIndex >= 0 && resultsRef.current) {
+      const item = resultsRef.current.children[selectedIndex] as HTMLElement;
+      if (item) {
+        item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    }
+  }, [selectedIndex]);
+
+  const navigateToMessage = useCallback((message: DiscordMessage) => {
+    onClose();
+    router.push(`/channels/${message.channel_id}`);
+  }, [onClose, router]);
+
+  // Clear selection when query changes
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [debouncedQuery]);
 
   return (
     <div
       ref={overlayRef}
-      onClick={handleOverlayClick}
-      className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 pt-[15vh]"
+      onClick={(e) => e.target === overlayRef.current && onClose()}
+      className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 pt-[10vh]"
     >
-      <div className="flex w-full max-w-2xl flex-col overflow-hidden rounded-sm border border-[var(--color-border-light)] bg-[var(--color-bg-sidebar)] shadow-2xl shadow-[rgba(62,207,142,0.2)]">
-        {/* Header */}
+      <div className="flex w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-[var(--color-border-light)] bg-[var(--color-bg-sidebar)] shadow-2xl shadow-[rgba(62,207,142,0.15)]">
+        {/* Header with search input */}
         <div className="flex items-center gap-3 border-b border-[var(--color-border)] px-4 py-3">
-          <Search className="h-4 w-4 flex-shrink-0 text-[var(--color-brand)]" />
+          <Search className="h-5 w-5 flex-shrink-0 text-[var(--color-brand)]" />
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder={`Search${channelName ? ` in #${channelName}` : ''}...`}
-            className="flex-1 bg-transparent font-mono text-base md:text-sm text-[var(--color-brand)] placeholder:text-[var(--color-text-muted)] focus:outline-none"
+            className="flex-1 bg-transparent font-mono text-base md:text-sm text-[var(--color-brand)] placeholder:text-[var(--color-text-muted)] focus:outline-none min-h-[36px]"
+            autoComplete="off"
+            spellCheck="false"
           />
           {isFetching && <Loader2 className="h-4 w-4 animate-spin text-[var(--color-brand)]" />}
-          <button
-            onClick={onClose}
-            className="flex-shrink-0 rounded-sm p-1 text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-brand)] transition-colors"
-          >
-            <X className="h-4 w-4" />
-          </button>
+          {query && !isFetching && (
+            <button
+              onClick={() => setQuery('')}
+              className="flex-shrink-0 rounded-sm p-1 text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text)] transition-colors"
+              aria-label="Clear search"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
         </div>
 
         {/* Results */}
-        <div className="max-h-[60vh] overflow-y-auto">
-          {/* Empty state */}
+        <div ref={resultsRef} className="max-h-[65vh] overflow-y-auto overscroll-behavior-contain">
+          {/* Empty state - no query */}
           {!query && (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <Search className="mb-3 h-10 w-10 text-[var(--color-text-muted)]" />
+            <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--color-bg-hover)]">
+                <Search className="h-7 w-7 text-[var(--color-text-muted)]" />
+              </div>
               <p className="font-mono text-sm font-medium text-[var(--color-text-secondary)]">
                 Search{channelName ? ` in #${channelName}` : ' messages'}
               </p>
-              <p className="mt-1 font-mono text-xs text-[var(--color-text-muted)]">
+              <p className="mt-2 font-mono text-xs text-[var(--color-text-muted)]">
                 Type at least 2 characters to search
               </p>
+              <div className="mt-6 flex gap-2">
+                <kbd className="rounded bg-[var(--color-bg-hover)] px-2 py-1 font-mono text-xs text-[var(--color-text-secondary)]">↑↓</kbd>
+                <span className="font-mono text-xs text-[var(--color-text-muted)]">navigate</span>
+                <kbd className="rounded bg-[var(--color-bg-hover)] px-2 py-1 font-mono text-xs text-[var(--color-text-secondary)]">Enter</kbd>
+                <span className="font-mono text-xs text-[var(--color-text-muted)]">open</span>
+                <kbd className="rounded bg-[var(--color-bg-hover)] px-2 py-1 font-mono text-xs text-[var(--color-text-secondary)]">Esc</kbd>
+                <span className="font-mono text-xs text-[var(--color-text-muted)]">close</span>
+              </div>
             </div>
           )}
 
-          {/* Loading */}
+          {/* Typing state */}
           {query && debouncedQuery.length < 2 && (
             <div className="flex items-center justify-center py-12 font-mono text-sm text-[var(--color-text-secondary)]">
               Keep typing...
             </div>
           )}
 
-          {/* Results */}
-          {debouncedQuery.length >= 2 && results?.length === 0 && !isFetching && (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <p className="font-mono text-sm text-[var(--color-text-secondary)]">
-                No results for &ldquo;{debouncedQuery}&rdquo;
+          {/* No results */}
+          {debouncedQuery.length >= 2 && !isFetching && messages.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--color-bg-hover)]">
+                <Hash className="h-7 w-7 text-[var(--color-text-muted)]" />
+              </div>
+              <p className="font-mono text-sm font-medium text-[var(--color-text-secondary)]">
+                No results for &ldquo;<span className="text-[var(--color-brand)]">{debouncedQuery}</span>&rdquo;
+              </p>
+              <p className="mt-2 font-mono text-xs text-[var(--color-text-muted)]">
+                Try a different keyword or check the spelling
               </p>
             </div>
           )}
 
-          {results && results.length > 0 && (
+          {/* Results list */}
+          {messages.length > 0 && (
             <div className="divide-y divide-[var(--color-border)]">
-              {results.map((message) => (
-                <SearchResultItem key={message.id} message={message} />
+              {messages.map((message, index) => (
+                <SearchResultItem
+                  key={message.id}
+                  message={message}
+                  query={debouncedQuery}
+                  isSelected={index === selectedIndex}
+                  onClick={() => navigateToMessage(message)}
+                  onMouseEnter={() => setSelectedIndex(index)}
+                />
               ))}
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="border-t border-[var(--color-border)] px-4 py-2">
+        <div className="flex items-center justify-between border-t border-[var(--color-border)] px-4 py-2">
+          <div className="flex items-center gap-4">
+            <p className="font-mono text-xs text-[var(--color-text-muted)]">
+              {messages.length > 0 && `${messages.length} results`}
+            </p>
+            <p className="font-mono text-xs text-[var(--color-text-muted)]">
+              {messages.length > 0 && (
+                <span className="ml-2">
+                  Selected: {selectedIndex + 1}/{messages.length}
+                </span>
+              )}
+            </p>
+          </div>
           <p className="font-mono text-xs text-[var(--color-text-muted)]">
-            {results?.length ?? 0} results • Press ESC to close
+            Press ESC to close
           </p>
         </div>
       </div>
@@ -139,52 +234,139 @@ export function SearchModal({ channelId, channelName, onClose }: SearchModalProp
   );
 }
 
-function SearchResultItem({ message }: { message: DiscordMessage }) {
-  const router = useRouter();
+interface SearchResultItemProps {
+  message: DiscordMessage;
+  query: string;
+  isSelected: boolean;
+  onClick: () => void;
+  onMouseEnter: () => void;
+}
+
+function SearchResultItem({ message, query, isSelected, onClick, onMouseEnter }: SearchResultItemProps) {
   const authorName =
     message.member?.nick || message.author.global_name || message.author.username;
   const avatarUrl = message.author.avatar
     ? `https://cdn.discordapp.com/avatars/${message.author.id}/${message.author.avatar}.png`
     : undefined;
 
-  const handleClick = () => {
-    // Navigate to channel and scroll to message
-    router.push(`/channels/${message.channel_id}`);
-    // Could also scroll to message with fragment
-  };
+  const highlightedContent = useMemo(
+    () => highlightSearchTerm(message.content, query),
+    [message.content, query]
+  );
+
+  const hasAttachments = message.attachments && message.attachments.length > 0;
+  const hasEmbeds = message.embeds && message.embeds.length > 0;
 
   return (
     <button
-      onClick={handleClick}
-      className="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-[var(--color-bg-hover)] transition-colors"
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      className={cn(
+        'flex w-full items-start gap-3 px-4 py-3 text-left transition-colors min-h-[72px]',
+        isSelected
+          ? 'bg-[var(--color-bg-hover)] border-l-2 border-[var(--color-brand)]'
+          : 'hover:bg-[var(--color-bg-hover)] border-l-2 border-transparent'
+      )}
     >
-      <Avatar
-        src={avatarUrl}
-        alt={authorName}
-        userId={message.author.id}
-        size="sm"
-      />
+      <div className="relative flex-shrink-0">
+        <Avatar
+          src={avatarUrl}
+          alt={authorName}
+          userId={message.author.id}
+          size="sm"
+        />
+      </div>
+
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline gap-2">
-          <span className="font-mono text-sm font-medium text-[var(--color-brand)]">{authorName}</span>
-          <span className="font-mono text-xs text-[var(--color-text-secondary)]">
+          <span className={cn(
+            'font-mono text-sm font-semibold',
+            isSelected ? 'text-[var(--color-brand)]' : 'text-[var(--color-text)]'
+          )}>
+            {authorName}
+          </span>
+          <span className="font-mono text-xs text-[var(--color-text-muted)]">
             {formatRelativeTime(message.timestamp)}
           </span>
         </div>
-        <p className="mt-0.5 line-clamp-2 font-mono text-sm text-[var(--color-brand)] opacity-80">
-          {highlightQuery(message.content)}
-        </p>
-        {message.attachments && message.attachments.length > 0 && (
-          <p className="mt-1 font-mono text-xs text-[var(--color-text-secondary)]">
-            📎 {message.attachments[0].filename}
-          </p>
+
+        <div className={cn(
+          'mt-1 font-mono text-sm leading-relaxed',
+          isSelected ? 'text-[var(--color-brand)]' : 'text-[var(--color-text-secondary)]'
+        )}>
+          {highlightedContent}
+        </div>
+
+        {/* Attachment/Embed indicators */}
+        {(hasAttachments || hasEmbeds) && (
+          <div className="mt-1.5 flex items-center gap-2">
+            {hasAttachments && (
+              <span className="flex items-center gap-1 font-mono text-xs text-[var(--color-text-muted)]">
+                <Paperclip className="h-3 w-3" />
+                {message.attachments![0].filename}
+                {message.attachments!.length > 1 && ` +${message.attachments!.length - 1}`}
+              </span>
+            )}
+            {hasEmbeds && !hasAttachments && (
+              <span className="flex items-center gap-1 font-mono text-xs text-[var(--color-text-muted)]">
+                <FileText className="h-3 w-3" />
+                Link/Embed
+              </span>
+            )}
+          </div>
         )}
       </div>
+
+      {/* Active indicator */}
+      {isSelected && (
+        <div className="flex-shrink-0 self-center">
+          <ArrowUp className="h-4 w-4 text-[var(--color-brand)]" />
+        </div>
+      )}
     </button>
   );
 }
 
-function highlightQuery(text: string): React.ReactNode {
-  // Simple highlight — will be refined
-  return text || <span className="italic text-[var(--color-text-muted)]">No text content</span>;
+function highlightSearchTerm(text: string, query: string): React.ReactNode {
+  if (!text || !query) {
+    return text || <span className="italic text-[var(--color-text-muted)]">No text content</span>;
+  }
+
+  const parts: React.ReactNode[] = [];
+  const lowerText = text.toLowerCase();
+  const lowerQuery = query.toLowerCase();
+
+  let lastIndex = 0;
+  let index = lowerText.indexOf(lowerQuery);
+
+  if (index === -1) {
+    return text;
+  }
+
+  while (index !== -1) {
+    // Add text before match
+    if (index > lastIndex) {
+      parts.push(text.slice(lastIndex, index));
+    }
+
+    // Add highlighted match
+    parts.push(
+      <mark
+        key={index}
+        className="rounded-sm bg-[rgba(62,207,142,0.25)] px-0.5 py-0 text-[var(--color-brand)] font-semibold"
+      >
+        {text.slice(index, index + query.length)}
+      </mark>
+    );
+
+    lastIndex = index + query.length;
+    index = lowerText.indexOf(lowerQuery, lastIndex);
+  }
+
+  // Add remaining text
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+
+  return parts.length > 0 ? parts : text;
 }

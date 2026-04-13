@@ -133,11 +133,14 @@ export class DiscordClient {
   async searchMessages(
     channelId: string,
     query: string,
-    options: { limit?: number } = {}
+    options: { limit?: number; before?: string } = {}
   ): Promise<DiscordMessage[]> {
     const params = new URLSearchParams();
     params.set("content", query);
     params.set("limit", String(options.limit ?? 25));
+    if (options.before) {
+      params.set("before", options.before);
+    }
 
     return discordFetch<DiscordMessage[]>(
       `${Endpoints.channelMessages(channelId)}/search?${params}`,

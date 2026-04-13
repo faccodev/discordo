@@ -26,6 +26,9 @@ export async function GET(
   const { channelId } = await params;
   const searchParams = request.nextUrl.searchParams;
   const query = searchParams.get("q");
+  const pageSize = Math.min(parseInt(searchParams.get("limit") || "25"), 50);
+  const cursor = searchParams.get("cursor") || undefined;
+  const authorId = searchParams.get("author") || undefined;
 
   if (!query || query.trim().length === 0) {
     return NextResponse.json(
@@ -36,9 +39,36 @@ export async function GET(
 
   try {
     const client = getDiscordClient();
-    // Discord search API: GET /channels/{channel.id}/messages/search?content={query}
-    const messages = await client.searchMessages(channelId, query.trim());
-    return NextResponse.json(messages);
+
+    // Build search options
+    const searchOptions: { limit?: number; before?: string } = {
+      limit: pageSize,
+    };
+
+    if (cursor) {
+      searchOptions.before = cursor;
+    }
+
+    const messages = await client.searchMessages(channelId, query.trim(), searchOptions);
+
+    // Filter by author if specified
+    let filteredMessages = messages;
+    if (authorId) {
+      filteredMessages = messages.filter((m) => m.author.id === authorId);
+    }
+
+    // Find next cursor (next page before message ID)
+    let nextCursor: string | null = null;
+    if (messages.length === pageSize && messages.length > 0) {
+      nextCursor = messages[messages.length - 1].id;
+    }
+
+    return NextResponse.json({
+      messages: filteredMessages,
+      nextCursor,
+      query: query.trim(),
+      total: filteredMessages.length,
+    });
   } catch (error) {
     console.error("Search error:", error);
     return NextResponse.json(
