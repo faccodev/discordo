@@ -92,7 +92,7 @@ export function MessageInput({ channelId }: MessageInputProps) {
   const canSend = (content.trim().length > 0 || files.length > 0) && !sendMessageMutation.isPending;
 
   return (
-    <div className="px-4 pb-4">
+    <div className="px-4 pb-3">
       {/* File previews */}
       {files.length > 0 && (
         <div className="mb-2 flex flex-wrap gap-2">

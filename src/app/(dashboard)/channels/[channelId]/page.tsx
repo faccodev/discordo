@@ -21,7 +21,7 @@ export default function ChannelPage({
   }, [channelId, setSelectedChannel]);
 
   return (
-    <div className="flex flex-1 min-h-0">
+    <div className="flex h-full">
       <ChatArea channelId={channelId} />
     </div>
   );

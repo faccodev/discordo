@@ -67,7 +67,7 @@ export function ChatArea({ channelId }: { channelId?: string }) {
     channelInfo?.type === ChannelType.GUILD_STAGE_VOICE;
 
   return (
-    <div className="flex flex-1 flex-col overflow-hidden bg-[var(--color-bg)]">
+    <div className="flex h-full flex-col overflow-hidden bg-[var(--color-bg)]">
       {/* Channel Header */}
       <div className="flex h-12 min-h-[48px] items-center border-b border-[var(--color-border)] px-4">
         <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -119,7 +119,7 @@ export function ChatArea({ channelId }: { channelId?: string }) {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-hidden">
+      <div className="h-full overflow-hidden">
         <MessageList channelId={activeChannelId} />
       </div>
 
