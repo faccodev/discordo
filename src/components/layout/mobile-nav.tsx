@@ -49,7 +49,7 @@ export function MobileNav({ className }: MobileNavProps) {
   if (!isMobile) return null;
 
   return (
-    <div className="flex-none h-12 bg-[var(--color-bg-sidebar)] border-b border-[var(--color-border)]">
+    <div className="flex-none h-14 bg-[var(--color-bg-sidebar)] border-b border-[var(--color-border)]">
       {/* Mobile Top Bar */}
       <div className="flex items-center h-full px-2 gap-1">
         {/* Back / Home */}
@@ -59,45 +59,51 @@ export function MobileNav({ className }: MobileNavProps) {
               setSelectedGuild(null);
               setSelectedChannel(null);
             }}
-            className="flex items-center gap-1 px-2 py-1 rounded-lg text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-hover)] transition-colors min-w-[44px] min-h-[44px]"
+            className="flex items-center justify-center rounded-lg text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-hover)] transition-colors min-w-[44px] min-h-[44px]"
+            aria-label="Voltar para DMs"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-5 w-5" />
           </button>
         ) : (
           <Link
             href="/"
-            className="flex items-center gap-1 px-2 py-1 rounded-lg text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-hover)] transition-colors min-w-[44px] min-h-[44px]"
+            className="flex items-center justify-center rounded-lg text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-hover)] transition-colors min-w-[44px] min-h-[44px]"
+            aria-label="Página inicial"
           >
-            <Home className="h-4 w-4" />
+            <Home className="h-5 w-5" />
           </Link>
         )}
 
-        {/* Server name - opens drawer */}
+        {/* Server/Channel name - opens drawer */}
         {selectedGuildId ? (
           <button
             onClick={() => { setDrawerTab('channels'); setShowDrawer(true); }}
-            className="flex-1 flex items-center gap-2 ml-1 px-2 py-1 rounded-lg text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-bg-hover)] transition-colors text-left truncate min-h-[44px]"
+            className="flex-1 flex items-center gap-2 ml-1 px-3 py-1 rounded-lg text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-bg-hover)] transition-colors text-left truncate min-h-[44px]"
+            aria-label="Abrir lista de servidores e canais"
           >
             {guilds.find((g) => g.id === selectedGuildId)?.icon ? (
               <img
                 src={`https://cdn.discordapp.com/icons/${selectedGuildId}/${guilds.find((g) => g.id === selectedGuildId)?.icon}.png`}
                 alt=""
-                className="w-5 h-5 rounded-lg flex-shrink-0 object-cover"
+                className="w-6 h-6 rounded-lg flex-shrink-0 object-cover"
               />
             ) : (
-              <Hash className="h-4 w-4 flex-shrink-0" />
+              <Hash className="h-5 w-5 flex-shrink-0 text-[var(--color-brand)]" />
             )}
-            <span className="truncate">
+            <span className="truncate flex-1">
               {guilds.find((g) => g.id === selectedGuildId)?.name}
             </span>
+            <ChevronDown className="h-4 w-4 flex-shrink-0 text-[var(--color-text-muted)]" />
           </button>
         ) : (
           <button
             onClick={() => { setDrawerTab('guilds'); setShowDrawer(true); }}
-            className="flex-1 flex items-center gap-2 ml-1 px-2 py-1 rounded-lg text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-bg-hover)] transition-colors text-left min-h-[44px]"
+            className="flex-1 flex items-center gap-2 ml-1 px-3 py-1 rounded-lg text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-bg-hover)] transition-colors text-left min-h-[44px]"
+            aria-label="Abrir lista de servidores"
           >
-            <Home className="h-4 w-4" />
-            <span>Direct Messages</span>
+            <Home className="h-5 w-5 flex-shrink-0 text-[var(--color-brand)]" />
+            <span className="flex-1">Direct Messages</span>
+            <ChevronDown className="h-4 w-4 flex-shrink-0 text-[var(--color-text-muted)]" />
           </button>
         )}
       </div>
@@ -111,16 +117,34 @@ export function MobileNav({ className }: MobileNavProps) {
             onClick={() => setShowDrawer(false)}
           />
 
-          {/* Drawer */}
-          <div className="relative flex flex-col w-[280px] h-full bg-[var(--color-bg-sidebar)] border-r border-[var(--color-border)]">
+          {/* Drawer - full width on mobile */}
+          <div className="relative flex flex-col w-[85vw] max-w-[320px] h-full bg-[var(--color-bg-sidebar)] border-r border-[var(--color-border)] shadow-2xl">
             {/* Drawer Header */}
-            <div className="flex items-center justify-between h-12 px-3 border-b border-[var(--color-border)] flex-shrink-0">
-              <span className="text-sm font-medium text-[var(--color-text)] truncate">
-                {drawerTab === 'channels' ? 'Canais' : 'Servidores'}
-              </span>
+            <div className="flex items-center justify-between h-14 px-4 border-b border-[var(--color-border)] flex-shrink-0">
+              <div className="flex items-center gap-2">
+                {selectedGuildId ? (
+                  guilds.find((g) => g.id === selectedGuildId)?.icon ? (
+                    <img
+                      src={`https://cdn.discordapp.com/icons/${selectedGuildId}/${guilds.find((g) => g.id === selectedGuildId)?.icon}.png`}
+                      alt=""
+                      className="w-6 h-6 rounded-lg object-cover"
+                    />
+                  ) : (
+                    <Hash className="h-5 w-5 text-[var(--color-brand)]" />
+                  )
+                ) : (
+                  <Home className="h-5 w-5 text-[var(--color-brand)]" />
+                )}
+                <span className="text-base font-semibold text-[var(--color-text)] truncate">
+                  {selectedGuildId
+                    ? guilds.find((g) => g.id === selectedGuildId)?.name
+                    : 'Direct Messages'}
+                </span>
+              </div>
               <button
                 onClick={() => setShowDrawer(false)}
-                className="flex items-center justify-center w-11 h-11 rounded-lg text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-hover)] transition-colors"
+                className="flex items-center justify-center rounded-lg text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-hover)] transition-colors min-w-[44px] min-h-[44px]"
+                aria-label="Fechar menu"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -132,10 +156,10 @@ export function MobileNav({ className }: MobileNavProps) {
                 <button
                   onClick={() => setDrawerTab('channels')}
                   className={cn(
-                    'flex-1 px-3 py-3 text-xs font-medium uppercase transition-colors min-h-[44px]',
+                    'flex-1 px-3 py-3 text-sm font-semibold uppercase tracking-wide transition-colors min-h-[48px]',
                     drawerTab === 'channels'
                       ? 'text-[var(--color-brand)] border-b-2 border-[var(--color-brand)]'
-                      : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
+                      : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-hover)]'
                   )}
                 >
                   Canais
@@ -143,10 +167,10 @@ export function MobileNav({ className }: MobileNavProps) {
                 <button
                   onClick={() => setDrawerTab('guilds')}
                   className={cn(
-                    'flex-1 px-3 py-3 text-xs font-medium uppercase transition-colors min-h-[44px]',
+                    'flex-1 px-3 py-3 text-sm font-semibold uppercase tracking-wide transition-colors min-h-[48px]',
                     drawerTab === 'guilds'
                       ? 'text-[var(--color-brand)] border-b-2 border-[var(--color-brand)]'
-                      : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
+                      : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-hover)]'
                   )}
                 >
                   Servidores
@@ -155,7 +179,7 @@ export function MobileNav({ className }: MobileNavProps) {
             )}
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-2">
+            <div className="flex-1 overflow-y-auto p-3 overscroll-behavior-contain">
               {drawerTab === 'channels' ? (
                 <MobileChannelSheet
                   selectedGuildId={selectedGuildId}
@@ -215,8 +239,8 @@ function MobileChannelSheet({
   if (!selectedGuildId) {
     // Show DMs
     return (
-      <div>
-        <p className="px-3 py-2 text-xs font-medium uppercase text-[var(--color-text-muted)]">Mensagens Diretas</p>
+      <div className="space-y-1">
+        <p className="px-1 py-2 text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Mensagens Diretas</p>
         {dms
           .slice()
           .sort((a, b) => {
@@ -232,18 +256,21 @@ function MobileChannelSheet({
                 key={dm.id}
                 onClick={() => onSelectChannel(dm.id)}
                 className={cn(
-                  'flex w-full items-center gap-2 rounded-lg px-3 py-3 text-sm transition-colors min-h-[44px]',
+                  'flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm transition-all min-h-[48px]',
                   selectedChannelId === dm.id
-                    ? 'bg-[var(--color-brand)]/10 text-[var(--color-brand)]'
+                    ? 'bg-[var(--color-brand)]/15 text-[var(--color-brand)] font-medium shadow-sm'
                     : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text)]'
                 )}
               >
-                <div className="w-6 h-6 rounded-full bg-[var(--color-bg-hover)] flex items-center justify-center flex-shrink-0">
-                  <span className="text-xs text-[var(--color-brand)] font-medium">
+                <div className="w-8 h-8 rounded-full bg-[var(--color-bg-hover)] flex items-center justify-center flex-shrink-0">
+                  <span className="text-sm text-[var(--color-brand)] font-semibold">
                     {name.charAt(0).toUpperCase()}
                   </span>
                 </div>
-                <span className="truncate">{name}</span>
+                <span className="truncate flex-1">{name}</span>
+                {selectedChannelId === dm.id && (
+                  <span className="w-2 h-2 rounded-full bg-[var(--color-brand)]" />
+                )}
               </button>
             );
           })}
@@ -252,39 +279,70 @@ function MobileChannelSheet({
   }
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-2">
+      {/* Uncategorized Channels - Show first if no categories */}
+      {uncategorizedChannels.length > 0 && categories.length === 0 && (
+        <div className="space-y-1">
+          {uncategorizedChannels.map((channel) => (
+            <button
+              key={channel.id}
+              onClick={() => onSelectChannel(channel.id)}
+              className={cn(
+                'flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm transition-all min-h-[48px]',
+                selectedChannelId === channel.id
+                  ? 'bg-[var(--color-brand)]/15 text-[var(--color-brand)] font-medium shadow-sm'
+                  : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text)]'
+              )}
+            >
+              <span className={cn(selectedChannelId === channel.id ? 'text-[var(--color-brand)]' : 'text-[var(--color-text-muted)]')}>
+                {getChannelIcon(channel.type)}
+              </span>
+              <span className="truncate">{channel.name}</span>
+              {selectedChannelId === channel.id && (
+                <span className="ml-auto w-2 h-2 rounded-full bg-[var(--color-brand)]" />
+              )}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Categories with collapsible channels */}
       {categories.map((category) => (
-        <div key={category.id} className="mt-3 first:mt-0">
+        <div key={category.id} className="mt-1">
           {/* Category Header */}
           <button
             onClick={() => toggleGuildExpanded(category.id)}
-            className="mb-1 flex w-full items-center gap-1 px-3 py-2 text-xs font-medium uppercase text-[var(--color-text-muted)] hover:text-[var(--color-text)] min-h-[44px]"
+            className="mb-1 flex w-full items-center gap-2 px-1 py-2 text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)] hover:text-[var(--color-brand)] min-h-[40px] transition-colors"
           >
             {isGuildExpanded(category.id) ? (
               <ChevronDown className="h-3 w-3" />
             ) : (
               <ChevronRight className="h-3 w-3" />
             )}
-            {category.name}
+            <span className="truncate">{category.name}</span>
           </button>
 
           {/* Category Channels */}
           {isGuildExpanded(category.id) && (
-            <div className="space-y-0.5">
+            <div className="space-y-0.5 ml-1">
               {getChannelsForCategory(category.id).map((channel) => (
                 <button
                   key={channel.id}
                   onClick={() => onSelectChannel(channel.id)}
                   className={cn(
-                    'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm transition-colors min-h-[44px]',
+                    'flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm transition-all min-h-[48px]',
                     selectedChannelId === channel.id
-                      ? 'bg-[var(--color-brand)]/10 text-[var(--color-brand)]'
+                      ? 'bg-[var(--color-brand)]/15 text-[var(--color-brand)] font-medium shadow-sm'
                       : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text)]'
                   )}
                 >
-                  {getChannelIcon(channel.type)}
+                  <span className={cn(selectedChannelId === channel.id ? 'text-[var(--color-brand)]' : 'text-[var(--color-text-muted)]')}>
+                    {getChannelIcon(channel.type)}
+                  </span>
                   <span className="truncate">{channel.name}</span>
+                  {selectedChannelId === channel.id && (
+                    <span className="ml-auto w-2 h-2 rounded-full bg-[var(--color-brand)]" />
+                  )}
                 </button>
               ))}
             </div>
@@ -292,24 +350,32 @@ function MobileChannelSheet({
         </div>
       ))}
 
-      {/* Uncategorized Channels */}
-      <div className="space-y-0.5">
-        {uncategorizedChannels.map((channel) => (
-          <button
-            key={channel.id}
-            onClick={() => onSelectChannel(channel.id)}
-            className={cn(
-              'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm transition-colors min-h-[44px]',
-              selectedChannelId === channel.id
-                ? 'bg-[var(--color-brand)]/10 text-[var(--color-brand)]'
-                : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text)]'
-            )}
-          >
-            {getChannelIcon(channel.type)}
-            <span className="truncate">{channel.name}</span>
-          </button>
-        ))}
-      </div>
+      {/* Uncategorized Channels - Show below categories */}
+      {uncategorizedChannels.length > 0 && categories.length > 0 && (
+        <div className="space-y-0.5 mt-2">
+          <p className="px-1 py-2 text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Outros</p>
+          {uncategorizedChannels.map((channel) => (
+            <button
+              key={channel.id}
+              onClick={() => onSelectChannel(channel.id)}
+              className={cn(
+                'flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm transition-all min-h-[48px]',
+                selectedChannelId === channel.id
+                  ? 'bg-[var(--color-brand)]/15 text-[var(--color-brand)] font-medium shadow-sm'
+                  : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text)]'
+              )}
+            >
+              <span className={cn(selectedChannelId === channel.id ? 'text-[var(--color-brand)]' : 'text-[var(--color-text-muted)]')}>
+                {getChannelIcon(channel.type)}
+              </span>
+              <span className="truncate">{channel.name}</span>
+              {selectedChannelId === channel.id && (
+                <span className="ml-auto w-2 h-2 rounded-full bg-[var(--color-brand)]" />
+              )}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -326,52 +392,67 @@ function MobileGuildSheet({
   const { setSelectedGuild, setSelectedChannel } = useUIStore();
 
   return (
-    <div className="space-y-1">
-      <button
-        onClick={() => {
-          setSelectedGuild(null);
-          setSelectedChannel(null);
-          onSelectGuild('');
-        }}
-        className={cn(
-          'flex w-full items-center gap-3 rounded-lg px-3 py-3 text-sm transition-colors min-h-[48px]',
-          selectedGuildId === null
-            ? 'bg-[var(--color-brand)]/10 text-[var(--color-brand)]'
-            : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text)]'
-        )}
-      >
-        <div className="w-10 h-10 rounded-lg bg-[var(--color-bg-hover)] flex items-center justify-center flex-shrink-0">
-          <Home className="h-5 w-5 text-[var(--color-brand)]" />
-        </div>
-        <span>Direct Messages</span>
-      </button>
-
-      <p className="px-3 py-2 text-xs font-medium uppercase text-[var(--color-text-muted)]">Servidores</p>
-      {guilds.map((guild) => (
+    <div className="space-y-2">
+      {/* DMs Section */}
+      <div>
+        <p className="px-1 py-2 text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Direct Messages</p>
         <button
-          key={guild.id}
-          onClick={() => onSelectGuild(guild.id)}
+          onClick={() => {
+            setSelectedGuild(null);
+            setSelectedChannel(null);
+            onSelectGuild('');
+          }}
           className={cn(
-            'flex w-full items-center gap-3 rounded-lg px-3 py-3 text-sm transition-colors min-h-[48px]',
-            selectedGuildId === guild.id
-              ? 'bg-[var(--color-brand)]/10 text-[var(--color-brand)]'
+            'flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm transition-all min-h-[48px] w-full',
+            selectedGuildId === null
+              ? 'bg-[var(--color-brand)]/15 text-[var(--color-brand)] font-medium shadow-sm'
               : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text)]'
           )}
         >
-          {guild.icon ? (
-            <img
-              src={`https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`}
-              alt={guild.name}
-              className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
-            />
-          ) : (
-            <div className="w-10 h-10 rounded-lg bg-[var(--color-bg-hover)] flex items-center justify-center flex-shrink-0 text-[var(--color-brand)] font-medium text-sm">
-              {guild.name.charAt(0).toUpperCase()}
-            </div>
+          <div className="w-10 h-10 rounded-full bg-[var(--color-bg-hover)] flex items-center justify-center flex-shrink-0">
+            <Home className="h-5 w-5 text-[var(--color-brand)]" />
+          </div>
+          <span className="flex-1 text-left">Direct Messages</span>
+          {selectedGuildId === null && (
+            <span className="w-2 h-2 rounded-full bg-[var(--color-brand)]" />
           )}
-          <span className="truncate">{guild.name}</span>
         </button>
-      ))}
+      </div>
+
+      {/* Servers Section */}
+      <div>
+        <p className="px-1 py-2 text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Servidores</p>
+        <div className="space-y-1">
+          {guilds.map((guild) => (
+            <button
+              key={guild.id}
+              onClick={() => onSelectGuild(guild.id)}
+              className={cn(
+                'flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm transition-all min-h-[48px]',
+                selectedGuildId === guild.id
+                  ? 'bg-[var(--color-brand)]/15 text-[var(--color-brand)] font-medium shadow-sm'
+                  : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text)]'
+              )}
+            >
+              {guild.icon ? (
+                <img
+                  src={`https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`}
+                  alt={guild.name}
+                  className="w-10 h-10 rounded-xl object-cover flex-shrink-0"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-xl bg-[var(--color-bg-hover)] flex items-center justify-center flex-shrink-0 text-[var(--color-brand)] font-bold text-sm">
+                  {guild.name.charAt(0).toUpperCase()}
+                </div>
+              )}
+              <span className="truncate flex-1 text-left">{guild.name}</span>
+              {selectedGuildId === guild.id && (
+                <span className="w-2 h-2 rounded-full bg-[var(--color-brand)]" />
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
