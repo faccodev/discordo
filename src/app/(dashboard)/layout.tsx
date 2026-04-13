@@ -95,7 +95,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[var(--color-bg)]">
+    <div className="flex h-[100dvh] w-screen overflow-hidden bg-[var(--color-bg)]">
       {/* Server List — hidden on mobile */}
       {!isMobile && <ServerList />}
 

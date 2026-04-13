@@ -47,7 +47,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${inter.variable} ${jetbrainsMono.variable} ${shareTechMono.variable}`}>
-      <body className="font-sans antialiased">
+      <body className="font-sans antialiased h-[100dvh]">
         <Providers>{children}</Providers>
       </body>
     </html>

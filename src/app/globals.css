@@ -59,6 +59,7 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   overflow: hidden;
+  height: 100dvh;
 }
 
 /* ─── Glass Effect ─────────────────────────────────────── */
@@ -227,7 +228,7 @@ input, textarea {
 
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   body {
-    padding-bottom: env(safe-area-inset-bottom);
+    /* no extra height — safe area handled per-element */
   }
 }
 
