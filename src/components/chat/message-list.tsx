@@ -136,7 +136,7 @@ function parseContent(content: string, mentions?: { id: string; username: string
         // Mention
         if (m[1] !== undefined) {
           parts.push(
-            <span key={`${idx}-m-${m.index}`} className="text-primary font-medium">
+            <span key={`${idx}-m-${m.index}`} className="text-[var(--color-brand)] font-medium">
               @{m[2]}
             </span>
           );
@@ -144,7 +144,7 @@ function parseContent(content: string, mentions?: { id: string; username: string
         // Channel mention
         if (m[3] !== undefined) {
           parts.push(
-            <span key={`${idx}-c-${m.index}`} className="text-cyan font-medium">
+            <span key={`${idx}-c-${m.index}`} className="text-[var(--color-brand-hover)] font-medium">
               #{m[3]}
             </span>
           );
@@ -169,11 +169,11 @@ function parseContent(content: string, mentions?: { id: string; username: string
     } else if (seg.type === "strike") {
       parts2.push(<del key={idx} className="line-through opacity-60">{seg.content}</del>);
     } else if (seg.type === "link") {
-      parts2.push(<a key={idx} href={seg.url} target="_blank" rel="noopener noreferrer" className="text-cyan hover:underline">{seg.content}</a>);
+      parts2.push(<a key={idx} href={seg.url} target="_blank" rel="noopener noreferrer" className="text-[var(--color-brand-hover)] hover:underline">{seg.content}</a>);
     } else if (seg.type === "inlinecode") {
       const unescaped = seg.content.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
       parts2.push(
-        <code key={idx} className="mx-0.5 rounded-sm bg-bg-hover border border-border px-1 py-0.5 font-mono text-xs text-primary">
+        <code key={idx} className="mx-0.5 rounded-sm bg-[var(--color-bg-hover)] border border-[var(--color-border)] px-1 py-0.5 font-mono text-xs text-[var(--color-brand)]">
           {unescaped}
         </code>
       );
@@ -187,21 +187,21 @@ function parseContent(content: string, mentions?: { id: string; username: string
         if (lang && hljs.getLanguage(lang)) {
           const highlighted = hljs.highlight(code, { language: lang }).value;
           parts2.push(
-            <pre key={idx} className="my-2 overflow-x-auto rounded-sm border border-border bg-bg-hover p-3">
-              <code className="font-mono text-xs text-primary" dangerouslySetInnerHTML={{ __html: highlighted }} />
+            <pre key={idx} className="my-2 overflow-x-auto rounded-sm border border-[var(--color-border)] bg-[var(--color-bg-hover)] p-3">
+              <code className="font-mono text-xs text-[var(--color-brand)]" dangerouslySetInnerHTML={{ __html: highlighted }} />
             </pre>
           );
         } else {
           parts2.push(
-            <pre key={idx} className="my-2 overflow-x-auto rounded-sm border border-border bg-bg-hover p-3">
-              <code className="font-mono text-xs text-primary">{code}</code>
+            <pre key={idx} className="my-2 overflow-x-auto rounded-sm border border-[var(--color-border)] bg-[var(--color-bg-hover)] p-3">
+              <code className="font-mono text-xs text-[var(--color-brand)]">{code}</code>
             </pre>
           );
         }
       } catch {
         parts2.push(
-          <pre key={idx} className="my-2 overflow-x-auto rounded-sm border border-border bg-bg-hover p-3">
-            <code className="font-mono text-xs text-primary">{code}</code>
+          <pre key={idx} className="my-2 overflow-x-auto rounded-sm border border-[var(--color-border)] bg-[var(--color-bg-hover)] p-3">
+            <code className="font-mono text-xs text-[var(--color-brand)]">{code}</code>
           </pre>
         );
       }
@@ -234,7 +234,7 @@ function ImageWithFallback({
       className="block max-w-[100px] overflow-hidden rounded-sm"
     >
       {imgError ? (
-        <div className="flex h-14 w-14 items-center justify-center border border-border bg-bg-hover font-mono text-2xl text-primary">
+        <div className="flex h-14 w-14 items-center justify-center border border-[var(--color-border)] bg-[var(--color-bg-hover)] font-mono text-2xl text-[var(--color-brand)]">
           {authorInitial}
         </div>
       ) : (
@@ -260,7 +260,7 @@ function MessageItem({ message }: { message: DiscordMessage }) {
     return (
       <div className="my-2 flex items-center gap-2">
         <div className="h-px flex-1 bg-border-bright" />
-        <span className="px-2 text-xs font-mono text-cyan">{message.content}</span>
+        <span className="px-2 text-xs font-mono text-[var(--color-brand-hover)]">{message.content}</span>
         <div className="h-px flex-1 bg-border-bright" />
       </div>
     );
@@ -273,7 +273,7 @@ function MessageItem({ message }: { message: DiscordMessage }) {
   const authorInitial = authorName.charAt(0).toUpperCase();
 
   return (
-    <div className="group relative flex gap-3 px-4 py-0.5 hover:bg-primary/5">
+    <div className="group relative flex gap-3 px-4 py-0.5 hover:bg-[var(--color-brand)]/5">
       {/* Avatar */}
       <Avatar
         src={avatarUrl}
@@ -287,17 +287,17 @@ function MessageItem({ message }: { message: DiscordMessage }) {
       <div className="min-w-0 flex-1">
         {/* Header */}
         <div className="flex items-baseline gap-2 leading-tight">
-          <span className="font-mono text-sm font-semibold text-primary">{authorName}</span>
-          <span className="font-mono text-xs text-text-muted">
+          <span className="font-mono text-sm font-semibold text-[var(--color-brand)]">{authorName}</span>
+          <span className="font-mono text-xs text-[var(--color-text-muted)]">
             {formatTimestamp(message.timestamp)}
           </span>
           {message.edited_timestamp && (
-            <span className="font-mono text-xs text-text-muted">(editado)</span>
+            <span className="font-mono text-xs text-[var(--color-text-muted)]">(editado)</span>
           )}
         </div>
 
         {/* Message Content */}
-        <div className="message-content leading-relaxed font-mono text-xs text-text-dim">
+        <div className="message-content leading-relaxed font-mono text-xs text-[var(--color-text-secondary)]">
           {renderCode(message.content)}
         </div>
 
@@ -358,11 +358,11 @@ function MessageItem({ message }: { message: DiscordMessage }) {
                   href={resolvedUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 font-mono text-xs text-cyan hover:underline"
+                  className="flex items-center gap-2 font-mono text-xs text-[var(--color-brand-hover)] hover:underline"
                 >
                   📎 {attachment.filename}
                   {attachment.size > 0 && (
-                    <span className="text-xs font-mono text-text-dim">
+                    <span className="text-xs font-mono text-[var(--color-text-secondary)]">
                       ({(attachment.size / 1024).toFixed(1)} KB)
                     </span>
                   )}
@@ -399,7 +399,7 @@ function MessageItem({ message }: { message: DiscordMessage }) {
               onClick={() =>
                 setShowPicker(showPicker === message.id ? null : message.id)
               }
-              className="flex h-6 w-6 items-center justify-center rounded-sm border border-border bg-bg-hover text-text-dim hover:border-primary hover:text-primary transition-colors"
+              className="flex h-6 w-6 items-center justify-center rounded-sm border border-[var(--color-border)] bg-[var(--color-bg-hover)] text-[var(--color-text-secondary)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] transition-colors"
               title="Add reaction"
             >
               <Smile className="h-3.5 w-3.5" />
@@ -494,14 +494,14 @@ export function MessageList({ channelId }: { channelId: string }) {
   if (isLoading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-[var(--color-brand)]" />
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="flex h-full items-center justify-center font-mono text-error">
+      <div className="flex h-full items-center justify-center font-mono text-[var(--color-error)]">
         Erro ao carregar mensagens
       </div>
     );
@@ -510,7 +510,7 @@ export function MessageList({ channelId }: { channelId: string }) {
   if (allMessages.length === 0) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className="font-mono text-text-dim">Nenhuma mensagem ainda</p>
+        <p className="font-mono text-[var(--color-text-secondary)]">Nenhuma mensagem ainda</p>
       </div>
     );
   }
@@ -527,7 +527,7 @@ export function MessageList({ channelId }: { channelId: string }) {
           <button
             onClick={() => fetchNextPage()}
             disabled={isFetchingNextPage}
-            className="rounded-lg border border-border bg-bg-hover px-4 py-3 text-sm font-mono text-text-dim hover:border-primary hover:text-primary disabled:opacity-50 min-h-[44px]"
+            className="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-hover)] px-4 py-3 text-sm font-mono text-[var(--color-text-secondary)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] disabled:opacity-50 min-h-[44px]"
           >
             {isFetchingNextPage ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -549,7 +549,7 @@ export function MessageList({ channelId }: { channelId: string }) {
       {showScrollButton && (
         <button
           onClick={scrollToBottom}
-          className="fixed bottom-24 right-4 md:right-8 flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-mono text-black shadow-lg transition-all hover:shadow-[0_0_12px_#00D4FF] min-h-[48px]"
+          className="fixed bottom-24 right-4 md:right-8 flex items-center gap-2 rounded-full bg-[var(--color-brand)] px-4 py-3 text-sm font-mono text-[var(--color-bg-deep)] shadow-lg transition-all hover:shadow-[0_0_12px_rgba(62,207,142,0.3)] min-h-[48px]"
         >
           <ArrowDown className="h-5 w-5" />
           <span className="hidden sm:inline">Novas mensagens</span>

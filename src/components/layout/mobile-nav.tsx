@@ -51,7 +51,7 @@ export function MobileNav({ className }: MobileNavProps) {
   return (
     <div className={cn('flex flex-col h-full', className)}>
       {/* Mobile Top Bar */}
-      <div className="flex items-center h-12 bg-bg-sidebar border-b border-border-bright px-2 gap-1 flex-shrink-0">
+      <div className="flex items-center h-12 bg-[var(--color-bg-sidebar)] border-b border-[var(--color-border)] px-2 gap-1 flex-shrink-0">
         {/* Back / Home */}
         {selectedGuildId ? (
           <button
@@ -59,15 +59,14 @@ export function MobileNav({ className }: MobileNavProps) {
               setSelectedGuild(null);
               setSelectedChannel(null);
             }}
-            className="flex items-center gap-1 px-2 py-1 rounded-sm text-sm font-mono text-text-dim hover:text-primary hover:bg-bg-hover transition-colors min-w-[44px] min-h-[44px]"
+            className="flex items-center gap-1 px-2 py-1 rounded-lg text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-hover)] transition-colors min-w-[44px] min-h-[44px]"
           >
             <ChevronLeft className="h-4 w-4" />
-            <span className="hidden sm:inline">DMs</span>
           </button>
         ) : (
           <Link
             href="/"
-            className="flex items-center gap-1 px-2 py-1 rounded-sm text-sm font-mono text-text-dim hover:text-primary hover:bg-bg-hover transition-colors min-w-[44px] min-h-[44px]"
+            className="flex items-center gap-1 px-2 py-1 rounded-lg text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-hover)] transition-colors min-w-[44px] min-h-[44px]"
           >
             <Home className="h-4 w-4" />
           </Link>
@@ -77,13 +76,13 @@ export function MobileNav({ className }: MobileNavProps) {
         {selectedGuildId ? (
           <button
             onClick={() => { setDrawerTab('channels'); setShowDrawer(true); }}
-            className="flex-1 flex items-center gap-2 ml-1 px-2 py-1 rounded-sm text-sm font-mono font-medium text-primary hover:bg-bg-hover transition-colors text-left truncate min-h-[44px]"
+            className="flex-1 flex items-center gap-2 ml-1 px-2 py-1 rounded-lg text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-bg-hover)] transition-colors text-left truncate min-h-[44px]"
           >
             {guilds.find((g) => g.id === selectedGuildId)?.icon ? (
               <img
                 src={`https://cdn.discordapp.com/icons/${selectedGuildId}/${guilds.find((g) => g.id === selectedGuildId)?.icon}.png`}
                 alt=""
-                className="w-5 h-5 rounded-sm flex-shrink-0 grayscale hover:grayscale-0 transition-all duration-300"
+                className="w-5 h-5 rounded-lg flex-shrink-0 object-cover"
               />
             ) : (
               <Hash className="h-4 w-4 flex-shrink-0" />
@@ -95,7 +94,7 @@ export function MobileNav({ className }: MobileNavProps) {
         ) : (
           <button
             onClick={() => { setDrawerTab('guilds'); setShowDrawer(true); }}
-            className="flex-1 flex items-center gap-2 ml-1 px-2 py-1 rounded-sm text-sm font-mono font-medium text-primary hover:bg-bg-hover transition-colors text-left min-h-[44px]"
+            className="flex-1 flex items-center gap-2 ml-1 px-2 py-1 rounded-lg text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-bg-hover)] transition-colors text-left min-h-[44px]"
           >
             <Home className="h-4 w-4" />
             <span>Direct Messages</span>
@@ -113,15 +112,15 @@ export function MobileNav({ className }: MobileNavProps) {
           />
 
           {/* Drawer */}
-          <div className="relative flex flex-col w-[280px] h-full glass-sidebar border-r border-border shadow-xl">
+          <div className="relative flex flex-col w-[280px] h-full bg-[var(--color-bg-sidebar)] border-r border-[var(--color-border)]">
             {/* Drawer Header */}
-            <div className="flex items-center justify-between h-12 px-3 border-b border-border-bright/30 flex-shrink-0">
-              <span className="text-sm font-mono font-semibold text-primary truncate">
+            <div className="flex items-center justify-between h-12 px-3 border-b border-[var(--color-border)] flex-shrink-0">
+              <span className="text-sm font-medium text-[var(--color-text)] truncate">
                 {drawerTab === 'channels' ? 'Canais' : 'Servidores'}
               </span>
               <button
                 onClick={() => setShowDrawer(false)}
-                className="flex items-center justify-center w-11 h-11 rounded-lg text-text-dim hover:text-primary hover:bg-bg-hover transition-colors"
+                className="flex items-center justify-center w-11 h-11 rounded-lg text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-hover)] transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -129,14 +128,14 @@ export function MobileNav({ className }: MobileNavProps) {
 
             {/* Tab Switcher */}
             {selectedGuildId && (
-              <div className="flex border-b border-border-bright/30 flex-shrink-0">
+              <div className="flex border-b border-[var(--color-border)] flex-shrink-0">
                 <button
                   onClick={() => setDrawerTab('channels')}
                   className={cn(
-                    'flex-1 px-3 py-3 text-xs font-semibold uppercase transition-colors min-h-[44px]',
+                    'flex-1 px-3 py-3 text-xs font-medium uppercase transition-colors min-h-[44px]',
                     drawerTab === 'channels'
-                      ? 'text-primary border-b-2 border-primary'
-                      : 'text-text-dim hover:text-primary'
+                      ? 'text-[var(--color-brand)] border-b-2 border-[var(--color-brand)]'
+                      : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
                   )}
                 >
                   Canais
@@ -144,10 +143,10 @@ export function MobileNav({ className }: MobileNavProps) {
                 <button
                   onClick={() => setDrawerTab('guilds')}
                   className={cn(
-                    'flex-1 px-3 py-3 text-xs font-semibold uppercase transition-colors min-h-[44px]',
+                    'flex-1 px-3 py-3 text-xs font-medium uppercase transition-colors min-h-[44px]',
                     drawerTab === 'guilds'
-                      ? 'text-primary border-b-2 border-primary'
-                      : 'text-text-dim hover:text-primary'
+                      ? 'text-[var(--color-brand)] border-b-2 border-[var(--color-brand)]'
+                      : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
                   )}
                 >
                   Servidores
@@ -217,7 +216,7 @@ function MobileChannelSheet({
     // Show DMs
     return (
       <div>
-        <p className="px-3 py-2 text-xs font-semibold uppercase text-text-dim">Mensagens Diretas</p>
+        <p className="px-3 py-2 text-xs font-medium uppercase text-[var(--color-text-muted)]">Mensagens Diretas</p>
         {dms
           .slice()
           .sort((a, b) => {
@@ -233,14 +232,14 @@ function MobileChannelSheet({
                 key={dm.id}
                 onClick={() => onSelectChannel(dm.id)}
                 className={cn(
-                  'flex w-full items-center gap-2 rounded-lg px-3 py-3 text-sm font-mono transition-colors min-h-[44px]',
+                  'flex w-full items-center gap-2 rounded-lg px-3 py-3 text-sm transition-colors min-h-[44px]',
                   selectedChannelId === dm.id
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-text-dim hover:bg-bg-hover hover:text-primary'
+                    ? 'bg-[var(--color-brand)]/10 text-[var(--color-brand)]'
+                    : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text)]'
                 )}
               >
-                <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                  <span className="text-xs text-primary font-bold">
+                <div className="w-6 h-6 rounded-full bg-[var(--color-bg-hover)] flex items-center justify-center flex-shrink-0">
+                  <span className="text-xs text-[var(--color-brand)] font-medium">
                     {name.charAt(0).toUpperCase()}
                   </span>
                 </div>
@@ -260,7 +259,7 @@ function MobileChannelSheet({
           {/* Category Header */}
           <button
             onClick={() => toggleGuildExpanded(category.id)}
-            className="mb-1 flex w-full items-center gap-1 px-3 py-2 text-xs font-semibold uppercase text-text-dim hover:text-primary min-h-[44px]"
+            className="mb-1 flex w-full items-center gap-1 px-3 py-2 text-xs font-medium uppercase text-[var(--color-text-muted)] hover:text-[var(--color-text)] min-h-[44px]"
           >
             {isGuildExpanded(category.id) ? (
               <ChevronDown className="h-3 w-3" />
@@ -278,10 +277,10 @@ function MobileChannelSheet({
                   key={channel.id}
                   onClick={() => onSelectChannel(channel.id)}
                   className={cn(
-                    'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-mono transition-colors min-h-[44px]',
+                    'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm transition-colors min-h-[44px]',
                     selectedChannelId === channel.id
-                      ? 'bg-primary/10 text-primary'
-                      : 'text-text-dim hover:bg-bg-hover hover:text-primary'
+                      ? 'bg-[var(--color-brand)]/10 text-[var(--color-brand)]'
+                      : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text)]'
                   )}
                 >
                   {getChannelIcon(channel.type)}
@@ -300,10 +299,10 @@ function MobileChannelSheet({
             key={channel.id}
             onClick={() => onSelectChannel(channel.id)}
             className={cn(
-              'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-mono transition-colors min-h-[44px]',
+              'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm transition-colors min-h-[44px]',
               selectedChannelId === channel.id
-                ? 'bg-primary/10 text-primary'
-                : 'text-text-dim hover:bg-bg-hover hover:text-primary'
+                ? 'bg-[var(--color-brand)]/10 text-[var(--color-brand)]'
+                : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text)]'
             )}
           >
             {getChannelIcon(channel.type)}
@@ -335,38 +334,38 @@ function MobileGuildSheet({
           onSelectGuild('');
         }}
         className={cn(
-          'flex w-full items-center gap-3 rounded-lg px-3 py-3 text-sm font-mono transition-colors min-h-[48px]',
+          'flex w-full items-center gap-3 rounded-lg px-3 py-3 text-sm transition-colors min-h-[48px]',
           selectedGuildId === null
-            ? 'bg-primary/10 text-primary'
-            : 'text-text-dim hover:bg-bg-hover hover:text-primary'
+            ? 'bg-[var(--color-brand)]/10 text-[var(--color-brand)]'
+            : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text)]'
         )}
       >
-        <div className="w-10 h-10 rounded-sm bg-primary/20 flex items-center justify-center flex-shrink-0">
-          <Home className="h-5 w-5 text-primary" />
+        <div className="w-10 h-10 rounded-lg bg-[var(--color-bg-hover)] flex items-center justify-center flex-shrink-0">
+          <Home className="h-5 w-5 text-[var(--color-brand)]" />
         </div>
         <span>Direct Messages</span>
       </button>
 
-      <p className="px-3 py-2 text-xs font-semibold uppercase text-text-dim">Servidores</p>
+      <p className="px-3 py-2 text-xs font-medium uppercase text-[var(--color-text-muted)]">Servidores</p>
       {guilds.map((guild) => (
         <button
           key={guild.id}
           onClick={() => onSelectGuild(guild.id)}
           className={cn(
-            'flex w-full items-center gap-3 rounded-lg px-3 py-3 text-sm font-mono transition-colors min-h-[48px]',
+            'flex w-full items-center gap-3 rounded-lg px-3 py-3 text-sm transition-colors min-h-[48px]',
             selectedGuildId === guild.id
-              ? 'bg-primary/10 text-primary'
-              : 'text-text-dim hover:bg-bg-hover hover:text-primary'
+              ? 'bg-[var(--color-brand)]/10 text-[var(--color-brand)]'
+              : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text)]'
           )}
         >
           {guild.icon ? (
             <img
               src={`https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`}
               alt={guild.name}
-              className="w-10 h-10 rounded-sm object-cover flex-shrink-0"
+              className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
             />
           ) : (
-            <div className="w-10 h-10 rounded-sm bg-bg-hover flex items-center justify-center flex-shrink-0 text-primary font-bold text-sm">
+            <div className="w-10 h-10 rounded-lg bg-[var(--color-bg-hover)] flex items-center justify-center flex-shrink-0 text-[var(--color-brand)] font-medium text-sm">
               {guild.name.charAt(0).toUpperCase()}
             </div>
           )}
@@ -393,7 +392,7 @@ export function MobileBottomBar() {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-30 flex h-16 items-center border-t border-border-bright bg-bg-sidebar px-2 md:hidden"
+      className="fixed bottom-0 left-0 right-0 z-30 flex h-16 items-center border-t border-[var(--color-border)] bg-[var(--color-bg-sidebar)] px-2 md:hidden"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
       {/* Horizontal scrollable guild list */}
@@ -406,14 +405,14 @@ export function MobileBottomBar() {
           }}
           className={cn(
             'flex items-center justify-center rounded-lg flex-shrink-0 transition-all min-w-[44px] min-h-[44px] p-1',
-            selectedGuildId === null && 'bg-primary shadow-[0_0_8px_#00D4FF]'
+            selectedGuildId === null && 'bg-[var(--color-brand)]/20'
           )}
         >
-          <Home className={cn('h-6 w-6', selectedGuildId === null ? 'text-black' : 'text-primary')} />
+          <Home className={cn('h-6 w-6', selectedGuildId === null ? 'text-[var(--color-brand)]' : 'text-[var(--color-text-secondary)]')} />
         </button>
 
         {/* Separator */}
-        <div className="h-8 w-[2px] bg-border-bright flex-shrink-0" />
+        <div className="h-8 w-[2px] bg-[var(--color-border-mid)] flex-shrink-0" />
 
         {/* Guild buttons */}
         {guilds.map((guild) => (
@@ -425,7 +424,7 @@ export function MobileBottomBar() {
             }}
             className={cn(
               'flex items-center justify-center rounded-lg flex-shrink-0 transition-all min-w-[44px] min-h-[44px] p-1',
-              selectedGuildId === guild.id && 'bg-primary/20 shadow-[0_0_8px_#00D4FF]'
+              selectedGuildId === guild.id && 'bg-[var(--color-brand)]/20'
             )}
             title={guild.name}
           >
@@ -438,7 +437,7 @@ export function MobileBottomBar() {
                 className="w-9 h-9 rounded-lg object-cover"
               />
             ) : (
-              <div className="flex w-9 h-9 items-center justify-center rounded-lg bg-bg-hover text-primary font-bold text-sm">
+              <div className="flex w-9 h-9 items-center justify-center rounded-lg bg-[var(--color-bg-hover)] text-[var(--color-brand)] font-medium text-sm">
                 {guild.name.charAt(0).toUpperCase()}
               </div>
             )}

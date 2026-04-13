@@ -37,7 +37,7 @@ function EmbedImage({
   if (failed) {
     return (
       <div
-        className="flex items-center justify-center rounded-sm border border-border bg-bg-hover font-mono text-sm text-primary cursor-pointer"
+        className="flex items-center justify-center rounded-sm border border-[var(--color-border)] bg-[var(--color-bg-hover)] font-mono text-sm text-[var(--color-brand)] cursor-pointer"
         style={{ width: width || 400, height: height || 200 }}
         onClick={onClick}
       >
@@ -124,7 +124,7 @@ function renderMarkdown(text: string): React.ReactNode[] {
       const code = token.content.slice(1, -1)
         .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
       result.push(
-        <code key={idx} className="mx-0.5 rounded-sm bg-bg-hover border border-border px-1 py-0.5 font-mono text-xs text-primary">
+        <code key={idx} className="mx-0.5 rounded-sm bg-[var(--color-bg-hover)] border border-[var(--color-border)] px-1 py-0.5 font-mono text-xs text-[var(--color-brand)]">
           {code}
         </code>
       );
@@ -136,21 +136,21 @@ function renderMarkdown(text: string): React.ReactNode[] {
         if (lang && hljs.getLanguage(lang)) {
           const highlighted = hljs.highlight(code, { language: lang }).value;
           result.push(
-            <pre key={idx} className="my-2 overflow-x-auto rounded-sm border border-border bg-bg-hover p-3">
-              <code className="font-mono text-xs text-primary" dangerouslySetInnerHTML={{ __html: highlighted }} />
+            <pre key={idx} className="my-2 overflow-x-auto rounded-sm border border-[var(--color-border)] bg-[var(--color-bg-hover)] p-3">
+              <code className="font-mono text-xs text-[var(--color-brand)]" dangerouslySetInnerHTML={{ __html: highlighted }} />
             </pre>
           );
         } else {
           result.push(
-            <pre key={idx} className="my-2 overflow-x-auto rounded-sm border border-border bg-bg-hover p-3">
-              <code className="font-mono text-xs text-primary">{code}</code>
+            <pre key={idx} className="my-2 overflow-x-auto rounded-sm border border-[var(--color-border)] bg-[var(--color-bg-hover)] p-3">
+              <code className="font-mono text-xs text-[var(--color-brand)]">{code}</code>
             </pre>
           );
         }
       } catch {
         result.push(
-          <pre key={idx} className="my-2 overflow-x-auto rounded-sm border border-border bg-bg-hover p-3">
-            <code className="font-mono text-xs text-primary">{code}</code>
+          <pre key={idx} className="my-2 overflow-x-auto rounded-sm border border-[var(--color-border)] bg-[var(--color-bg-hover)] p-3">
+            <code className="font-mono text-xs text-[var(--color-brand)]">{code}</code>
           </pre>
         );
       }
@@ -187,7 +187,7 @@ export function EmbedCard({ embed }: EmbedCardProps) {
                 />
               )}
               {embed.author.name && (
-                <span className="font-mono text-xs font-medium text-primary">
+                <span className="font-mono text-xs font-medium text-[var(--color-brand)]">
                   {embed.author.name}
                 </span>
               )}
@@ -250,7 +250,7 @@ export function EmbedCard({ embed }: EmbedCardProps) {
             >
               {embed.fields.map((field, idx) => (
                 <div key={idx} className={field.inline ? "col-span-1" : "col-span-2"}>
-                  <p className="font-mono text-xs font-semibold text-primary">{field.name}</p>
+                  <p className="font-mono text-xs font-semibold text-[var(--color-brand)]">{field.name}</p>
                   <p className="font-mono text-xs text-text-dim leading-relaxed">{field.value}</p>
                 </div>
               ))}
@@ -259,7 +259,7 @@ export function EmbedCard({ embed }: EmbedCardProps) {
 
           {/* Footer */}
           {(embed.footer || embed.timestamp) && (
-            <div className="mt-2 flex items-center gap-2 font-mono text-xs text-text-muted">
+            <div className="mt-2 flex items-center gap-2 font-mono text-xs text-text-[var(--color-text-muted)]">
               {embed.footer?.icon_url && (
                 <img
                   src={embed.footer.icon_url}
@@ -284,7 +284,7 @@ export function EmbedCard({ embed }: EmbedCardProps) {
 
           {/* Provider */}
           {embed.provider?.name && (
-            <p className="mt-1 font-mono text-xs text-text-muted">{embed.provider.name}</p>
+            <p className="mt-1 font-mono text-xs text-text-[var(--color-text-muted)]">{embed.provider.name}</p>
           )}
         </div>
 

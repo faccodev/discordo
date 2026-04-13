@@ -81,21 +81,21 @@ export function ReactionPicker({ channelId, messageId, onClose }: ReactionPicker
   return (
     <div
       ref={containerRef}
-      className="absolute bottom-full left-0 z-50 mb-2 w-80 rounded-sm border border-border-bright bg-bg-sidebar shadow-xl"
+      className="absolute bottom-full left-0 z-50 mb-2 w-80 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-sidebar)] shadow-xl"
     >
       {/* Search */}
-      <div className="flex items-center gap-2 border-b border-border px-3 py-2">
+      <div className="flex items-center gap-2 border-b border-[var(--color-border)] px-3 py-2">
         <input
           ref={inputRef}
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search emoji..."
-          className="flex-1 bg-transparent font-mono text-sm text-primary placeholder:text-text-muted focus:outline-none"
+          className="flex-1 bg-transparent font-mono text-sm text-[var(--color-brand)] placeholder:text-[var(--color-text-muted)] focus:outline-none"
         />
         <button
           onClick={onClose}
-          className="flex min-w-[44px] min-h-[44px] items-center justify-center rounded-lg text-text-dim hover:text-primary transition-colors"
+          className="flex min-w-[44px] min-h-[44px] items-center justify-center rounded-lg text-[var(--color-text-secondary)] hover:text-[var(--color-brand)] transition-colors"
         >
           <X className="h-5 w-5" />
         </button>
@@ -110,7 +110,7 @@ export function ReactionPicker({ channelId, messageId, onClose }: ReactionPicker
             disabled={toggleMutation.isPending}
             className={cn(
               'flex min-w-[44px] min-h-[44px] items-center justify-center rounded-lg text-xl transition-colors',
-              'hover:bg-primary/10 hover:scale-110',
+              'hover:bg-[var(--color-brand)]/10 hover:scale-110',
               toggleMutation.isPending && 'opacity-50'
             )}
             title={emoji}
@@ -119,7 +119,7 @@ export function ReactionPicker({ channelId, messageId, onClose }: ReactionPicker
           </button>
         ))}
         {filteredEmojis.length === 0 && (
-          <p className="w-full py-4 text-center font-mono text-sm text-text-dim">
+          <p className="w-full py-4 text-center font-mono text-sm text-[var(--color-text-secondary)]">
             No results
           </p>
         )}
@@ -145,12 +145,12 @@ export function ReactionBadge({ count, me, emoji, onClick }: ReactionBadgeProps)
       className={cn(
         'flex items-center gap-1 rounded-sm border px-2 py-0.5 font-mono text-xs transition-colors',
         me
-          ? 'border-primary bg-primary/10 text-primary'
-          : 'border-border bg-bg-hover text-text-dim hover:border-primary hover:bg-primary/5 hover:text-primary'
+          ? 'border-[var(--color-brand)] bg-[var(--color-brand)]/10 text-[var(--color-brand)]'
+          : 'border-[var(--color-border)] bg-[var(--color-bg-hover)] text-[var(--color-text-secondary)] hover:border-[var(--color-brand)] hover:bg-[var(--color-brand)]/5 hover:text-[var(--color-brand)]'
       )}
     >
       <span className="text-sm">{displayEmoji}</span>
-      <span className={cn('font-medium', me && 'text-primary')}>{count}</span>
+      <span className={cn('font-medium', me && 'text-[var(--color-brand)]')}>{count}</span>
     </button>
   );
 }

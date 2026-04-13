@@ -57,7 +57,7 @@ export function AudioPlayer({ src, filename }: AudioPlayerProps) {
   };
 
   return (
-    <div className="flex w-full max-w-sm items-center gap-3 rounded-sm border border-border bg-bg-hover px-3 py-2">
+    <div className="flex w-full max-w-sm items-center gap-3 rounded-sm border border-[var(--color-border)] bg-[var(--color-bg-hover)] px-3 py-2">
       <audio
         ref={audioRef}
         src={src}
@@ -71,12 +71,12 @@ export function AudioPlayer({ src, filename }: AudioPlayerProps) {
       {/* Play/Pause */}
       <button
         onClick={togglePlay}
-        className="flex min-w-[44px] min-h-[44px] flex-shrink-0 items-center justify-center rounded-full bg-primary text-black hover:shadow-[0_0_8px_#00D4FF] transition-colors p-2"
+        className="flex min-w-[44px] min-h-[44px] flex-shrink-0 items-center justify-center rounded-full bg-[var(--color-brand)] text-[var(--color-bg-deep)] hover:shadow-[0_0_8px_rgba(62,207,142,0.3)] transition-colors p-2"
       >
         {isPlaying ? (
-          <Pause className="h-5 w-5 fill-black" />
+          <Pause className="h-5 w-5 fill-[var(--color-bg-deep)]" />
         ) : (
-          <Play className="h-5 w-5 fill-black" />
+          <Play className="h-5 w-5 fill-[var(--color-bg-deep)]" />
         )}
       </button>
 
@@ -87,16 +87,16 @@ export function AudioPlayer({ src, filename }: AudioPlayerProps) {
           onClick={handleSeek}
         >
           <div
-            className="h-full rounded-full bg-primary transition-all"
+            className="h-full rounded-full bg-[var(--color-brand)] transition-all"
             style={{ width: `${progress}%` }}
           />
         </div>
         <div className="mt-1 flex items-center justify-between">
-          <span className="font-mono text-xs text-text-dim">
+          <span className="font-mono text-xs text-[var(--color-text-secondary)]">
             {formatTime(audioRef.current?.currentTime || 0)} / {formatTime(duration)}
           </span>
           {filename && (
-            <span className="truncate font-mono text-xs text-text-dim max-w-[100px]">{filename}</span>
+            <span className="truncate font-mono text-xs text-[var(--color-text-secondary)] max-w-[100px]">{filename}</span>
           )}
         </div>
       </div>
@@ -104,7 +104,7 @@ export function AudioPlayer({ src, filename }: AudioPlayerProps) {
       {/* Mute */}
       <button
         onClick={toggleMute}
-        className="flex min-w-[44px] min-h-[44px] flex-shrink-0 items-center justify-center rounded text-text-dim hover:text-primary transition-colors p-2"
+        className="flex min-w-[44px] min-h-[44px] flex-shrink-0 items-center justify-center rounded text-[var(--color-text-secondary)] hover:text-[var(--color-brand)] transition-colors p-2"
       >
         {isMuted ? (
           <VolumeX className="h-5 w-5" />

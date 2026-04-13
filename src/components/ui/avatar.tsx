@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { cn, getInitials, getAvatarColor } from "@/lib/utils";
+import { cn, getInitials } from "@/lib/utils";
 
 interface AvatarProps {
   src?: string | null;
@@ -17,7 +17,7 @@ const sizeMap = {
   xs: 16,
   sm: 24,
   md: 32,
-  lg: 32,
+  lg: 40,
 };
 
 const statusSizeMap = {
@@ -38,35 +38,32 @@ export function Avatar({
 }: AvatarProps) {
   const dimension = sizeMap[size];
   const statusSize = statusSizeMap[size];
-  const bgColor = userId ? getAvatarColor(userId) : "#5865F2";
 
   const statusColors = {
-    online: "bg-status-online",
-    idle: "bg-status-idle",
-    dnd: "bg-status-dnd",
-    offline: "bg-status-offline",
+    online: "bg-[var(--color-status-online)]",
+    idle: "bg-[var(--color-status-idle)]",
+    dnd: "bg-[var(--color-status-dnd)]",
+    offline: "bg-[var(--color-status-offline)]",
   };
 
   return (
-    <div className={cn("relative inline-block group", className)}>
+    <div className={cn("relative inline-block", className)}>
       {src ? (
         <Image
           src={src}
           alt={alt}
           width={dimension}
           height={dimension}
-          className="rounded-sm object-cover grayscale brightness-90 contrast-110 transition-all duration-300 group-hover:grayscale-0 group-hover:brightness-100 group-hover:contrast-100 group-hover:shadow-[0_0_10px_rgba(0,212,255,0.3)]"
+          className="rounded-lg object-cover"
           style={{ width: dimension, height: dimension }}
         />
       ) : (
         <div
-          className="flex items-center justify-center rounded-sm font-mono font-medium text-primary transition-all duration-300 group-hover:shadow-[0_0_10px_rgba(0,212,255,0.3)]"
+          className="flex items-center justify-center rounded-lg bg-[var(--color-bg-hover)] font-medium text-[var(--color-text-secondary)]"
           style={{
             width: dimension,
             height: dimension,
-            backgroundColor: "rgba(0, 212, 255, 0.1)",
-            fontSize: dimension * 0.4,
-            border: "1px solid rgba(0, 212, 255, 0.3)",
+            fontSize: dimension * 0.35,
           }}
         >
           {getInitials(alt)}
@@ -75,7 +72,7 @@ export function Avatar({
       {showStatus && status && (
         <span
           className={cn(
-            "absolute bottom-0 right-0 rounded-full border-2 border-dark",
+            "absolute bottom-0 right-0 rounded-full border-2 border-[var(--color-bg)]",
             statusColors[status]
           )}
           style={{

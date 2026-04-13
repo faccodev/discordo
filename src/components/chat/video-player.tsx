@@ -74,7 +74,7 @@ export function VideoPlayer({ src, filename, poster, className }: VideoPlayerPro
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => isPlaying && setShowControls(false)}
-      className={cn('relative w-full max-w-sm overflow-hidden rounded-sm border border-border bg-black', className)}
+      className={cn('relative w-full max-w-sm overflow-hidden rounded-sm border border-[var(--color-border)] bg-[var(--color-bg-deep)]', className)}
     >
       <video
         ref={videoRef}
@@ -93,10 +93,10 @@ export function VideoPlayer({ src, filename, poster, className }: VideoPlayerPro
       {!isPlaying && (
         <button
           onClick={togglePlay}
-          className="absolute inset-0 flex items-center justify-center bg-black/40 transition-colors hover:bg-black/50 min-h-[100px]"
+          className="absolute inset-0 flex items-center justify-center bg-[var(--color-bg-deep)]/40 transition-colors hover:bg-[var(--color-bg-deep)]/50 min-h-[100px]"
         >
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition-transform hover:scale-110">
-            <Play className="h-7 w-7 text-white fill-white" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[rgba(255,255,255,0.2)] backdrop-blur-sm transition-transform hover:scale-110">
+            <Play className="h-7 w-7 text-[var(--color-text)] fill-[var(--color-text)]" />
           </div>
         </button>
       )}
@@ -123,18 +123,18 @@ export function VideoPlayer({ src, filename, poster, className }: VideoPlayerPro
         <div className="flex items-center gap-1">
           <button
             onClick={togglePlay}
-            className="flex min-w-[44px] min-h-[44px] items-center justify-center rounded text-white hover:bg-white/20 transition-colors"
+            className="flex min-w-[44px] min-h-[44px] items-center justify-center rounded text-[var(--color-text)] hover:bg-[rgba(255,255,255,0.2)] transition-colors"
           >
             {isPlaying ? (
-              <Pause className="h-5 w-5 fill-white" />
+              <Pause className="h-5 w-5 fill-[var(--color-text)]" />
             ) : (
-              <Play className="h-5 w-5 fill-white" />
+              <Play className="h-5 w-5 fill-[var(--color-text)]" />
             )}
           </button>
 
           <button
             onClick={toggleMute}
-            className="flex min-w-[44px] min-h-[44px] items-center justify-center rounded text-white hover:bg-white/20 transition-colors"
+            className="flex min-w-[44px] min-h-[44px] items-center justify-center rounded text-[var(--color-text)] hover:bg-[rgba(255,255,255,0.2)] transition-colors"
           >
             {isMuted ? (
               <VolumeX className="h-5 w-5" />
@@ -146,12 +146,12 @@ export function VideoPlayer({ src, filename, poster, className }: VideoPlayerPro
           <div className="flex-1" />
 
           {filename && (
-            <span className="text-[10px] text-white/60 truncate max-w-[80px]">{filename}</span>
+            <span className="text-[10px] text-[var(--color-text)]/60 truncate max-w-[80px]">{filename}</span>
           )}
 
           <button
             onClick={toggleFullscreen}
-            className="flex min-w-[44px] min-h-[44px] items-center justify-center rounded text-white hover:bg-white/20 transition-colors"
+            className="flex min-w-[44px] min-h-[44px] items-center justify-center rounded text-[var(--color-text)] hover:bg-[rgba(255,255,255,0.2)] transition-colors"
           >
             <Maximize className="h-5 w-5" />
           </button>

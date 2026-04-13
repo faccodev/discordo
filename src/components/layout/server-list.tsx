@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { useUIStore } from "@/stores/ui-store";
-import { cn, getInitials, getAvatarColor } from "@/lib/utils";
-import { Home, Settings, Sun, Moon } from "lucide-react";
+import { cn, getInitials } from "@/lib/utils";
+import { Home, Sun, Moon } from "lucide-react";
 import Link from "next/link";
 
 export function ServerList() {
@@ -15,25 +15,25 @@ export function ServerList() {
   };
 
   return (
-    <div className="flex h-full w-[72px] flex-col items-center border-l-2 border-primary bg-bg-sidebar py-3">
+    <div className="flex h-full w-[72px] flex-col items-center border-r border-[var(--color-border)] bg-[var(--color-bg-sidebar)] py-3">
       {/* Home Button */}
       <Link
         href="/"
         className={cn(
-          "group flex h-12 w-12 items-center justify-center rounded-sm transition-all",
-          "hover:rounded-lg hover:shadow-[0_0_8px_#00D4FF]",
-          selectedGuildId === null && "rounded-sm bg-primary/20 shadow-[0_0_8px_#00D4FF]"
+          "group flex h-12 w-12 items-center justify-center rounded-lg transition-all",
+          "hover:bg-[var(--color-bg-hover)]",
+          selectedGuildId === null && "bg-[var(--color-brand)]/10"
         )}
         onClick={() => {
           setSelectedGuild(null);
           setSelectedChannel(null);
         }}
       >
-        <Home className="h-6 w-6 text-primary" />
+        <Home className="h-6 w-6 text-[var(--color-brand)]" />
       </Link>
 
       {/* Separator */}
-      <div className="my-2 h-[2px] w-8 rounded-full bg-border-bright" />
+      <div className="my-2 h-[2px] w-8 rounded-full bg-[var(--color-border-mid)]" />
 
       {/* Guild List */}
       <div className="flex flex-1 flex-col items-center gap-2 overflow-y-auto">
@@ -42,9 +42,8 @@ export function ServerList() {
             key={guild.id}
             onClick={() => handleGuildClick(guild.id)}
             className={cn(
-              "group relative flex h-12 w-12 items-center justify-center rounded-sm transition-all",
-              "hover:rounded-lg",
-              selectedGuildId === guild.id && "rounded-sm bg-primary/20 shadow-[0_0_8px_#00D4FF]"
+              "group relative flex h-12 w-12 items-center justify-center rounded-lg transition-all",
+              selectedGuildId === guild.id && "bg-[var(--color-brand)]/10"
             )}
             title={guild.name}
           >
@@ -54,20 +53,19 @@ export function ServerList() {
                 alt={guild.name}
                 width={48}
                 height={48}
-                className="h-12 w-12 rounded-sm object-cover grayscale brightness-75 contrast-100 transition-all duration-300 group-hover:grayscale-0 group-hover:brightness-100"
+                className="h-10 w-10 rounded-lg object-cover"
               />
             ) : (
               <div
-                className="flex h-12 w-12 items-center justify-center rounded-sm text-sm font-bold font-mono text-primary"
-                style={{ backgroundColor: "#1A1A1A", border: "1px solid #1F3D1F" }}
+                className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--color-bg-hover)] text-sm font-medium text-[var(--color-brand)]"
               >
                 {getInitials(guild.name)}
               </div>
             )}
 
-            {/* Online indicator dot */}
+            {/* Selection indicator */}
             {selectedGuildId === guild.id && (
-              <span className="absolute bottom-0 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-primary" />
+              <span className="absolute -left-1 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-[var(--color-brand)]" />
             )}
           </button>
         ))}
@@ -76,13 +74,13 @@ export function ServerList() {
       {/* Theme Toggle Button */}
       <button
         onClick={toggleTheme}
-        className="mt-auto flex h-10 w-10 items-center justify-center rounded-sm bg-bg-hover transition-all hover:rounded-lg hover:shadow-[0_0_8px_#00D4FF]"
+        className="mt-auto flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--color-bg-hover)] transition-all hover:bg-[var(--color-border)]"
         title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
       >
         {theme === 'dark' ? (
-          <Sun className="h-5 w-5 text-warning" />
+          <Sun className="h-5 w-5 text-[var(--color-warning)]" />
         ) : (
-          <Moon className="h-5 w-5 text-primary" />
+          <Moon className="h-5 w-5 text-[var(--color-brand)]" />
         )}
       </button>
     </div>

@@ -105,14 +105,14 @@ export function MessageInput({ channelId }: MessageInputProps) {
                   className="h-20 w-20 rounded object-cover"
                 />
               ) : (
-                <div className="flex h-20 w-36 items-center gap-2 rounded-sm border border-border bg-bg-hover px-3">
-                  <FileText className="h-5 w-5 flex-shrink-0 text-text-dim" />
-                  <span className="truncate text-xs font-mono text-text-dim">{f.file.name}</span>
+                <div className="flex h-20 w-36 items-center gap-2 rounded-sm border border-[var(--color-border)] bg-[var(--color-bg-hover)] px-3">
+                  <FileText className="h-5 w-5 flex-shrink-0 text-[var(--color-text-secondary)]" />
+                  <span className="truncate text-xs font-mono text-[var(--color-text-secondary)]">{f.file.name}</span>
                 </div>
               )}
               <button
                 onClick={() => removeFile(f.id)}
-                className="absolute -top-1.5 -right-1.5 flex min-w-[32px] min-h-[32px] items-center justify-center rounded-full bg-error text-black shadow hover:shadow-[0_0_8px_#FF0040] transition-colors"
+                className="absolute -top-1.5 -right-1.5 flex min-w-[32px] min-h-[32px] items-center justify-center rounded-full bg-[var(--color-error)] text-black shadow hover:shadow-[0_0_8px_rgba(239,68,68,0.5)] transition-colors"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -121,7 +121,7 @@ export function MessageInput({ channelId }: MessageInputProps) {
         </div>
       )}
 
-      <div className="rounded-xl border border-border-bright/50 glass p-1 transition-all duration-300 focus-within:border-primary focus-within:shadow-[0_0_20px_rgba(0,255,65,0.2)]">
+      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-glass)] p-1 transition-all duration-300 focus-within:border-[var(--color-brand)] focus-within:shadow-[0_0_20px_rgba(62,207,142,0.2)]">
         <div className="flex items-end gap-2 p-2">
           {/* Attach Button */}
           <div className="relative">
@@ -134,7 +134,7 @@ export function MessageInput({ channelId }: MessageInputProps) {
               className="absolute inset-0 cursor-pointer opacity-0"
             />
             <button
-              className="flex min-w-[44px] min-h-[44px] items-center justify-center rounded-lg text-text-dim transition-all duration-200 hover:text-primary hover:shadow-[0_0_10px_rgba(0,255,65,0.3)] p-2"
+              className="flex min-w-[44px] min-h-[44px] items-center justify-center rounded-lg text-[var(--color-text-secondary)] transition-all duration-200 hover:text-[var(--color-brand)] hover:shadow-[0_0_10px_rgba(62,207,142,0.2)] p-2"
               title="Anexar arquivo"
             >
               <Paperclip className="h-5 w-5" />
@@ -148,14 +148,14 @@ export function MessageInput({ channelId }: MessageInputProps) {
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             placeholder={`Digite uma mensagem...`}
-            className="min-h-[40px] max-h-[200px] flex-1 resize-none bg-transparent py-2 text-sm font-mono text-text-dim placeholder:text-text-muted focus:outline-none"
+            className="min-h-[40px] max-h-[200px] flex-1 resize-none bg-transparent py-2 text-sm font-mono text-[var(--color-text-secondary)] placeholder:text-[var(--color-text-muted)] focus:outline-none"
             rows={1}
           />
 
           {/* Image preview shortcut */}
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="flex min-w-[44px] min-h-[44px] items-center justify-center rounded-lg text-text-dim transition-all duration-200 hover:text-primary hover:shadow-[0_0_10px_rgba(0,255,65,0.3)] p-2"
+            className="flex min-w-[44px] min-h-[44px] items-center justify-center rounded-lg text-[var(--color-text-secondary)] transition-all duration-200 hover:text-[var(--color-brand)] hover:shadow-[0_0_10px_rgba(62,207,142,0.2)] p-2"
             title="Enviar imagem"
           >
             <ImageIcon className="h-5 w-5" />
@@ -168,8 +168,8 @@ export function MessageInput({ channelId }: MessageInputProps) {
             className={cn(
               "flex min-w-[44px] min-h-[44px] items-center justify-center rounded-lg transition-all duration-200 p-2",
               canSend
-                ? "text-primary hover:shadow-[0_0_15px_rgba(0,255,65,0.5)]"
-                : "cursor-not-allowed text-text-muted"
+                ? "text-[var(--color-brand)] hover:shadow-[0_0_15px_rgba(62,207,142,0.3)]"
+                : "cursor-not-allowed text-[var(--color-text-muted)]"
             )}
             title="Enviar mensagem"
           >
@@ -182,7 +182,7 @@ export function MessageInput({ channelId }: MessageInputProps) {
           <div
             className={cn(
               "px-2 pb-1 text-right text-xs font-mono",
-              content.length > 2000 ? "text-error" : "text-text-dim"
+              content.length > 2000 ? "text-error" : "text-[var(--color-text-secondary)]"
             )}
           >
             {content.length}/2000

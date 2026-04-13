@@ -2,48 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Matrix/Terminal Theme ──────────────────────────────── */
+/* ─── Supabase Design System ──────────────────────────────── */
 
 :root {
-  /* Primary neon cyan */
-  --color-primary: #00D4FF;
-  --color-primary-dark: #00A8CC;
-  --color-primary-glow: rgba(0, 212, 255, 0.2);
+  /* Brand Green */
+  --color-brand: #3ecf8e;
+  --color-brand-hover: #00c573;
+  --color-brand-border: rgba(62, 207, 142, 0.3);
 
-  /* Neon cyan accent (kept as secondary) */
-  --color-cyan: #00D4FF;
-  --color-cyan-glow: rgba(0, 212, 255, 0.2);
-
-  /* Backgrounds — dark with glass */
-  --color-bg: #0a0a0f;
+  /* Backgrounds */
+  --color-bg-deep: #0f0f0f;
+  --color-bg: #171717;
   --color-bg-hover: rgba(255, 255, 255, 0.05);
   --color-bg-active: rgba(255, 255, 255, 0.08);
-  --color-bg-sidebar: rgba(10, 10, 15, 0.8);
-  --color-bg-glass: rgba(15, 15, 25, 0.6);
-  --color-bg-input: rgba(15, 15, 25, 0.6);
+  --color-bg-sidebar: rgba(23, 23, 23, 0.95);
+  --color-bg-glass: rgba(41, 41, 41, 0.84);
+  --color-bg-input: rgba(41, 41, 41, 0.6);
 
   /* Borders */
-  --color-border: rgba(0, 212, 255, 0.15);
-  --color-border-bright: rgba(0, 212, 255, 0.5);
+  --color-border-subtle: #242424;
+  --color-border: #2e2e2e;
+  --color-border-mid: #363636;
+  --color-border-light: #393939;
 
   /* Text */
-  --color-text: #00D4FF;
-  --color-text-dim: #6B7280;
-  --color-text-muted: #4B5563;
+  --color-text: #fafafa;
+  --color-text-secondary: #b4b4b4;
+  --color-text-muted: #898989;
 
   /* Accents */
-  --color-warning: #FFD700;
-  --color-error: #FF0040;
+  --color-warning: #ffd700;
+  --color-error: #ef4444;
+  --color-success: #3ecf8e;
+  --color-info: #3b82f6;
 
-  /* Status (neon colors) */
-  --color-status-online: #00D4FF;
-  --color-status-idle: #FFD700;
-  --color-status-dnd: #FF0040;
-  --color-status-offline: #4B5563;
+  /* Status */
+  --color-status-online: #3ecf8e;
+  --color-status-idle: #ffd700;
+  --color-status-dnd: #ef4444;
+  --color-status-offline: #898989;
 
-  /* Glow effects */
-  --glow-primary: 0 0 20px rgba(0, 212, 255, 0.3), 0 0 40px rgba(0, 212, 255, 0.1);
-  --glow-cyan: 0 0 20px rgba(0, 212, 255, 0.3), 0 0 40px rgba(0, 212, 255, 0.1);
+  /* Focus */
+  --color-focus: rgba(62, 207, 142, 0.3);
 }
 
 * {
@@ -55,11 +55,8 @@ html {
 }
 
 body {
-  font-family: var(--font-sans);
-  background:
-    radial-gradient(ellipse at 20% 0%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 100%, rgba(0, 212, 255, 0.06) 0%, transparent 50%),
-    var(--color-bg);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background: var(--color-bg);
   color: var(--color-text);
   overflow: hidden;
 }
@@ -75,13 +72,12 @@ body {
 
 .glass-hover:hover {
   background: var(--color-bg-hover);
-  border-color: var(--color-border-bright);
+  border-color: var(--color-border-mid);
 }
 
 .glass-active {
   background: var(--color-bg-active);
-  border-color: var(--color-primary);
-  box-shadow: var(--glow-primary);
+  border-color: var(--color-brand);
 }
 
 .glass-sidebar {
@@ -93,26 +89,25 @@ body {
 /* ─── Scrollbar ─────────────────────────────────────────── */
 
 ::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: var(--color-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 212, 255, 0.3);
-  border-radius: 2px;
+  background: var(--color-border-mid);
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 212, 255, 0.5);
-  box-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+  background: var(--color-border-light);
 }
 
 /* ─── Text Selection ───────────────────────────────────── */
 
 ::selection {
-  background: var(--color-primary);
-  color: var(--color-bg);
+  background: var(--color-brand);
+  color: var(--color-bg-deep);
 }
 
 /* ─── Cursor ───────────────────────────────────────────── */
@@ -130,84 +125,86 @@ input, textarea {
 /* ─── Focus ────────────────────────────────────────────── */
 
 :focus-visible {
-  outline: 1px solid var(--color-border-bright);
-  outline-offset: 1px;
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
 }
 
-/* Message content formatting */
+/* ─── Message Content ───────────────────────────────────── */
+
 .message-content {
-  line-height: 1.5;
+  line-height: 1.6;
   word-wrap: break-word;
-  color: var(--color-text-dim);
+  color: var(--color-text-secondary);
 }
 
 .message-content .mention {
-  color: var(--color-primary);
-  font-weight: 600;
-  background: var(--color-primary-glow);
-  padding: 0 0.2em;
-  border-radius: 2px;
+  color: var(--color-brand);
+  font-weight: 500;
+  background: rgba(62, 207, 142, 0.1);
+  padding: 0 4px;
+  border-radius: 4px;
 }
 
 .message-content .channel-mention {
-  color: var(--color-cyan);
-  font-weight: 600;
-  background: rgba(0, 212, 255, 0.1);
-  padding: 0 0.2em;
-  border-radius: 2px;
+  color: var(--color-brand-hover);
+  font-weight: 500;
+  background: rgba(0, 197, 115, 0.1);
+  padding: 0 4px;
+  border-radius: 4px;
 }
 
 .message-content code {
   background: var(--color-bg-hover);
-  color: var(--color-primary);
-  padding: 0.2em 0.4em;
-  border-radius: 2px;
-  font-family: var(--font-mono);
+  color: var(--color-brand);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Source Code Pro', 'Office Code Pro', Menlo, monospace;
   font-size: 0.85em;
 }
 
 .message-content pre {
   background: var(--color-bg-hover);
   border: 1px solid var(--color-border);
-  padding: 1em;
-  border-radius: 2px;
+  padding: 16px;
+  border-radius: 8px;
   overflow-x: auto;
-  margin: 0.5em 0;
+  margin: 8px 0;
 }
 
 .message-content pre code {
   background: transparent;
   padding: 0;
-  color: var(--color-primary);
+  color: var(--color-brand);
 }
 
-/* Matrix mention styling */
+/* ─── Mention Styling ───────────────────────────────────── */
+
 .mention {
-  color: var(--color-cyan);
-  background: var(--color-primary-glow);
-  border-radius: 2px;
-  padding: 0 0.2em;
+  color: var(--color-brand-hover);
+  background: rgba(0, 197, 115, 0.1);
+  border-radius: 4px;
+  padding: 0 4px;
 }
 
 .mention:hover {
-  background: rgba(0, 212, 255, 0.3);
+  background: rgba(62, 207, 142, 0.2);
 }
 
 .channel-mention {
-  color: var(--color-text-dim);
+  color: var(--color-text-secondary);
 }
 
 .channel-mention:hover {
-  color: var(--color-primary);
+  color: var(--color-brand);
 }
 
 .role-mention {
-  color: var(--color-cyan);
-  border-radius: 2px;
-  padding: 0 0.2em;
+  color: var(--color-brand);
+  border-radius: 4px;
+  padding: 0 4px;
 }
 
-/* ─── Mobile-specific ─────────────────────────────────── */
+/* ─── Mobile-specific ───────────────────────────────────── */
 
 @media (max-width: 767px) {
   .overflow-y-auto {
@@ -234,13 +231,6 @@ input, textarea {
   }
 }
 
-/* Safe area padding for fixed bottom elements */
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .safe-area-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-}
-
 @media (max-width: 767px) {
   ::-webkit-scrollbar {
     display: none;
@@ -258,7 +248,6 @@ input, textarea {
   min-width: 44px;
 }
 
-/* Scrollbar hide utility for mobile */
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -276,38 +265,17 @@ input, textarea {
   50% { opacity: 0; }
 }
 
-@keyframes scanline {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100vh); }
-}
-
-@keyframes glow-pulse {
-  0%, 100% { text-shadow: 0 0 4px var(--color-primary), 0 0 12px var(--color-primary); }
-  50% { text-shadow: 0 0 8px var(--color-primary), 0 0 24px var(--color-primary); }
-}
-
 .animate-blink {
   animation: blink 1s step-end infinite;
 }
 
-.animate-glow {
-  animation: glow-pulse 2s ease-in-out infinite;
+/* ─── Brand Glow Text ───────────────────────────────────── */
+
+.text-brand {
+  color: var(--color-brand);
 }
 
-/* Grid pattern overlay for matrix effect */
-.matrix-grid {
-  background-image:
-    linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
+.text-brand-glow {
+  color: var(--color-brand);
+  text-shadow: 0 0 20px rgba(62, 207, 142, 0.3);
 }
-
-/* Neon glow text */
-.text-glow {
-  text-shadow: 0 0 10px var(--color-primary), 0 0 20px rgba(0, 212, 255, 0.5);
-}
-
-.text-glow-cyan {
-  text-shadow: 0 0 10px var(--color-cyan), 0 0 20px rgba(0, 212, 255, 0.5);
-}
-
