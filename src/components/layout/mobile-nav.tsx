@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 import { useUIStore } from '@/stores/ui-store';
 import { cn } from '@/lib/utils';
 import { Home, Hash, Volume2, ChevronLeft, ChevronDown, ChevronRight, X } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ChannelType } from '@/lib/discord/types';
+import type { DiscordChannel } from '@/lib/discord/types';
 
 interface MobileNavProps {
   className?: string;
@@ -15,7 +17,7 @@ interface MobileNavProps {
 
 export function MobileNav({ className }: MobileNavProps) {
   const router = useRouter();
-  const { guilds, selectedGuildId, selectedChannelId, setSelectedGuild, setSelectedChannel } = useUIStore();
+  const { guilds, selectedGuildId, selectedChannelId, setSelectedGuild, setSelectedChannel, setChannels } = useUIStore();
   const [showDrawer, setShowDrawer] = useState(false);
   const [drawerTab, setDrawerTab] = useState<'channels' | 'guilds'>('channels');
   const [isMobile, setIsMobile] = useState(false);
@@ -26,6 +28,23 @@ export function MobileNav({ className }: MobileNavProps) {
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
   }, []);
+
+  // Fetch channels when guild is selected (same logic as ChannelSidebar)
+  const { data: guildChannels } = useQuery({
+    queryKey: ["discord-guilds", selectedGuildId, "channels"],
+    queryFn: async () => {
+      const res = await fetch(`/api/discord/guilds/${selectedGuildId}/channels`);
+      if (!res.ok) throw new Error("Failed to fetch channels");
+      return res.json() as Promise<DiscordChannel[]>;
+    },
+    enabled: !!selectedGuildId,
+  });
+
+  useEffect(() => {
+    if (guildChannels && selectedGuildId) {
+      setChannels(selectedGuildId, guildChannels);
+    }
+  }, [guildChannels, selectedGuildId, setChannels]);
 
   if (!isMobile) return null;
 
@@ -387,7 +406,7 @@ export function MobileBottomBar() {
           }}
           className={cn(
             'flex items-center justify-center rounded-lg flex-shrink-0 transition-all min-w-[44px] min-h-[44px] p-1',
-            selectedGuildId === null && 'bg-primary shadow-[0_0_8px_#00FF41]'
+            selectedGuildId === null && 'bg-primary shadow-[0_0_8px_#00D4FF]'
           )}
         >
           <Home className={cn('h-6 w-6', selectedGuildId === null ? 'text-black' : 'text-primary')} />
@@ -406,7 +425,7 @@ export function MobileBottomBar() {
             }}
             className={cn(
               'flex items-center justify-center rounded-lg flex-shrink-0 transition-all min-w-[44px] min-h-[44px] p-1',
-              selectedGuildId === guild.id && 'bg-primary/20 shadow-[0_0_8px_#00FF41]'
+              selectedGuildId === guild.id && 'bg-primary/20 shadow-[0_0_8px_#00D4FF]'
             )}
             title={guild.name}
           >

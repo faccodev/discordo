@@ -21,8 +21,8 @@ export function ServerList() {
         href="/"
         className={cn(
           "group flex h-12 w-12 items-center justify-center rounded-sm transition-all",
-          "hover:rounded-lg hover:shadow-[0_0_8px_#00FF41]",
-          selectedGuildId === null && "rounded-sm bg-primary/20 shadow-[0_0_8px_#00FF41]"
+          "hover:rounded-lg hover:shadow-[0_0_8px_#00D4FF]",
+          selectedGuildId === null && "rounded-sm bg-primary/20 shadow-[0_0_8px_#00D4FF]"
         )}
         onClick={() => {
           setSelectedGuild(null);
@@ -44,7 +44,7 @@ export function ServerList() {
             className={cn(
               "group relative flex h-12 w-12 items-center justify-center rounded-sm transition-all",
               "hover:rounded-lg",
-              selectedGuildId === guild.id && "rounded-sm bg-primary/20 shadow-[0_0_8px_#00FF41]"
+              selectedGuildId === guild.id && "rounded-sm bg-primary/20 shadow-[0_0_8px_#00D4FF]"
             )}
             title={guild.name}
           >
@@ -76,7 +76,7 @@ export function ServerList() {
       {/* Theme Toggle Button */}
       <button
         onClick={toggleTheme}
-        className="mt-auto flex h-10 w-10 items-center justify-center rounded-sm bg-bg-hover transition-all hover:rounded-lg hover:shadow-[0_0_8px_#00FF41]"
+        className="mt-auto flex h-10 w-10 items-center justify-center rounded-sm bg-bg-hover transition-all hover:rounded-lg hover:shadow-[0_0_8px_#00D4FF]"
         title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
       >
         {theme === 'dark' ? (

@@ -12,7 +12,7 @@ interface EmbedCardProps {
 }
 
 function getEmbedColor(color?: number): string {
-  if (!color) return "#00FF41";
+  if (!color) return "#00D4FF";
   const r = (color >> 16) & 255;
   const g = (color >> 8) & 255;
   const b = color & 255;
@@ -172,7 +172,7 @@ export function EmbedCard({ embed }: EmbedCardProps) {
         className="mt-1 flex max-w-[520px] overflow-hidden rounded-sm"
         style={{
           backgroundColor: "#0A0A0A",
-          borderLeft: hasColor ? `4px solid ${getEmbedColor(embed.color)}` : "4px solid #00FF41",
+          borderLeft: hasColor ? `4px solid ${getEmbedColor(embed.color)}` : "4px solid #00D4FF",
         }}
       >
         <div className="flex flex-1 flex-col p-3">

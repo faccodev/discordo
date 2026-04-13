@@ -225,7 +225,7 @@ export function ChannelSidebar() {
                           size="sm"
                         />
                         {isDmUnread && (
-                          <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-primary shadow-[0_0_6px_#00FF41]" />
+                          <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-primary shadow-[0_0_6px_#00D4FF]" />
                         )}
                       </div>
                       <span className={cn("truncate", isDmUnread && "font-semibold text-primary")}>{name}</span>
@@ -307,7 +307,7 @@ function ChannelItem({
         {channel.name}
       </span>
       {channelUnread && (
-        <span className="h-2 w-2 flex-shrink-0 rounded-full bg-primary shadow-[0_0_6px_#00FF41]" />
+        <span className="h-2 w-2 flex-shrink-0 rounded-full bg-primary shadow-[0_0_6px_#00D4FF]" />
       )}
       {channel.topic && (
         <span className="ml-1 font-mono text-xs text-text-dim">{channel.topic}</span>

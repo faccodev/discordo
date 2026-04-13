@@ -71,7 +71,7 @@ export function AudioPlayer({ src, filename }: AudioPlayerProps) {
       {/* Play/Pause */}
       <button
         onClick={togglePlay}
-        className="flex min-w-[44px] min-h-[44px] flex-shrink-0 items-center justify-center rounded-full bg-primary text-black hover:shadow-[0_0_8px_#00FF41] transition-colors p-2"
+        className="flex min-w-[44px] min-h-[44px] flex-shrink-0 items-center justify-center rounded-full bg-primary text-black hover:shadow-[0_0_8px_#00D4FF] transition-colors p-2"
       >
         {isPlaying ? (
           <Pause className="h-5 w-5 fill-black" />

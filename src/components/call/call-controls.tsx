@@ -110,7 +110,7 @@ export function CallControls({ className }: CallControlsProps) {
           className={cn(
             'flex h-8 w-8 items-center justify-center rounded-full transition-colors',
             selfVideoOn
-              ? 'bg-primary text-black hover:shadow-[0_0_8px_#00FF41]'
+              ? 'bg-primary text-black hover:shadow-[0_0_8px_#00D4FF]'
               : 'bg-bg-hover text-text-dim hover:text-primary hover:bg-primary/10'
           )}
           title={selfVideoOn ? 'Turn off camera' : 'Turn on camera'}
@@ -124,7 +124,7 @@ export function CallControls({ className }: CallControlsProps) {
           className={cn(
             'flex h-8 w-8 items-center justify-center rounded-full transition-colors',
             selfScreenShare
-              ? 'bg-primary text-black hover:shadow-[0_0_8px_#00FF41]'
+              ? 'bg-primary text-black hover:shadow-[0_0_8px_#00D4FF]'
               : 'bg-bg-hover text-text-dim hover:text-primary hover:bg-primary/10'
           )}
           title={selfScreenShare ? 'Stop sharing' : 'Share screen'}

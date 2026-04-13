@@ -55,18 +55,18 @@ export function Avatar({
           alt={alt}
           width={dimension}
           height={dimension}
-          className="rounded-sm object-cover grayscale brightness-90 contrast-110 transition-all duration-300 group-hover:grayscale-0 group-hover:brightness-100 group-hover:contrast-100 group-hover:shadow-[0_0_10px_rgba(0,255,65,0.3)]"
+          className="rounded-sm object-cover grayscale brightness-90 contrast-110 transition-all duration-300 group-hover:grayscale-0 group-hover:brightness-100 group-hover:contrast-100 group-hover:shadow-[0_0_10px_rgba(0,212,255,0.3)]"
           style={{ width: dimension, height: dimension }}
         />
       ) : (
         <div
-          className="flex items-center justify-center rounded-sm font-mono font-medium text-primary transition-all duration-300 group-hover:shadow-[0_0_10px_rgba(0,255,65,0.3)]"
+          className="flex items-center justify-center rounded-sm font-mono font-medium text-primary transition-all duration-300 group-hover:shadow-[0_0_10px_rgba(0,212,255,0.3)]"
           style={{
             width: dimension,
             height: dimension,
-            backgroundColor: "rgba(0, 255, 65, 0.1)",
+            backgroundColor: "rgba(0, 212, 255, 0.1)",
             fontSize: dimension * 0.4,
-            border: "1px solid rgba(0, 255, 65, 0.3)",
+            border: "1px solid rgba(0, 212, 255, 0.3)",
           }}
         >
           {getInitials(alt)}

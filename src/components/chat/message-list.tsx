@@ -549,7 +549,7 @@ export function MessageList({ channelId }: { channelId: string }) {
       {showScrollButton && (
         <button
           onClick={scrollToBottom}
-          className="fixed bottom-24 right-4 md:right-8 flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-mono text-black shadow-lg transition-all hover:shadow-[0_0_12px_#00FF41] min-h-[48px]"
+          className="fixed bottom-24 right-4 md:right-8 flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-mono text-black shadow-lg transition-all hover:shadow-[0_0_12px_#00D4FF] min-h-[48px]"
         >
           <ArrowDown className="h-5 w-5" />
           <span className="hidden sm:inline">Novas mensagens</span>
