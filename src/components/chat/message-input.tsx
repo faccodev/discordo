@@ -147,8 +147,8 @@ export function MessageInput({ channelId }: MessageInputProps) {
             value={content}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            placeholder={`Digite uma mensagem...`}
-            className="min-h-[40px] max-h-[200px] flex-1 resize-none bg-transparent py-2 text-sm font-mono text-[var(--color-text-secondary)] placeholder:text-[var(--color-text-muted)] focus:outline-none"
+            placeholder={`Mensagem...`}
+            className="min-h-[36px] max-h-[200px] flex-1 resize-none bg-transparent py-2 text-sm font-mono text-[var(--color-text-secondary)] placeholder:text-[var(--color-text-muted)] focus:outline-none"
             rows={1}
           />
 
