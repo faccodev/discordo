@@ -108,9 +108,7 @@ export default function DashboardLayout({
         {isMobile && <MobileNav />}
 
         {/* Page content */}
-        <div className="flex flex-1 overflow-hidden">
-          {children}
-        </div>
+        {children}
       </div>
 
       {/* Mobile bottom bar */}
