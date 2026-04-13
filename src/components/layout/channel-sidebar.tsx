@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useUIStore } from "@/stores/ui-store";
+import { useUnreadStatus } from "@/hooks/useUnreadStatus";
 import { cn } from "@/lib/utils";
 import { Avatar } from "@/components/ui/avatar";
 import { CreateGroupModal } from "@/components/chat/create-group-modal";
@@ -48,16 +49,9 @@ export function ChannelSidebar() {
     currentUser,
     theme,
     toggleTheme,
-    isUnread,
   } = useUIStore();
 
-  const navigateToChannel = (channelId: string) => {
-    setSelectedChannel(channelId);
-    router.push(`/channels/${channelId}`);
-  };
-
   const [showCreateGroup, setShowCreateGroup] = useState(false);
-
   const selectedGuild = guilds.find((g) => g.id === selectedGuildId);
 
   // Fetch channels when guild is selected
@@ -79,6 +73,16 @@ export function ChannelSidebar() {
 
   const currentChannels = selectedGuildId ? channels[selectedGuildId] || [] : [];
 
+  // Get all channel IDs for unread check (guild channels + DMs)
+  const guildChannelIds = currentChannels
+    .filter((c) => c.type !== ChannelType.GUILD_CATEGORY)
+    .map((c) => c.id);
+  const dmIds = dms.map((d) => d.id);
+  const allChannelIds = [...guildChannelIds, ...dmIds];
+
+  // Fetch unread status for all channels (API-based)
+  const { hasUnread: checkUnread } = useUnreadStatus(allChannelIds);
+
   // Group channels by category
   const categories = currentChannels.filter(
     (c) => c.type === ChannelType.GUILD_CATEGORY
@@ -89,6 +93,11 @@ export function ChannelSidebar() {
 
   const getChannelsForCategory = (parentId: string) =>
     currentChannels.filter((c) => c.parent_id === parentId);
+
+  const navigateToChannel = (channelId: string) => {
+    setSelectedChannel(channelId);
+    router.push(`/channels/${channelId}`);
+  };
 
   if (sidebarCollapsed) {
     return null;
@@ -144,6 +153,7 @@ export function ChannelSidebar() {
                           channel={channel}
                           isSelected={selectedChannelId === channel.id}
                           onSelect={() => navigateToChannel(channel.id)}
+                          checkUnread={checkUnread}
                         />
                       ))}
                     </div>
@@ -159,6 +169,7 @@ export function ChannelSidebar() {
                     channel={channel}
                     isSelected={selectedChannelId === channel.id}
                     onSelect={() => navigateToChannel(channel.id)}
+                    checkUnread={checkUnread}
                   />
                 ))}
               </div>
@@ -190,7 +201,7 @@ export function ChannelSidebar() {
                 .map((dm) => {
                   const recipient = dm.recipients?.[0];
                   const name = dm.name || recipient?.username || "Unknown";
-                  const isDmUnread = dm.last_message_id ? isUnread(dm.id, dm.last_message_id) : false;
+                  const isDmUnread = checkUnread(dm.id);
                   return (
                     <button
                       key={dm.id}
@@ -261,20 +272,23 @@ export function ChannelSidebar() {
   );
 }
 
+type UnreadChecker = (channelId: string) => boolean;
+
 function ChannelItem({
   channel,
   isSelected,
   onSelect,
+  checkUnread,
 }: {
   channel: DiscordChannel;
   isSelected: boolean;
   onSelect: () => void;
+  checkUnread: UnreadChecker;
 }) {
-  const { isUnread } = useUIStore();
   const isVoice =
     channel.type === ChannelType.GUILD_VOICE ||
     channel.type === ChannelType.GUILD_STAGE_VOICE;
-  const channelUnread = channel.last_message_id ? isUnread(channel.id, channel.last_message_id) : false;
+  const isChannelUnread = checkUnread(channel.id);
 
   return (
     <button
@@ -288,10 +302,10 @@ function ChannelItem({
       )}
     >
       {getChannelIcon(channel)}
-      <span className={cn("flex-1 truncate text-left", isVoice && "ml-1", channelUnread && "font-medium text-[var(--color-brand)]")}>
+      <span className={cn("flex-1 truncate text-left", isVoice && "ml-1", isChannelUnread && "font-medium text-[var(--color-brand)]")}>
         {channel.name}
       </span>
-      {channelUnread && (
+      {isChannelUnread && (
         <span className="h-2 w-2 flex-shrink-0 rounded-full bg-[var(--color-brand)]" />
       )}
     </button>

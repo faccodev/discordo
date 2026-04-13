@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useUIStore } from '@/stores/ui-store';
+import { useUnreadStatus } from '@/hooks/useUnreadStatus';
 import { cn } from '@/lib/utils';
 import { Home, Hash, Volume2, ChevronLeft, ChevronDown, ChevronRight, X } from 'lucide-react';
 import Link from 'next/link';
@@ -221,6 +222,16 @@ function MobileChannelSheet({
   const { channels, dms, isGuildExpanded, toggleGuildExpanded } = useUIStore();
   const currentChannels = selectedGuildId ? channels[selectedGuildId] || [] : [];
 
+  // Get all channel IDs for unread check
+  const guildChannelIds = currentChannels
+    .filter((c) => c.type !== ChannelType.GUILD_CATEGORY)
+    .map((c) => c.id);
+  const dmIds = dms.map((d) => d.id);
+  const allChannelIds = [...guildChannelIds, ...dmIds];
+
+  // Fetch unread status for all channels
+  const { hasUnread: checkUnread } = useUnreadStatus(allChannelIds);
+
   // Group channels by category (same logic as desktop channel-sidebar)
   const categories = currentChannels.filter((c) => c.type === ChannelType.GUILD_CATEGORY);
   const uncategorizedChannels = currentChannels.filter(
@@ -251,6 +262,7 @@ function MobileChannelSheet({
           .map((dm) => {
             const recipient = dm.recipients?.[0];
             const name = dm.name || recipient?.username || "Unknown";
+            const isDmUnread = checkUnread(dm.id);
             return (
               <button
                 key={dm.id}
@@ -262,13 +274,16 @@ function MobileChannelSheet({
                     : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text)]'
                 )}
               >
-                <div className="w-8 h-8 rounded-full bg-[var(--color-bg-hover)] flex items-center justify-center flex-shrink-0">
+                <div className="relative w-8 h-8 rounded-full bg-[var(--color-bg-hover)] flex items-center justify-center flex-shrink-0">
                   <span className="text-sm text-[var(--color-brand)] font-semibold">
                     {name.charAt(0).toUpperCase()}
                   </span>
+                  {isDmUnread && (
+                    <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[var(--color-brand)]" />
+                  )}
                 </div>
-                <span className="truncate flex-1">{name}</span>
-                {selectedChannelId === dm.id && (
+                <span className={cn('truncate flex-1', isDmUnread && 'font-medium text-[var(--color-brand)]')}>{name}</span>
+                {selectedChannelId === dm.id && !isDmUnread && (
                   <span className="w-2 h-2 rounded-full bg-[var(--color-brand)]" />
                 )}
               </button>
@@ -283,26 +298,32 @@ function MobileChannelSheet({
       {/* Uncategorized Channels - Show first if no categories */}
       {uncategorizedChannels.length > 0 && categories.length === 0 && (
         <div className="space-y-1">
-          {uncategorizedChannels.map((channel) => (
-            <button
-              key={channel.id}
-              onClick={() => onSelectChannel(channel.id)}
-              className={cn(
-                'flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm transition-all min-h-[48px]',
-                selectedChannelId === channel.id
-                  ? 'bg-[var(--color-brand)]/15 text-[var(--color-brand)] font-medium shadow-sm'
-                  : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text)]'
-              )}
-            >
-              <span className={cn(selectedChannelId === channel.id ? 'text-[var(--color-brand)]' : 'text-[var(--color-text-muted)]')}>
-                {getChannelIcon(channel.type)}
-              </span>
-              <span className="truncate">{channel.name}</span>
-              {selectedChannelId === channel.id && (
-                <span className="ml-auto w-2 h-2 rounded-full bg-[var(--color-brand)]" />
-              )}
-            </button>
-          ))}
+          {uncategorizedChannels.map((channel) => {
+            const isChannelUnread = checkUnread(channel.id);
+            return (
+              <button
+                key={channel.id}
+                onClick={() => onSelectChannel(channel.id)}
+                className={cn(
+                  'flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm transition-all min-h-[48px]',
+                  selectedChannelId === channel.id
+                    ? 'bg-[var(--color-brand)]/15 text-[var(--color-brand)] font-medium shadow-sm'
+                    : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text)]'
+                )}
+              >
+                <span className={cn(selectedChannelId === channel.id || isChannelUnread ? 'text-[var(--color-brand)]' : 'text-[var(--color-text-muted)]')}>
+                  {getChannelIcon(channel.type)}
+                </span>
+                <span className={cn('truncate', isChannelUnread && 'font-medium text-[var(--color-brand)]')}>{channel.name}</span>
+                {isChannelUnread && (
+                  <span className="ml-auto w-2.5 h-2.5 rounded-full bg-[var(--color-brand)]" />
+                )}
+                {selectedChannelId === channel.id && !isChannelUnread && (
+                  <span className="ml-auto w-2 h-2 rounded-full bg-[var(--color-brand)]" />
+                )}
+              </button>
+            );
+          })}
         </div>
       )}
 
@@ -325,26 +346,32 @@ function MobileChannelSheet({
           {/* Category Channels */}
           {isGuildExpanded(category.id) && (
             <div className="space-y-0.5 ml-1">
-              {getChannelsForCategory(category.id).map((channel) => (
-                <button
-                  key={channel.id}
-                  onClick={() => onSelectChannel(channel.id)}
-                  className={cn(
-                    'flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm transition-all min-h-[48px]',
-                    selectedChannelId === channel.id
-                      ? 'bg-[var(--color-brand)]/15 text-[var(--color-brand)] font-medium shadow-sm'
-                      : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text)]'
-                  )}
-                >
-                  <span className={cn(selectedChannelId === channel.id ? 'text-[var(--color-brand)]' : 'text-[var(--color-text-muted)]')}>
-                    {getChannelIcon(channel.type)}
-                  </span>
-                  <span className="truncate">{channel.name}</span>
-                  {selectedChannelId === channel.id && (
-                    <span className="ml-auto w-2 h-2 rounded-full bg-[var(--color-brand)]" />
-                  )}
-                </button>
-              ))}
+              {getChannelsForCategory(category.id).map((channel) => {
+                const isChannelUnread = checkUnread(channel.id);
+                return (
+                  <button
+                    key={channel.id}
+                    onClick={() => onSelectChannel(channel.id)}
+                    className={cn(
+                      'flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm transition-all min-h-[48px]',
+                      selectedChannelId === channel.id
+                        ? 'bg-[var(--color-brand)]/15 text-[var(--color-brand)] font-medium shadow-sm'
+                        : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text)]'
+                    )}
+                  >
+                    <span className={cn(selectedChannelId === channel.id || isChannelUnread ? 'text-[var(--color-brand)]' : 'text-[var(--color-text-muted)]')}>
+                      {getChannelIcon(channel.type)}
+                    </span>
+                    <span className={cn('truncate', isChannelUnread && 'font-medium text-[var(--color-brand)]')}>{channel.name}</span>
+                    {isChannelUnread && (
+                      <span className="ml-auto w-2.5 h-2.5 rounded-full bg-[var(--color-brand)]" />
+                    )}
+                    {selectedChannelId === channel.id && !isChannelUnread && (
+                      <span className="ml-auto w-2 h-2 rounded-full bg-[var(--color-brand)]" />
+                    )}
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
@@ -354,26 +381,32 @@ function MobileChannelSheet({
       {uncategorizedChannels.length > 0 && categories.length > 0 && (
         <div className="space-y-0.5 mt-2">
           <p className="px-1 py-2 text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Outros</p>
-          {uncategorizedChannels.map((channel) => (
-            <button
-              key={channel.id}
-              onClick={() => onSelectChannel(channel.id)}
-              className={cn(
-                'flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm transition-all min-h-[48px]',
-                selectedChannelId === channel.id
-                  ? 'bg-[var(--color-brand)]/15 text-[var(--color-brand)] font-medium shadow-sm'
-                  : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text)]'
-              )}
-            >
-              <span className={cn(selectedChannelId === channel.id ? 'text-[var(--color-brand)]' : 'text-[var(--color-text-muted)]')}>
-                {getChannelIcon(channel.type)}
-              </span>
-              <span className="truncate">{channel.name}</span>
-              {selectedChannelId === channel.id && (
-                <span className="ml-auto w-2 h-2 rounded-full bg-[var(--color-brand)]" />
-              )}
-            </button>
-          ))}
+          {uncategorizedChannels.map((channel) => {
+            const isChannelUnread = checkUnread(channel.id);
+            return (
+              <button
+                key={channel.id}
+                onClick={() => onSelectChannel(channel.id)}
+                className={cn(
+                  'flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm transition-all min-h-[48px]',
+                  selectedChannelId === channel.id
+                    ? 'bg-[var(--color-brand)]/15 text-[var(--color-brand)] font-medium shadow-sm'
+                    : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text)]'
+                )}
+              >
+                <span className={cn(selectedChannelId === channel.id || isChannelUnread ? 'text-[var(--color-brand)]' : 'text-[var(--color-text-muted)]')}>
+                  {getChannelIcon(channel.type)}
+                </span>
+                <span className={cn('truncate', isChannelUnread && 'font-medium text-[var(--color-brand)]')}>{channel.name}</span>
+                {isChannelUnread && (
+                  <span className="ml-auto w-2.5 h-2.5 rounded-full bg-[var(--color-brand)]" />
+                )}
+                {selectedChannelId === channel.id && !isChannelUnread && (
+                  <span className="ml-auto w-2 h-2 rounded-full bg-[var(--color-brand)]" />
+                )}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>
