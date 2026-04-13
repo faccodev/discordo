@@ -77,7 +77,7 @@ export function SearchModal({ channelId, channelName, onClose }: SearchModalProp
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={`Search${channelName ? ` in #${channelName}` : ''}...`}
-            className="flex-1 bg-transparent font-mono text-sm text-primary placeholder:text-text-muted focus:outline-none"
+            className="flex-1 bg-transparent font-mono text-base md:text-sm text-primary placeholder:text-text-muted focus:outline-none"
           />
           {isFetching && <Loader2 className="h-4 w-4 animate-spin text-primary" />}
           <button

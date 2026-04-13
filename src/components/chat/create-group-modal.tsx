@@ -167,7 +167,7 @@ export function CreateGroupModal({ onClose }: CreateGroupModalProps) {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search for people..."
-                  className="w-full rounded-sm border border-border bg-bg py-2 pl-10 pr-4 font-mono text-sm text-primary placeholder:text-text-muted focus:border-primary focus:outline-none"
+                  className="w-full rounded-sm border border-border bg-bg py-2 pl-10 pr-4 font-mono text-base md:text-sm text-primary placeholder:text-text-muted focus:border-primary focus:outline-none"
                 />
               </div>
 
@@ -269,7 +269,7 @@ export function CreateGroupModal({ onClose }: CreateGroupModalProps) {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Study Group, Weekend Plans"
                   maxLength={100}
-                  className="w-full rounded-sm border border-border bg-bg py-2 px-3 font-mono text-sm text-primary placeholder:text-text-muted focus:border-primary focus:outline-none"
+                  className="w-full rounded-sm border border-border bg-bg py-2 px-3 font-mono text-base md:text-sm text-primary placeholder:text-text-muted focus:border-primary focus:outline-none"
                 />
                 <p className="mt-1 font-mono text-xs text-text-dim">{name.length}/100</p>
               </div>

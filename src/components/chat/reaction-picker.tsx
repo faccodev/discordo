@@ -91,7 +91,7 @@ export function ReactionPicker({ channelId, messageId, onClose }: ReactionPicker
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search emoji..."
-          className="flex-1 bg-transparent font-mono text-sm text-[var(--color-brand)] placeholder:text-[var(--color-text-muted)] focus:outline-none"
+          className="flex-1 bg-transparent font-mono text-base md:text-sm text-[var(--color-brand)] placeholder:text-[var(--color-text-muted)] focus:outline-none"
         />
         <button
           onClick={onClose}
