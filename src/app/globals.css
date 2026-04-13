@@ -234,18 +234,39 @@ input, textarea {
   }
 }
 
+/* Safe area padding for fixed bottom elements */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
 @media (max-width: 767px) {
   ::-webkit-scrollbar {
     display: none;
+    height: 0;
+    width: 0;
   }
   * {
     scrollbar-width: none;
+    -ms-overflow-style: none;
   }
 }
 
 .touch-target {
   min-height: 44px;
   min-width: 44px;
+}
+
+/* Scrollbar hide utility for mobile */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+  height: 0;
+  width: 0;
 }
 
 /* ─── Animations ───────────────────────────────────────── */

@@ -1,17 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useUIStore } from '@/stores/ui-store';
 import { cn } from '@/lib/utils';
-import { Home, Hash, Users, ChevronLeft, X } from 'lucide-react';
+import { Home, Hash, Volume2, ChevronLeft, ChevronDown, ChevronRight, X } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { ChannelType } from '@/lib/discord/types';
 
 interface MobileNavProps {
   className?: string;
 }
 
 export function MobileNav({ className }: MobileNavProps) {
+  const router = useRouter();
   const { guilds, selectedGuildId, selectedChannelId, setSelectedGuild, setSelectedChannel } = useUIStore();
   const [showDrawer, setShowDrawer] = useState(false);
   const [drawerTab, setDrawerTab] = useState<'channels' | 'guilds'>('channels');
@@ -37,7 +40,7 @@ export function MobileNav({ className }: MobileNavProps) {
               setSelectedGuild(null);
               setSelectedChannel(null);
             }}
-            className="flex items-center gap-1 px-2 py-1 rounded-sm text-sm font-mono text-text-dim hover:text-primary hover:bg-bg-hover transition-colors"
+            className="flex items-center gap-1 px-2 py-1 rounded-sm text-sm font-mono text-text-dim hover:text-primary hover:bg-bg-hover transition-colors min-w-[44px] min-h-[44px]"
           >
             <ChevronLeft className="h-4 w-4" />
             <span className="hidden sm:inline">DMs</span>
@@ -45,7 +48,7 @@ export function MobileNav({ className }: MobileNavProps) {
         ) : (
           <Link
             href="/"
-            className="flex items-center gap-1 px-2 py-1 rounded-sm text-sm font-mono text-text-dim hover:text-primary hover:bg-bg-hover transition-colors"
+            className="flex items-center gap-1 px-2 py-1 rounded-sm text-sm font-mono text-text-dim hover:text-primary hover:bg-bg-hover transition-colors min-w-[44px] min-h-[44px]"
           >
             <Home className="h-4 w-4" />
           </Link>
@@ -55,7 +58,7 @@ export function MobileNav({ className }: MobileNavProps) {
         {selectedGuildId ? (
           <button
             onClick={() => { setDrawerTab('channels'); setShowDrawer(true); }}
-            className="flex-1 flex items-center gap-2 ml-1 px-2 py-1 rounded-sm text-sm font-mono font-medium text-primary hover:bg-bg-hover transition-colors text-left truncate"
+            className="flex-1 flex items-center gap-2 ml-1 px-2 py-1 rounded-sm text-sm font-mono font-medium text-primary hover:bg-bg-hover transition-colors text-left truncate min-h-[44px]"
           >
             {guilds.find((g) => g.id === selectedGuildId)?.icon ? (
               <img
@@ -73,7 +76,7 @@ export function MobileNav({ className }: MobileNavProps) {
         ) : (
           <button
             onClick={() => { setDrawerTab('guilds'); setShowDrawer(true); }}
-            className="flex-1 flex items-center gap-2 ml-1 px-2 py-1 rounded-sm text-sm font-mono font-medium text-primary hover:bg-bg-hover transition-colors text-left"
+            className="flex-1 flex items-center gap-2 ml-1 px-2 py-1 rounded-sm text-sm font-mono font-medium text-primary hover:bg-bg-hover transition-colors text-left min-h-[44px]"
           >
             <Home className="h-4 w-4" />
             <span>Direct Messages</span>
@@ -99,9 +102,9 @@ export function MobileNav({ className }: MobileNavProps) {
               </span>
               <button
                 onClick={() => setShowDrawer(false)}
-                className="flex items-center justify-center w-8 h-8 rounded-sm text-text-dim hover:text-primary hover:bg-bg-hover transition-colors"
+                className="flex items-center justify-center w-11 h-11 rounded-lg text-text-dim hover:text-primary hover:bg-bg-hover transition-colors"
               >
-                <X className="h-4 w-4" />
+                <X className="h-5 w-5" />
               </button>
             </div>
 
@@ -111,7 +114,7 @@ export function MobileNav({ className }: MobileNavProps) {
                 <button
                   onClick={() => setDrawerTab('channels')}
                   className={cn(
-                    'flex-1 px-3 py-2 text-xs font-semibold uppercase transition-colors',
+                    'flex-1 px-3 py-3 text-xs font-semibold uppercase transition-colors min-h-[44px]',
                     drawerTab === 'channels'
                       ? 'text-primary border-b-2 border-primary'
                       : 'text-text-dim hover:text-primary'
@@ -122,7 +125,7 @@ export function MobileNav({ className }: MobileNavProps) {
                 <button
                   onClick={() => setDrawerTab('guilds')}
                   className={cn(
-                    'flex-1 px-3 py-2 text-xs font-semibold uppercase transition-colors',
+                    'flex-1 px-3 py-3 text-xs font-semibold uppercase transition-colors min-h-[44px]',
                     drawerTab === 'guilds'
                       ? 'text-primary border-b-2 border-primary'
                       : 'text-text-dim hover:text-primary'
@@ -141,6 +144,7 @@ export function MobileNav({ className }: MobileNavProps) {
                   selectedChannelId={selectedChannelId}
                   onSelectChannel={(id) => {
                     setSelectedChannel(id);
+                    router.push(`/channels/${id}`);
                     setShowDrawer(false);
                   }}
                 />
@@ -172,14 +176,29 @@ function MobileChannelSheet({
   selectedChannelId: string | null;
   onSelectChannel: (id: string) => void;
 }) {
-  const { channels, dms } = useUIStore();
+  const { channels, dms, isGuildExpanded, toggleGuildExpanded } = useUIStore();
   const currentChannels = selectedGuildId ? channels[selectedGuildId] || [] : [];
+
+  // Group channels by category (same logic as desktop channel-sidebar)
+  const categories = currentChannels.filter((c) => c.type === ChannelType.GUILD_CATEGORY);
+  const uncategorizedChannels = currentChannels.filter(
+    (c) => !c.parent_id && c.type !== ChannelType.GUILD_CATEGORY
+  );
+  const getChannelsForCategory = (parentId: string) =>
+    currentChannels.filter((c) => c.parent_id === parentId);
+
+  const getChannelIcon = (type: number) => {
+    if (type === ChannelType.GUILD_VOICE || type === ChannelType.GUILD_STAGE_VOICE) {
+      return <Volume2 className="h-4 w-4 flex-shrink-0" />;
+    }
+    return <Hash className="h-4 w-4 flex-shrink-0" />;
+  };
 
   if (!selectedGuildId) {
     // Show DMs
     return (
       <div>
-        <p className="px-2 py-1 text-xs font-semibold uppercase text-text-dim">Mensagens Diretas</p>
+        <p className="px-3 py-2 text-xs font-semibold uppercase text-text-dim">Mensagens Diretas</p>
         {dms
           .slice()
           .sort((a, b) => {
@@ -195,7 +214,7 @@ function MobileChannelSheet({
                 key={dm.id}
                 onClick={() => onSelectChannel(dm.id)}
                 className={cn(
-                  'flex w-full items-center gap-2 rounded-sm px-2 py-2 text-sm font-mono transition-colors',
+                  'flex w-full items-center gap-2 rounded-lg px-3 py-3 text-sm font-mono transition-colors min-h-[44px]',
                   selectedChannelId === dm.id
                     ? 'bg-primary/10 text-primary'
                     : 'text-text-dim hover:bg-bg-hover hover:text-primary'
@@ -215,25 +234,64 @@ function MobileChannelSheet({
   }
 
   return (
-    <div>
-      <p className="px-2 py-1 text-xs font-semibold uppercase text-text-dim">Canais de Texto</p>
-      {currentChannels
-        .filter((c) => c.type !== 4)
-        .map((channel) => (
+    <div className="space-y-1">
+      {/* Categories with collapsible channels */}
+      {categories.map((category) => (
+        <div key={category.id} className="mt-3 first:mt-0">
+          {/* Category Header */}
+          <button
+            onClick={() => toggleGuildExpanded(category.id)}
+            className="mb-1 flex w-full items-center gap-1 px-3 py-2 text-xs font-semibold uppercase text-text-dim hover:text-primary min-h-[44px]"
+          >
+            {isGuildExpanded(category.id) ? (
+              <ChevronDown className="h-3 w-3" />
+            ) : (
+              <ChevronRight className="h-3 w-3" />
+            )}
+            {category.name}
+          </button>
+
+          {/* Category Channels */}
+          {isGuildExpanded(category.id) && (
+            <div className="space-y-0.5">
+              {getChannelsForCategory(category.id).map((channel) => (
+                <button
+                  key={channel.id}
+                  onClick={() => onSelectChannel(channel.id)}
+                  className={cn(
+                    'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-mono transition-colors min-h-[44px]',
+                    selectedChannelId === channel.id
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-text-dim hover:bg-bg-hover hover:text-primary'
+                  )}
+                >
+                  {getChannelIcon(channel.type)}
+                  <span className="truncate">{channel.name}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+
+      {/* Uncategorized Channels */}
+      <div className="space-y-0.5">
+        {uncategorizedChannels.map((channel) => (
           <button
             key={channel.id}
             onClick={() => onSelectChannel(channel.id)}
             className={cn(
-              'flex w-full items-center gap-2 rounded-sm px-2 py-2 text-sm font-mono transition-colors',
+              'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-mono transition-colors min-h-[44px]',
               selectedChannelId === channel.id
                 ? 'bg-primary/10 text-primary'
                 : 'text-text-dim hover:bg-bg-hover hover:text-primary'
             )}
           >
-            <Hash className="h-4 w-4 flex-shrink-0" />
+            {getChannelIcon(channel.type)}
             <span className="truncate">{channel.name}</span>
           </button>
         ))}
+      </div>
     </div>
   );
 }
@@ -250,7 +308,7 @@ function MobileGuildSheet({
   const { setSelectedGuild, setSelectedChannel } = useUIStore();
 
   return (
-    <div>
+    <div className="space-y-1">
       <button
         onClick={() => {
           setSelectedGuild(null);
@@ -258,25 +316,25 @@ function MobileGuildSheet({
           onSelectGuild('');
         }}
         className={cn(
-          'flex w-full items-center gap-2 rounded-sm px-2 py-2 text-sm font-mono transition-colors mb-2',
+          'flex w-full items-center gap-3 rounded-lg px-3 py-3 text-sm font-mono transition-colors min-h-[48px]',
           selectedGuildId === null
             ? 'bg-primary/10 text-primary'
             : 'text-text-dim hover:bg-bg-hover hover:text-primary'
         )}
       >
-        <div className="w-8 h-8 rounded-sm bg-primary/20 flex items-center justify-center flex-shrink-0">
-          <Home className="h-4 w-4 text-primary" />
+        <div className="w-10 h-10 rounded-sm bg-primary/20 flex items-center justify-center flex-shrink-0">
+          <Home className="h-5 w-5 text-primary" />
         </div>
         <span>Direct Messages</span>
       </button>
 
-      <p className="px-2 py-1 text-xs font-semibold uppercase text-text-dim">Servidores</p>
+      <p className="px-3 py-2 text-xs font-semibold uppercase text-text-dim">Servidores</p>
       {guilds.map((guild) => (
         <button
           key={guild.id}
           onClick={() => onSelectGuild(guild.id)}
           className={cn(
-            'flex w-full items-center gap-2 rounded-sm px-2 py-2 text-sm font-mono transition-colors',
+            'flex w-full items-center gap-3 rounded-lg px-3 py-3 text-sm font-mono transition-colors min-h-[48px]',
             selectedGuildId === guild.id
               ? 'bg-primary/10 text-primary'
               : 'text-text-dim hover:bg-bg-hover hover:text-primary'
@@ -286,10 +344,10 @@ function MobileGuildSheet({
             <img
               src={`https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`}
               alt={guild.name}
-              className="w-8 h-8 rounded-sm object-cover flex-shrink-0"
+              className="w-10 h-10 rounded-sm object-cover flex-shrink-0"
             />
           ) : (
-            <div className="w-8 h-8 rounded-sm bg-bg-hover flex items-center justify-center flex-shrink-0 text-primary font-bold text-xs">
+            <div className="w-10 h-10 rounded-sm bg-bg-hover flex items-center justify-center flex-shrink-0 text-primary font-bold text-sm">
               {guild.name.charAt(0).toUpperCase()}
             </div>
           )}
@@ -315,9 +373,12 @@ export function MobileBottomBar() {
   if (!isMobile) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-30 flex h-14 items-center border-t border-border-bright bg-bg-sidebar px-2 md:hidden">
+    <div
+      className="fixed bottom-0 left-0 right-0 z-30 flex h-16 items-center border-t border-border-bright bg-bg-sidebar px-2 md:hidden"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+    >
       {/* Horizontal scrollable guild list */}
-      <div className="flex gap-1 overflow-x-auto items-center flex-1 h-full py-2 scrollbar-hide">
+      <div className="flex gap-2 items-center flex-1 h-full overflow-x-auto scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch' }}>
         {/* Home / DMs button */}
         <button
           onClick={() => {
@@ -325,15 +386,15 @@ export function MobileBottomBar() {
             setSelectedChannel(null);
           }}
           className={cn(
-            'flex items-center justify-center h-10 w-10 rounded-sm flex-shrink-0 transition-all',
-            selectedGuildId === null && 'rounded-lg bg-primary shadow-[0_0_8px_#00FF41]'
+            'flex items-center justify-center rounded-lg flex-shrink-0 transition-all min-w-[44px] min-h-[44px] p-1',
+            selectedGuildId === null && 'bg-primary shadow-[0_0_8px_#00FF41]'
           )}
         >
-          <Home className={cn('h-5 w-5', selectedGuildId === null ? 'text-black' : 'text-primary')} />
+          <Home className={cn('h-6 w-6', selectedGuildId === null ? 'text-black' : 'text-primary')} />
         </button>
 
         {/* Separator */}
-        <div className="h-8 w-[2px] bg-border-bright flex-shrink-0 mx-1" />
+        <div className="h-8 w-[2px] bg-border-bright flex-shrink-0" />
 
         {/* Guild buttons */}
         {guilds.map((guild) => (
@@ -344,8 +405,8 @@ export function MobileBottomBar() {
               setSelectedChannel(null);
             }}
             className={cn(
-              'flex items-center justify-center h-10 w-10 rounded-sm flex-shrink-0 transition-all',
-              selectedGuildId === guild.id && 'rounded-lg bg-primary/20 shadow-[0_0_8px_#00FF41]'
+              'flex items-center justify-center rounded-lg flex-shrink-0 transition-all min-w-[44px] min-h-[44px] p-1',
+              selectedGuildId === guild.id && 'bg-primary/20 shadow-[0_0_8px_#00FF41]'
             )}
             title={guild.name}
           >
@@ -353,12 +414,12 @@ export function MobileBottomBar() {
               <Image
                 src={`https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`}
                 alt={guild.name}
-                width={32}
-                height={32}
-                className="h-8 w-8 rounded-sm object-cover"
+                width={36}
+                height={36}
+                className="w-9 h-9 rounded-lg object-cover"
               />
             ) : (
-              <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-bg-hover text-primary font-bold text-sm">
+              <div className="flex w-9 h-9 items-center justify-center rounded-lg bg-bg-hover text-primary font-bold text-sm">
                 {guild.name.charAt(0).toUpperCase()}
               </div>
             )}

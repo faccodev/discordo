@@ -112,9 +112,9 @@ export function MessageInput({ channelId }: MessageInputProps) {
               )}
               <button
                 onClick={() => removeFile(f.id)}
-                className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-error text-black shadow hover:shadow-[0_0_8px_#FF0040] transition-colors"
+                className="absolute -top-1.5 -right-1.5 flex min-w-[32px] min-h-[32px] items-center justify-center rounded-full bg-error text-black shadow hover:shadow-[0_0_8px_#FF0040] transition-colors"
               >
-                <X className="h-3 w-3" />
+                <X className="h-4 w-4" />
               </button>
             </div>
           ))}
@@ -134,7 +134,7 @@ export function MessageInput({ channelId }: MessageInputProps) {
               className="absolute inset-0 cursor-pointer opacity-0"
             />
             <button
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-text-dim transition-all duration-200 hover:text-primary hover:shadow-[0_0_10px_rgba(0,255,65,0.3)]"
+              className="flex min-w-[44px] min-h-[44px] items-center justify-center rounded-lg text-text-dim transition-all duration-200 hover:text-primary hover:shadow-[0_0_10px_rgba(0,255,65,0.3)] p-2"
               title="Anexar arquivo"
             >
               <Paperclip className="h-5 w-5" />
@@ -155,7 +155,7 @@ export function MessageInput({ channelId }: MessageInputProps) {
           {/* Image preview shortcut */}
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-text-dim transition-all duration-200 hover:text-primary hover:shadow-[0_0_10px_rgba(0,255,65,0.3)]"
+            className="flex min-w-[44px] min-h-[44px] items-center justify-center rounded-lg text-text-dim transition-all duration-200 hover:text-primary hover:shadow-[0_0_10px_rgba(0,255,65,0.3)] p-2"
             title="Enviar imagem"
           >
             <ImageIcon className="h-5 w-5" />
@@ -166,7 +166,7 @@ export function MessageInput({ channelId }: MessageInputProps) {
             onClick={handleSubmit}
             disabled={!canSend}
             className={cn(
-              "flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-200",
+              "flex min-w-[44px] min-h-[44px] items-center justify-center rounded-lg transition-all duration-200 p-2",
               canSend
                 ? "text-primary hover:shadow-[0_0_15px_rgba(0,255,65,0.5)]"
                 : "cursor-not-allowed text-text-muted"

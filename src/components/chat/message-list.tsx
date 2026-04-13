@@ -527,7 +527,7 @@ export function MessageList({ channelId }: { channelId: string }) {
           <button
             onClick={() => fetchNextPage()}
             disabled={isFetchingNextPage}
-            className="rounded-sm border border-border bg-bg-hover px-4 py-2 text-sm font-mono text-text-dim hover:border-primary hover:text-primary disabled:opacity-50"
+            className="rounded-lg border border-border bg-bg-hover px-4 py-3 text-sm font-mono text-text-dim hover:border-primary hover:text-primary disabled:opacity-50 min-h-[44px]"
           >
             {isFetchingNextPage ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -549,10 +549,10 @@ export function MessageList({ channelId }: { channelId: string }) {
       {showScrollButton && (
         <button
           onClick={scrollToBottom}
-          className="fixed bottom-24 right-8 flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-sm font-mono text-black shadow-lg transition-all hover:shadow-[0_0_12px_#00FF41]"
+          className="fixed bottom-24 right-4 md:right-8 flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-mono text-black shadow-lg transition-all hover:shadow-[0_0_12px_#00FF41] min-h-[48px]"
         >
-          <ArrowDown className="h-4 w-4" />
-          Novas mensagens
+          <ArrowDown className="h-5 w-5" />
+          <span className="hidden sm:inline">Novas mensagens</span>
         </button>
       )}
     </div>

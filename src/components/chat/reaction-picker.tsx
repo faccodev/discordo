@@ -95,9 +95,9 @@ export function ReactionPicker({ channelId, messageId, onClose }: ReactionPicker
         />
         <button
           onClick={onClose}
-          className="flex h-6 w-6 items-center justify-center rounded-sm text-text-dim hover:text-primary transition-colors"
+          className="flex min-w-[44px] min-h-[44px] items-center justify-center rounded-lg text-text-dim hover:text-primary transition-colors"
         >
-          <X className="h-4 w-4" />
+          <X className="h-5 w-5" />
         </button>
       </div>
 
@@ -109,7 +109,7 @@ export function ReactionPicker({ channelId, messageId, onClose }: ReactionPicker
             onClick={() => toggleMutation.mutate(emoji)}
             disabled={toggleMutation.isPending}
             className={cn(
-              'flex h-8 w-8 items-center justify-center rounded-sm text-lg transition-colors',
+              'flex min-w-[44px] min-h-[44px] items-center justify-center rounded-lg text-xl transition-colors',
               'hover:bg-primary/10 hover:scale-110',
               toggleMutation.isPending && 'opacity-50'
             )}

@@ -93,10 +93,10 @@ export function VideoPlayer({ src, filename, poster, className }: VideoPlayerPro
       {!isPlaying && (
         <button
           onClick={togglePlay}
-          className="absolute inset-0 flex items-center justify-center bg-black/40 transition-colors hover:bg-black/50"
+          className="absolute inset-0 flex items-center justify-center bg-black/40 transition-colors hover:bg-black/50 min-h-[100px]"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition-transform hover:scale-110">
-            <Play className="h-5 w-5 text-white fill-white" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition-transform hover:scale-110">
+            <Play className="h-7 w-7 text-white fill-white" />
           </div>
         </button>
       )}
@@ -123,23 +123,23 @@ export function VideoPlayer({ src, filename, poster, className }: VideoPlayerPro
         <div className="flex items-center gap-1">
           <button
             onClick={togglePlay}
-            className="flex h-7 w-7 items-center justify-center rounded text-white hover:bg-white/20 transition-colors"
+            className="flex min-w-[44px] min-h-[44px] items-center justify-center rounded text-white hover:bg-white/20 transition-colors"
           >
             {isPlaying ? (
-              <Pause className="h-3.5 w-3.5 fill-white" />
+              <Pause className="h-5 w-5 fill-white" />
             ) : (
-              <Play className="h-3.5 w-3.5 fill-white" />
+              <Play className="h-5 w-5 fill-white" />
             )}
           </button>
 
           <button
             onClick={toggleMute}
-            className="flex h-7 w-7 items-center justify-center rounded text-white hover:bg-white/20 transition-colors"
+            className="flex min-w-[44px] min-h-[44px] items-center justify-center rounded text-white hover:bg-white/20 transition-colors"
           >
             {isMuted ? (
-              <VolumeX className="h-3.5 w-3.5" />
+              <VolumeX className="h-5 w-5" />
             ) : (
-              <Volume2 className="h-3.5 w-3.5" />
+              <Volume2 className="h-5 w-5" />
             )}
           </button>
 
@@ -151,9 +151,9 @@ export function VideoPlayer({ src, filename, poster, className }: VideoPlayerPro
 
           <button
             onClick={toggleFullscreen}
-            className="flex h-7 w-7 items-center justify-center rounded text-white hover:bg-white/20 transition-colors"
+            className="flex min-w-[44px] min-h-[44px] items-center justify-center rounded text-white hover:bg-white/20 transition-colors"
           >
-            <Maximize className="h-3.5 w-3.5" />
+            <Maximize className="h-5 w-5" />
           </button>
         </div>
       </div>

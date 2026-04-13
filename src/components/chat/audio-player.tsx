@@ -71,12 +71,12 @@ export function AudioPlayer({ src, filename }: AudioPlayerProps) {
       {/* Play/Pause */}
       <button
         onClick={togglePlay}
-        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary text-black hover:shadow-[0_0_8px_#00FF41] transition-colors"
+        className="flex min-w-[44px] min-h-[44px] flex-shrink-0 items-center justify-center rounded-full bg-primary text-black hover:shadow-[0_0_8px_#00FF41] transition-colors p-2"
       >
         {isPlaying ? (
-          <Pause className="h-4 w-4 fill-black" />
+          <Pause className="h-5 w-5 fill-black" />
         ) : (
-          <Play className="h-4 w-4 fill-black" />
+          <Play className="h-5 w-5 fill-black" />
         )}
       </button>
 
@@ -104,12 +104,12 @@ export function AudioPlayer({ src, filename }: AudioPlayerProps) {
       {/* Mute */}
       <button
         onClick={toggleMute}
-        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded text-text-dim hover:text-primary transition-colors"
+        className="flex min-w-[44px] min-h-[44px] flex-shrink-0 items-center justify-center rounded text-text-dim hover:text-primary transition-colors p-2"
       >
         {isMuted ? (
-          <VolumeX className="h-4 w-4" />
+          <VolumeX className="h-5 w-5" />
         ) : (
-          <Volume2 className="h-4 w-4" />
+          <Volume2 className="h-5 w-5" />
         )}
       </button>
     </div>

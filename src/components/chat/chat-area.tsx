@@ -86,7 +86,7 @@ export function ChatArea({ channelId }: { channelId?: string }) {
           {notifPermission === 'default' && (
             <button
               onClick={requestNotifPermission}
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-text-dim hover:bg-bg-hover hover:text-primary transition-colors md:hidden"
+              className="flex min-w-[44px] min-h-[44px] items-center justify-center rounded-lg text-text-dim hover:bg-bg-hover hover:text-primary transition-colors md:min-w-auto md:h-8 md:w-8"
               title="Ativar notificações"
             >
               <Bell className="h-5 w-5" />
@@ -102,7 +102,7 @@ export function ChatArea({ channelId }: { channelId?: string }) {
           {!isVoiceChannel && (
             <button
               onClick={() => setSearchOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-text-dim hover:bg-bg-hover hover:text-primary transition-colors hover:shadow-[0_0_10px_rgba(0,255,65,0.2)]"
+              className="flex min-w-[44px] min-h-[44px] items-center justify-center rounded-lg text-text-dim hover:bg-bg-hover hover:text-primary transition-colors hover:shadow-[0_0_10px_rgba(0,255,65,0.2)] md:min-w-auto md:h-8 md:w-8"
               title="Pesquisar mensagens"
             >
               <Search className="h-5 w-5" />
