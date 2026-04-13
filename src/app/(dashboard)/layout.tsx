@@ -88,27 +88,29 @@ export default function DashboardLayout({
 
   if (!me) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-bg">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex h-screen w-screen items-center justify-center bg-[var(--color-bg)]">
+        <Loader2 className="h-8 w-8 animate-spin text-[var(--color-brand)]" />
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-bg">
+    <div className="flex h-screen w-screen overflow-hidden bg-[var(--color-bg)]">
       {/* Server List — hidden on mobile */}
       {!isMobile && <ServerList />}
 
       {/* Channel Sidebar — hidden on mobile (replaced by top bar) */}
       {!isMobile && <ChannelSidebar />}
 
-      {/* Main Content */}
+      {/* Main Content - flex-col on mobile to handle nav + content + bottom bar */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Mobile navigation */}
         {isMobile && <MobileNav />}
 
-        {/* Page content */}
-        {children}
+        {/* Page content - takes remaining space */}
+        <div className="flex-1 min-h-0 overflow-hidden">
+          {children}
+        </div>
       </div>
 
       {/* Mobile bottom bar */}

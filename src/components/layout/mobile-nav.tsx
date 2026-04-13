@@ -49,9 +49,9 @@ export function MobileNav({ className }: MobileNavProps) {
   if (!isMobile) return null;
 
   return (
-    <div className={cn('flex flex-col h-full', className)}>
+    <div className="flex flex-col flex-1 min-h-0 flex-shrink-0" style={{ height: '48px' }}>
       {/* Mobile Top Bar */}
-      <div className="flex items-center h-12 bg-[var(--color-bg-sidebar)] border-b border-[var(--color-border)] px-2 gap-1 flex-shrink-0">
+      <div className="flex items-center h-full bg-[var(--color-bg-sidebar)] border-b border-[var(--color-border)] px-2 gap-1">
         {/* Back / Home */}
         {selectedGuildId ? (
           <button
