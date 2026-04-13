@@ -47,7 +47,7 @@ interface UIState {
   isUnread: (channelId: string, currentLastMessageId: string) => boolean;
 
   // Expanded guilds (for showing channels)
-  expandedGuilds: Set<string>;
+  expandedGuilds: string[];
   toggleGuildExpanded: (guildId: string) => void;
   isGuildExpanded: (guildId: string) => boolean;
 }
@@ -108,18 +108,17 @@ export const useUIStore = create<UIState>()(
       },
 
       // Expanded guilds
-      expandedGuilds: new Set<string>(),
+      expandedGuilds: [],
       toggleGuildExpanded: (guildId) =>
         set((state) => {
-          const newSet = new Set(state.expandedGuilds);
-          if (newSet.has(guildId)) {
-            newSet.delete(guildId);
-          } else {
-            newSet.add(guildId);
-          }
-          return { expandedGuilds: newSet };
+          const has = state.expandedGuilds.includes(guildId);
+          return {
+            expandedGuilds: has
+              ? state.expandedGuilds.filter((id) => id !== guildId)
+              : [...state.expandedGuilds, guildId],
+          };
         }),
-      isGuildExpanded: (guildId) => get().expandedGuilds.has(guildId),
+      isGuildExpanded: (guildId) => get().expandedGuilds.includes(guildId),
     }),
     {
       name: "discordo-ui",
@@ -129,6 +128,7 @@ export const useUIStore = create<UIState>()(
         selectedChannelId: state.selectedChannelId,
         theme: state.theme,
         lastReadMessages: state.lastReadMessages,
+        expandedGuilds: state.expandedGuilds,
       }),
     }
   )

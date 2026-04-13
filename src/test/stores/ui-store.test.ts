@@ -13,7 +13,7 @@ describe('useUIStore', () => {
       guilds: [],
       channels: {},
       dms: [],
-      expandedGuilds: new Set(),
+      expandedGuilds: [],
     });
   });
 
