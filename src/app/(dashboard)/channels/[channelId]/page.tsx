@@ -1,16 +1,18 @@
 "use client";
 
 import { useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { use } from "react";
+import { useParams } from "next/navigation";
 import { useUIStore } from "@/stores/ui-store";
 import { ChatArea } from "@/components/chat/chat-area";
 
-export default function ChannelPage() {
-  const params = useParams();
-  const router = useRouter();
-  const { setSelectedChannel, dms } = useUIStore();
-
-  const channelId = params.channelId as string;
+export default function ChannelPage({
+  params,
+}: {
+  params: Promise<{ channelId: string }>;
+}) {
+  const { channelId } = use(params);
+  const { setSelectedChannel } = useUIStore();
 
   useEffect(() => {
     if (channelId) {
@@ -19,7 +21,7 @@ export default function ChannelPage() {
   }, [channelId, setSelectedChannel]);
 
   return (
-    <div className="flex flex-1 flex-col overflow-hidden">
+    <div className="flex h-full flex-col overflow-hidden">
       <ChatArea channelId={channelId} />
     </div>
   );
