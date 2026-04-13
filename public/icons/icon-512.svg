@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Brand gradient -->
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3ecf8e"/>
+      <stop offset="50%" stop-color="#00d4aa"/>
+      <stop offset="100%" stop-color="#00c5ff"/>
+    </linearGradient>
+
+    <!-- Glow filter -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Soft glow for background elements -->
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="16" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Radial pulse for background -->
+    <radialGradient id="bgGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#3ecf8e" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#3ecf8e" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Dark background -->
+  <rect width="512" height="512" fill="#0f0f0f" rx="80"/>
+
+  <!-- Ambient glow behind icon -->
+  <circle cx="256" cy="256" r="200" fill="url(#bgGlow)"/>
+
+  <!-- Outer hexagon ring - subtle -->
+  <path
+    d="M256 32 L460 144 L460 368 L256 480 L52 368 L52 144 Z"
+    fill="none"
+    stroke="#3ecf8e"
+    stroke-width="3"
+    stroke-opacity="0.15"
+  />
+
+  <!-- Middle hexagon ring -->
+  <path
+    d="M256 70 L432 166 L432 346 L256 442 L80 346 L80 166 Z"
+    fill="none"
+    stroke="url(#brandGrad)"
+    stroke-width="4"
+    stroke-opacity="0.3"
+    filter="url(#softGlow)"
+  />
+
+  <!-- Main filled hexagon -->
+  <path
+    d="M256 112 L404 192 L404 320 L256 400 L108 320 L108 192 Z"
+    fill="#171717"
+    stroke="url(#brandGrad)"
+    stroke-width="6"
+    filter="url(#glow)"
+  />
+
+  <!-- Inner hexagonal glow accent -->
+  <path
+    d="M256 130 L390 200 L390 312 L256 382 L122 312 L122 200 Z"
+    fill="none"
+    stroke="#3ecf8e"
+    stroke-width="1.5"
+    stroke-opacity="0.25"
+  />
+
+  <!-- Chat bubble shape inside hexagon -->
+  <g filter="url(#glow)">
+    <!-- Main bubble body -->
+    <rect x="148" y="178" width="216" height="156" rx="28" fill="url(#brandGrad)"/>
+
+    <!-- Bubble tail pointing down-left (like Discord) -->
+    <polygon
+      points="168,334 168,368 210,334"
+      fill="url(#brandGrad)"
+    />
+
+    <!-- Text lines inside bubble -->
+    <rect x="178" y="212" width="120" height="14" rx="7" fill="#0f0f0f" opacity="0.4"/>
+    <rect x="178" y="240" width="156" height="14" rx="7" fill="#0f0f0f" opacity="0.4"/>
+    <rect x="178" y="268" width="90" height="14" rx="7" fill="#0f0f0f" opacity="0.4"/>
+
+    <!-- Notification dot - pulsing indicator -->
+    <circle cx="364" cy="162" r="22" fill="#ff4757"/>
+    <circle cx="364" cy="162" r="14" fill="white"/>
+  </g>
+
+  <!-- Floating signal dots around hexagon -->
+  <!-- Top right -->
+  <circle cx="420" cy="110" r="8" fill="#3ecf8e" filter="url(#glow)" opacity="0.9"/>
+  <circle cx="420" cy="110" r="16" fill="none" stroke="#3ecf8e" stroke-width="2" opacity="0.3"/>
+
+  <!-- Bottom left -->
+  <circle cx="92" cy="402" r="8" fill="#00d4aa" filter="url(#glow)" opacity="0.9"/>
+  <circle cx="92" cy="402" r="16" fill="none" stroke="#00d4aa" stroke-width="2" opacity="0.3"/>
+
+  <!-- Top -->
+  <circle cx="256" cy="48" r="6" fill="#00c5ff" filter="url(#glow)" opacity="0.8"/>
+
+  <!-- Right side -->
+  <circle cx="480" cy="256" r="6" fill="#3ecf8e" filter="url(#glow)" opacity="0.7"/>
+
+  <!-- Left side -->
+  <circle cx="32" cy="256" r="6" fill="#00d4aa" filter="url(#glow)" opacity="0.7"/>
+
+  <!-- Connection lines (subtle) -->
+  <line x1="256" y1="48" x2="310" y2="120" stroke="#3ecf8e" stroke-width="1.5" stroke-opacity="0.2" stroke-dasharray="4,4"/>
+  <line x1="32" y1="256" x2="108" y2="220" stroke="#00d4aa" stroke-width="1.5" stroke-opacity="0.2" stroke-dasharray="4,4"/>
+  <line x1="480" y1="256" x2="404" y2="220" stroke="#3ecf8e" stroke-width="1.5" stroke-opacity="0.2" stroke-dasharray="4,4"/>
+
+  <!-- Small accent: small lightning bolt top-right -->
+  <polygon
+    points="390,88 408,112 398,112 416,140 394,108 404,108"
+    fill="#00c5ff"
+    filter="url(#glow)"
+    opacity="0.85"
+  />
+</svg>

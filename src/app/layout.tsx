@@ -23,11 +23,12 @@ const shareTechMono = Share_Tech_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Matrix",
-  description: "Matrix Discord Client",
+  title: "Discordo",
+  description: "Cliente Discord com Supabase Design System",
   manifest: "/manifest.json",
   icons: {
     icon: [
+      { url: "/favicon.svg", sizes: "any", type: "image/svg+xml" },
       { url: "/icons/icon-192.svg", sizes: "192x192", type: "image/svg+xml" },
       { url: "/icons/icon-512.svg", sizes: "512x512", type: "image/svg+xml" },
     ],

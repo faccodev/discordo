@@ -1,13 +1,19 @@
 {
   "name": "Discordo",
   "short_name": "Discordo",
-  "description": "Web client for Discord — DMs, channels, calls and more",
+  "description": "Cliente Discord com Supabase Design System — DMs, canais, chamadas e mais",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0D0D0D",
-  "theme_color": "#00FF41",
+  "background_color": "#0f0f0f",
+  "theme_color": "#3ecf8e",
   "orientation": "portrait-primary",
   "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
     {
       "src": "/icons/icon-192.svg",
       "sizes": "192x192",
@@ -15,7 +21,7 @@
       "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-192.svg",
+      "src": "/icons/icon-512.svg",
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"
@@ -27,7 +33,7 @@
     {
       "name": "Direct Messages",
       "url": "/",
-      "description": "Open your direct messages"
+      "description": "Abra suas mensagens diretas"
     }
   ]
 }
