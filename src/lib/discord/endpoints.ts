@@ -33,4 +33,8 @@ export const Endpoints = {
 
   // Invite
   getInvite: (inviteCode: string) => `/invites/${inviteCode}`,
+
+  // Application Commands
+  applicationCommands: (appId: string) => `/applications/${appId}/commands`,
+  guildApplicationCommands: (appId: string, guildId: string) => `/applications/${appId}/guilds/${guildId}/commands`,
 } as const;

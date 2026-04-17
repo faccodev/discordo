@@ -6,6 +6,7 @@ import type {
   DiscordMessage,
   DiscordRole,
   GuildMember,
+  ApplicationCommand,
 } from "./types";
 
 const DISCORD_SUPER_PROPERTIES = {
@@ -213,6 +214,18 @@ export class DiscordClient {
       Endpoints.channelRecipient(channelId, userId),
       this.token,
       { method: "DELETE" }
+    );
+  }
+
+  // Application Commands (Slash Commands)
+  async getGlobalApplicationCommands(appId: string): Promise<ApplicationCommand[]> {
+    return discordFetch<ApplicationCommand[]>(Endpoints.applicationCommands(appId), this.token);
+  }
+
+  async getGuildApplicationCommands(appId: string, guildId: string): Promise<ApplicationCommand[]> {
+    return discordFetch<ApplicationCommand[]>(
+      Endpoints.guildApplicationCommands(appId, guildId),
+      this.token
     );
   }
 }

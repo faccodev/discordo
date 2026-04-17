@@ -149,7 +149,8 @@ export function SearchModal({ channelId, channelName, onClose }: SearchModalProp
 
   const navigateToMessage = useCallback((message: DiscordMessage) => {
     onClose();
-    router.push(`/channels/${message.channel_id}`);
+    // Navigate to channel with message hash for scroll-to-message
+    router.push(`/channels/${message.channel_id}#${message.id}`);
   }, [onClose, router]);
 
   // Clear selection when query changes

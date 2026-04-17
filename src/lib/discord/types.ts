@@ -224,3 +224,32 @@ export interface DiscordPaginatedResponse<T> {
   data: T[];
   hasMore: boolean;
 }
+
+// Application Command types (Discord Slash Commands)
+export interface ApplicationCommandOptionChoice {
+  name: string;
+  value: string | number;
+}
+
+export interface ApplicationCommandOption {
+  name: string;
+  description: string;
+  type: number; // 1=SUB_COMMAND, 2=SUB_COMMAND_GROUP, 3=STRING, 4=INTEGER, 5=BOOLEAN, 6=USER, 7=CHANNEL, 8=ROLE, 9=MENTIONABLE, 10=NUMBER
+  required?: boolean;
+  choices?: ApplicationCommandOptionChoice[];
+  options?: ApplicationCommandOption[];
+}
+
+export interface ApplicationCommand {
+  id: string;
+  type: number; // 1=CHAT_INPUT, 2=USER, 3=MESSAGE
+  application_id: string;
+  guild_id?: string;
+  name: string;
+  description: string;
+  options?: ApplicationCommandOption[];
+  default_member_permissions?: string | null;
+  dm_permission?: boolean;
+  nsfw?: boolean;
+  version: string;
+}

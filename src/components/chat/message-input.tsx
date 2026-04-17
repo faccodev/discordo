@@ -1,12 +1,16 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
-import { Send, Paperclip, AtSign, X, ImageIcon, FileText } from "lucide-react";
+import { Send, Paperclip, X, ImageIcon, FileText } from "lucide-react";
+import { CommandPicker } from "./command-picker";
+import { buildCommandUsage } from "@/lib/commands/search";
+import type { ApplicationCommand } from "@/lib/discord/types";
 
 interface MessageInputProps {
   channelId: string;
+  guildId?: string;
 }
 
 interface FilePreview {
@@ -15,12 +19,26 @@ interface FilePreview {
   preview: string | null;
 }
 
-export function MessageInput({ channelId }: MessageInputProps) {
+export function MessageInput({ channelId, guildId }: MessageInputProps) {
   const [content, setContent] = useState("");
   const [files, setFiles] = useState<FilePreview[]>([]);
+  const [commandPickerOpen, setCommandPickerOpen] = useState(false);
+  const [slashPosition, setSlashPosition] = useState<number | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
+
+  // Fetch slash commands for guild
+  const { data: guildCommands } = useQuery({
+    queryKey: ["discord-guild-commands", guildId],
+    queryFn: async () => {
+      if (!guildId) return [];
+      const res = await fetch(`/api/discord/guilds/${guildId}/commands`);
+      if (!res.ok) return [];
+      return res.json() as Promise<ApplicationCommand[]>;
+    },
+    enabled: !!guildId,
+  });
 
   const sendMessageMutation = useMutation({
     mutationFn: async (payload: { content: string; files?: File[] }) => {
@@ -57,7 +75,6 @@ export function MessageInput({ channelId }: MessageInputProps) {
     }));
 
     setFiles((prev) => [...prev, ...newFiles]);
-    // Reset input so the same file can be selected again
     if (fileInputRef.current) fileInputRef.current.value = "";
   }, [files.length]);
 
@@ -75,6 +92,12 @@ export function MessageInput({ channelId }: MessageInputProps) {
   }, [content, files, sendMessageMutation]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (commandPickerOpen) {
+      if (["ArrowUp", "ArrowDown", "Tab", "Enter", "Escape"].includes(e.key)) {
+        return;
+      }
+    }
+
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit();
@@ -82,12 +105,53 @@ export function MessageInput({ channelId }: MessageInputProps) {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setContent(e.target.value);
+    const newContent = e.target.value;
+    const cursorPos = e.target.selectionStart;
+    setContent(newContent);
+
+    // Detect "/" at start of a word
+    if (cursorPos > 0 && newContent[cursorPos - 1] === "/") {
+      const textBefore = newContent.slice(0, cursorPos - 1);
+      if (textBefore === "" || /\s$/.test(textBefore)) {
+        setSlashPosition(cursorPos);
+        setCommandPickerOpen(true);
+      }
+    } else if (commandPickerOpen && slashPosition !== null) {
+      // Check if user moved away from slash or deleted it
+      const textAfterSlash = newContent.slice(slashPosition - 1, cursorPos);
+      if (!textAfterSlash.startsWith("/")) {
+        setCommandPickerOpen(false);
+        setSlashPosition(null);
+      }
+    }
+
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
     }
   };
+
+  const handleCommandSelect = useCallback((command: ApplicationCommand) => {
+    if (slashPosition === null || !guildCommands) return;
+
+    const beforeSlash = content.slice(0, slashPosition - 1);
+    const afterSlash = content.slice(slashPosition);
+    const nextSpace = afterSlash.indexOf(" ");
+    const afterCommand = nextSpace >= 0 ? afterSlash.slice(nextSpace) : "";
+
+    const usage = buildCommandUsage(command);
+    const newContent = `${beforeSlash}${usage} ${afterCommand}`.trim();
+    setContent(newContent);
+    setCommandPickerOpen(false);
+    setSlashPosition(null);
+
+    textareaRef.current?.focus();
+  }, [content, slashPosition, guildCommands]);
+
+  const handleCommandClose = useCallback(() => {
+    setCommandPickerOpen(false);
+    setSlashPosition(null);
+  }, []);
 
   const canSend = (content.trim().length > 0 || files.length > 0) && !sendMessageMutation.isPending;
 
@@ -189,6 +253,17 @@ export function MessageInput({ channelId }: MessageInputProps) {
           </div>
         )}
       </div>
+
+      {/* Command Picker */}
+      {commandPickerOpen && guildCommands && (
+        <div className="relative">
+          <CommandPicker
+            commands={guildCommands}
+            onSelect={handleCommandSelect}
+            onClose={handleCommandClose}
+          />
+        </div>
+      )}
     </div>
   );
 }

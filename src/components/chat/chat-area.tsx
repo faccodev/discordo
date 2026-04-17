@@ -124,7 +124,7 @@ export function ChatArea({ channelId }: { channelId?: string }) {
       </div>
 
       {/* Input */}
-      {!isVoiceChannel && <MessageInput channelId={activeChannelId} />}
+      {!isVoiceChannel && <MessageInput channelId={activeChannelId} guildId={selectedGuildId || undefined} />}
 
       {/* Search Modal */}
       {searchOpen && activeChannelId && (

@@ -15,6 +15,7 @@ import { VideoPlayer } from "./video-player";
 import { AudioPlayer } from "./audio-player";
 import { ImageLightbox } from "./image-lightbox";
 import hljs from "highlight.js";
+import { usePathname } from "next/navigation";
 
 const MESSAGE_TYPES_WITH_CONTENT = [
   MessageType.DEFAULT,
@@ -250,7 +251,7 @@ function ImageWithFallback({
   );
 }
 
-function MessageItem({ message }: { message: DiscordMessage }) {
+function MessageItem({ message, isHighlighted }: { message: DiscordMessage; isHighlighted?: boolean }) {
   const isContentMessage = isMessageWithContent(message.type);
   const [showPicker, setShowPicker] = useState<string | null>(null);
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
@@ -260,7 +261,12 @@ function MessageItem({ message }: { message: DiscordMessage }) {
     return (
       <div className="my-2 flex items-center gap-2">
         <div className="h-px flex-1 bg-[var(--color-border-light)]" />
-        <span className="px-2 text-xs font-mono text-[var(--color-brand-hover)]">{message.content}</span>
+        <span className={cn(
+          "px-2 text-xs font-mono",
+          isHighlighted ? "text-[var(--color-brand)] font-bold" : "text-[var(--color-brand-hover)]"
+        )}>
+          {message.content}
+        </span>
         <div className="h-px flex-1 bg-[var(--color-border-light)]" />
       </div>
     );
@@ -273,7 +279,15 @@ function MessageItem({ message }: { message: DiscordMessage }) {
   const authorInitial = authorName.charAt(0).toUpperCase();
 
   return (
-    <div className="group relative flex gap-3 px-4 py-0.5 hover:bg-[var(--color-brand)]/5">
+    <div
+      id={`message-${message.id}`}
+      className={cn(
+        "group relative flex gap-3 px-4 py-0.5 transition-all duration-500",
+        isHighlighted
+          ? "bg-[rgba(62,207,142,0.12)] border-l-4 border-[var(--color-brand)] -ml-0.5"
+          : "hover:bg-[var(--color-brand)]/5"
+      )}
+    >
       {/* Avatar */}
       <Avatar
         src={avatarUrl}
@@ -287,7 +301,12 @@ function MessageItem({ message }: { message: DiscordMessage }) {
       <div className="min-w-0 flex-1">
         {/* Header */}
         <div className="flex items-baseline gap-2 leading-tight">
-          <span className="font-mono text-sm font-semibold text-[var(--color-brand)]">{authorName}</span>
+          <span className={cn(
+            "font-mono text-sm font-semibold",
+            isHighlighted ? "text-[var(--color-brand)]" : "text-[var(--color-brand)]"
+          )}>
+            {authorName}
+          </span>
           <span className="font-mono text-xs text-[var(--color-text-muted)]">
             {formatTimestamp(message.timestamp)}
           </span>
@@ -434,7 +453,9 @@ function MessageItem({ message }: { message: DiscordMessage }) {
 export function MessageList({ channelId }: { channelId: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const [highlightedId, setHighlightedId] = useState<string | null>(null);
   const { currentUser, markChannelRead } = useUIStore();
+  const pathname = usePathname();
 
   const {
     data: messages,
@@ -491,6 +512,40 @@ export function MessageList({ channelId }: { channelId: string }) {
     }
   }, [isLoading, channelId]);
 
+  // Scroll to and highlight message from URL hash (triggered by search navigation)
+  useEffect(() => {
+    const hash = window.location.hash.slice(1); // remove '#'
+    if (!hash) return;
+
+    const scroll = () => {
+      const el = document.getElementById(`message-${hash}`);
+      if (!el) return;
+
+      setHighlightedId(hash);
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+
+      // Clear highlight after 3 seconds
+      const timeout = setTimeout(() => setHighlightedId(null), 3000);
+      return () => clearTimeout(timeout);
+    };
+
+    // Element may not be in DOM yet on initial mount
+    const rafId = requestAnimationFrame(() => {
+      scroll();
+    });
+
+    // Fallback in case messages load later
+    const fallback = setTimeout(() => {
+      cancelAnimationFrame(rafId);
+      scroll();
+    }, 2000);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      clearTimeout(fallback);
+    };
+  }, [pathname, allMessages.length]);
+
   if (isLoading) {
     return (
       <div className="flex h-full items-center justify-center">
@@ -541,7 +596,7 @@ export function MessageList({ channelId }: { channelId: string }) {
       {/* Messages */}
       <div className="space-y-0.5 pb-4">
         {allMessages.map((message) => (
-          <MessageItem key={message.id} message={message} />
+          <MessageItem key={message.id} message={message} isHighlighted={highlightedId === message.id} />
         ))}
       </div>
 
